@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { HassAuthState, HassConfig, HassInboundMessage, HassOutboundMessage } from '@/types';
+import { buildWsUrl } from '@/utils';
 
 export interface HassConnectionState {
   authState: HassAuthState;
@@ -24,7 +25,6 @@ export const useHassConnection = (config: HassConfig | null): HassConnectionStat
   useEffect(() => {
     if (!config) return;
 
-    const { buildWsUrl } = require('@/utils');
     const ws = new WebSocket(buildWsUrl(config));
     wsRef.current = ws;
     setAuthState('connecting');
