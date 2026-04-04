@@ -42,6 +42,7 @@ export type MediaPlayerState =
 export type MediaType = 'music' | 'tvshow' | 'movie' | 'video' | 'episode' | 'channel' | 'playlist';
 
 export interface MediaPlayerAttributes {
+  [key: string]: unknown;
   friendly_name?: string;
   entity_picture?: string;
   media_title?: string;
