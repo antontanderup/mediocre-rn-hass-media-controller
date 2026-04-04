@@ -6,7 +6,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  StyleSheet,
   Switch,
   Text,
   TextInput,
@@ -240,8 +239,7 @@ export default function SettingsScreen() {
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const useStyles = createUseStyles(theme =>
-  StyleSheet.create({
+const useStyles = createUseStyles(theme => ({
     flex: {
       flex: 1,
       backgroundColor: theme.background,
@@ -329,4 +327,4 @@ const useStyles = createUseStyles(theme =>
       fontSize: 16,
       fontWeight: '600',
     },
-  }));
+}));
