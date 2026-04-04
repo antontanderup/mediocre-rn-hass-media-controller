@@ -15,7 +15,7 @@ describe('buildTheme', () => {
   it('produces valid hex strings for all tokens', () => {
     const tokens = Object.entries(light).filter(([k]) => k !== 'colorScheme');
     for (const [key, value] of tokens) {
-      expect(value).toMatch(HEX_RE), `${key} should be a valid hex color`;
+      expect(value, `${key} should be a valid hex color`).toMatch(HEX_RE);
     }
   });
 
