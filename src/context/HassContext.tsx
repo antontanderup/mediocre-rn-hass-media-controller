@@ -6,6 +6,8 @@ interface HassContextValue {
   authState: HassAuthState;
   players: MediaPlayerEntity[];
   isLoading: boolean;
+  isConfigLoaded: boolean;
+  hasConfig: boolean;
   send: (msg: HassOutboundMessage) => void;
 }
 
@@ -16,7 +18,7 @@ interface HassProviderProps {
 }
 
 export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element => {
-  const { config, clearConfig } = useHassConfig();
+  const { config, isLoaded: isConfigLoaded, clearConfig } = useHassConfig();
   const { authState, send, lastMessage } = useHassConnection(config);
   const { players, isLoading } = useMediaPlayers(lastMessage);
 
@@ -29,8 +31,8 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
   }, [authState, clearConfig]);
 
   const value = useMemo(
-    () => ({ authState, players, isLoading, send }),
-    [authState, players, isLoading, send],
+    () => ({ authState, players, isLoading, isConfigLoaded, hasConfig: config !== null, send }),
+    [authState, players, isLoading, isConfigLoaded, config, send],
   );
 
   return <HassContext.Provider value={value}>{children}</HassContext.Provider>;

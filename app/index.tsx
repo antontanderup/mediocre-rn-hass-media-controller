@@ -69,7 +69,7 @@ export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
   const styles = useStyles();
-  const { players, isLoading, authState } = useHassContext();
+  const { players, isLoading, authState, isConfigLoaded, hasConfig } = useHassContext();
 
   useEffect(() => {
     if (authState === 'auth_invalid') {
@@ -113,13 +113,15 @@ export default function HomeScreen() {
         )}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            {isLoading && authState !== 'error' ? (
+            {!isConfigLoaded || (hasConfig && isLoading && authState !== 'error') ? (
               <ActivityIndicator size="large" color={theme.primary} />
             ) : (
               <Text style={styles.emptyText}>
-                {authState === 'authenticated'
-                  ? 'No media players found.'
-                  : 'Configure your Home Assistant instance in settings.'}
+                {!hasConfig
+                  ? 'Configure your Home Assistant instance in settings.'
+                  : authState === 'authenticated'
+                    ? 'No media players found.'
+                    : 'Configure your Home Assistant instance in settings.'}
               </Text>
             )}
           </View>
