@@ -79,6 +79,20 @@ Connection logic lives in `src/hooks/useHassConnection.ts` and `src/hooks/useMed
 
 ---
 
+## Before creating a PR (REQUIRED)
+
+Run these three checks **sequentially** before presenting a "Create PR" option or opening a pull request. Only proceed if **all three pass**:
+
+```
+yarn typecheck
+yarn lint
+yarn test
+```
+
+If any step fails, fix the issues first.
+
+---
+
 ## Key Rules
 
 1. Named exports only — no default exports (screens in `app/` are the exception; Expo Router requires defaults there)
