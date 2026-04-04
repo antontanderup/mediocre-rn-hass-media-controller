@@ -11,3 +11,6 @@ export type { HassConfigState } from './useHassConfig';
 
 export { useMediaPlayerControls } from './useMediaPlayerControls';
 export type { MediaPlayerControls } from './useMediaPlayerControls';
+
+export { useAppConfig } from './useAppConfig';
+export type { AppConfigState } from './useAppConfig';

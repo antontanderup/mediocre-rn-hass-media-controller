@@ -1,6 +1,8 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { SUPPORT_NEXT_TRACK, SUPPORT_PREVIOUS_TRACK } from '@/types';
 import { createUseStyles } from '@/utils';
+import { useTheme } from '@/hooks';
+import { Icon } from '@/components/Icon';
 import type { PlaybackControlsProps } from './PlaybackControls.types';
 
 const useStyles = createUseStyles(theme => ({
@@ -17,10 +19,6 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonText: {
-    fontSize: 22,
-    color: theme.primary,
-  },
   playPauseButton: {
     width: 60,
     height: 60,
@@ -29,10 +27,6 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  playPauseText: {
-    fontSize: 24,
-    color: theme.onPrimary,
-  },
   buttonDisabled: {
     opacity: 0.35,
   },
@@ -40,6 +34,7 @@ const useStyles = createUseStyles(theme => ({
 
 export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): React.JSX.Element => {
   const styles = useStyles();
+  const theme = useTheme();
   const supported = player.attributes.supported_features ?? 0;
   const hasPrev = (supported & SUPPORT_PREVIOUS_TRACK) !== 0;
   const hasNext = (supported & SUPPORT_NEXT_TRACK) !== 0;
@@ -54,7 +49,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         accessibilityLabel="Previous track"
         accessibilityRole="button"
       >
-        <Text style={styles.buttonText}>⏮</Text>
+        <Icon name="skip-back-line" size={24} color={theme.primary} />
       </Pressable>
 
       <Pressable
@@ -63,7 +58,11 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
         accessibilityRole="button"
       >
-        <Text style={styles.playPauseText}>{isPlaying ? '⏸' : '▶'}</Text>
+        <Icon
+          name={isPlaying ? 'pause-line' : 'play-line'}
+          size={28}
+          color={theme.onPrimary}
+        />
       </Pressable>
 
       <Pressable
@@ -73,7 +72,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         accessibilityLabel="Next track"
         accessibilityRole="button"
       >
-        <Text style={styles.buttonText}>⏭</Text>
+        <Icon name="skip-forward-line" size={24} color={theme.primary} />
       </Pressable>
     </View>
   );

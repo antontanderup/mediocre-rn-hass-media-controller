@@ -1,3 +1,6 @@
+export { Icon } from './Icon';
+export type { IconProps, IconName } from './Icon';
+
 export { MediaCard } from './MediaCard';
 export type { MediaCardProps } from './MediaCard';
 

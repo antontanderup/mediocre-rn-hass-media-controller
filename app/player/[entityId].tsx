@@ -1,9 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { PlaybackControls, ProgressBar, VolumeSlider } from '@/components';
+import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
-import { useMediaPlayerControls } from '@/hooks';
-import { useTheme } from '@/hooks';
+import { useMediaPlayerControls, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
 
 export default function PlayerDetailScreen() {
@@ -52,7 +51,7 @@ export default function PlayerDetailScreen() {
       <View style={styles.artworkContainer}>
         {!attributes.entity_picture && (
           <View style={[styles.artworkPlaceholder, { backgroundColor: theme.surfaceContainerHigh }]}>
-            <Text style={[styles.artworkPlaceholderText, { color: theme.onSurfaceVariant }]}>♪</Text>
+            <Icon name="music-line" size={80} color={theme.onSurfaceVariant} />
           </View>
         )}
       </View>
@@ -139,9 +138,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  artworkPlaceholderText: {
-    fontSize: 80,
   },
   infoCard: {
     marginHorizontal: 16,
