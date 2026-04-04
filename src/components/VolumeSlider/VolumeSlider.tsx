@@ -1,23 +1,18 @@
 import Slider from '@react-native-community/slider';
 import { useCallback, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
+import { Icon } from '@/components/Icon';
 import type { VolumeSliderProps } from './VolumeSlider.types';
 
 const DEBOUNCE_MS = 200;
 
-const useStyles = createUseStyles(theme => ({
+const useStyles = createUseStyles(() => ({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  icon: {
-    fontSize: 16,
-    color: theme.onSurfaceVariant,
-    width: 20,
-    textAlign: 'center',
   },
   slider: {
     flex: 1,
@@ -45,7 +40,7 @@ export const VolumeSlider = ({ volume, onVolumeChange }: VolumeSliderProps): Rea
 
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>🔈</Text>
+      <Icon name="volume-down-line" size={20} color={theme.onSurfaceVariant} />
       <Slider
         style={styles.slider}
         minimumValue={0}
@@ -57,7 +52,7 @@ export const VolumeSlider = ({ volume, onVolumeChange }: VolumeSliderProps): Rea
         maximumTrackTintColor={theme.surfaceVariant}
         accessibilityLabel="Volume"
       />
-      <Text style={styles.icon}>🔊</Text>
+      <Icon name="volume-up-line" size={20} color={theme.onSurfaceVariant} />
     </View>
   );
 };

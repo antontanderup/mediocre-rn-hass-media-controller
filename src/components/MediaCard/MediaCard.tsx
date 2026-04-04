@@ -1,6 +1,8 @@
 import { Image, Pressable, Text, View } from 'react-native';
 import type { ImageStyle } from 'react-native';
+import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
+import { Icon } from '@/components/Icon';
 import type { MediaCardProps } from './MediaCard.types';
 
 const STATE_LABELS: Record<string, string> = {
@@ -37,10 +39,6 @@ const useStyles = createUseStyles(theme => ({
     backgroundColor: theme.surfaceContainerHigh,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  artworkPlaceholderText: {
-    fontSize: 24,
-    color: theme.onSurfaceVariant,
   },
   info: {
     flex: 1,
@@ -89,14 +87,11 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  playButtonText: {
-    fontSize: 16,
-    color: theme.onPrimary,
-  },
 }));
 
 export const MediaCard = ({ player, onPress, onPlayPause }: MediaCardProps): React.JSX.Element => {
   const styles = useStyles();
+  const theme = useTheme();
   const { attributes, state } = player;
 
   const name = attributes.friendly_name ?? player.entity_id;
@@ -114,7 +109,7 @@ export const MediaCard = ({ player, onPress, onPlayPause }: MediaCardProps): Rea
         <Image source={{ uri: attributes.entity_picture }} style={styles.artwork as ImageStyle} />
       ) : (
         <View style={styles.artworkPlaceholder}>
-          <Text style={styles.artworkPlaceholderText}>♪</Text>
+          <Icon name="music-line" size={28} color={theme.onSurfaceVariant} />
         </View>
       )}
 
@@ -139,7 +134,7 @@ export const MediaCard = ({ player, onPress, onPlayPause }: MediaCardProps): Rea
         accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
         accessibilityRole="button"
       >
-        <Text style={styles.playButtonText}>{isPlaying ? '⏸' : '▶'}</Text>
+        <Icon name={isPlaying ? 'pause-line' : 'play-line'} size={18} color={theme.onPrimary} />
       </Pressable>
     </Pressable>
   );

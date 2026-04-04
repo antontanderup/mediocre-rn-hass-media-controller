@@ -12,8 +12,9 @@ import {
   View,
 } from 'react-native';
 import { useThemeContext } from '@/context';
-import { useHassConfig, useTheme } from '@/hooks';
-import type { HassConfig } from '@/types';
+import { useAppConfig, useHassConfig, useTheme } from '@/hooks';
+import { Icon } from '@/components';
+import type { AppConfig, AppOptions, HassConfig } from '@/types';
 import { createUseStyles } from '@/utils';
 
 // ─── Validation schema ────────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ export default function SettingsScreen() {
   const theme = useTheme();
   const { setSourceColor } = useThemeContext();
   const { config, saveConfig } = useHassConfig();
+  const { config: appConfig, saveConfig: saveAppConfig } = useAppConfig();
   const router = useRouter();
   const styles = useStyles();
   const { error } = useLocalSearchParams<{ error?: string }>();
@@ -46,6 +48,10 @@ export default function SettingsScreen() {
       ssl: config?.ssl ?? false,
       token: config?.token ?? '',
       sourceColor: theme.sourceColor,
+      useArtColors: appConfig?.options.useArtColors ?? false,
+      disablePlayerFocusSwitching: appConfig?.options.disablePlayerFocusSwitching ?? false,
+      playerIsActiveWhen: appConfig?.options.playerIsActiveWhen ?? ('playing' as AppOptions['playerIsActiveWhen']),
+      showVolumeStepButtons: appConfig?.options.showVolumeStepButtons ?? false,
     },
     onSubmit: async ({ value }) => {
       const result = settingsSchema(value);
@@ -62,7 +68,18 @@ export default function SettingsScreen() {
         token: result.token.trim(),
       };
 
-      await saveConfig(cfg);
+      const newAppConfig: AppConfig = {
+        mediaPlayers: appConfig?.mediaPlayers ?? [],
+        options: {
+          useArtColors: value.useArtColors,
+          disablePlayerFocusSwitching: value.disablePlayerFocusSwitching,
+          playerIsActiveWhen: value.playerIsActiveWhen,
+          showVolumeStepButtons: value.showVolumeStepButtons,
+        },
+      };
+
+      await Promise.all([saveConfig(cfg), saveAppConfig(newAppConfig)]);
+
       if (HEX_RE.test(result.sourceColor)) {
         setSourceColor(result.sourceColor);
       }
@@ -229,6 +246,107 @@ export default function SettingsScreen() {
           }}
         </form.Field>
 
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>App Options</Text>
+
+        {/* Use art colors */}
+        <form.Field name="useArtColors">
+          {field => (
+            <View style={styles.row}>
+              <Text style={styles.label}>Use art colors</Text>
+              <Switch
+                value={field.state.value}
+                onValueChange={field.handleChange}
+                trackColor={{ true: theme.primary, false: theme.surfaceVariant }}
+                thumbColor={field.state.value ? theme.onPrimary : theme.onSurfaceVariant}
+              />
+            </View>
+          )}
+        </form.Field>
+
+        {/* Show volume step buttons */}
+        <form.Field name="showVolumeStepButtons">
+          {field => (
+            <View style={styles.row}>
+              <Text style={styles.label}>Show volume step buttons</Text>
+              <Switch
+                value={field.state.value}
+                onValueChange={field.handleChange}
+                trackColor={{ true: theme.primary, false: theme.surfaceVariant }}
+                thumbColor={field.state.value ? theme.onPrimary : theme.onSurfaceVariant}
+              />
+            </View>
+          )}
+        </form.Field>
+
+        {/* Disable player focus switching */}
+        <form.Field name="disablePlayerFocusSwitching">
+          {field => (
+            <View style={styles.row}>
+              <Text style={styles.label}>Disable player focus switching</Text>
+              <Switch
+                value={field.state.value}
+                onValueChange={field.handleChange}
+                trackColor={{ true: theme.primary, false: theme.surfaceVariant }}
+                thumbColor={field.state.value ? theme.onPrimary : theme.onSurfaceVariant}
+              />
+            </View>
+          )}
+        </form.Field>
+
+        {/* Player is active when */}
+        <form.Field name="playerIsActiveWhen">
+          {field => (
+            <View style={styles.field}>
+              <Text style={styles.label}>Player is active when</Text>
+              <View style={styles.segmentedControl}>
+                <Pressable
+                  style={[
+                    styles.segment,
+                    field.state.value === 'playing' && styles.segmentActive,
+                  ]}
+                  onPress={() => field.handleChange('playing')}
+                >
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      field.state.value === 'playing' && styles.segmentTextActive,
+                    ]}
+                  >
+                    Playing
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.segment,
+                    field.state.value === 'playing_or_paused' && styles.segmentActive,
+                  ]}
+                  onPress={() => field.handleChange('playing_or_paused')}
+                >
+                  <Text
+                    style={[
+                      styles.segmentText,
+                      field.state.value === 'playing_or_paused' && styles.segmentTextActive,
+                    ]}
+                  >
+                    Playing or paused
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          )}
+        </form.Field>
+
+        {/* Media Players — navigation link */}
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Media Players</Text>
+        <Pressable
+          style={styles.navRow}
+          onPress={() => router.push('/media-players')}
+          accessibilityRole="button"
+        >
+          <Text style={styles.navRowText}>Configure media players</Text>
+          <Icon name="arrow-right-s-line" size={20} color={theme.onSurfaceVariant} />
+        </Pressable>
+
         <form.Subscribe selector={state => state.isSubmitting}>
           {isSubmitting => (
             <Pressable
@@ -332,6 +450,46 @@ const useStyles = createUseStyles(theme => ({
       color: theme.error,
       fontSize: 12,
       marginTop: 4,
+    },
+    segmentedControl: {
+      flexDirection: 'row',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.outline,
+      overflow: 'hidden',
+    },
+    segment: {
+      flex: 1,
+      paddingVertical: 10,
+      alignItems: 'center',
+      backgroundColor: theme.surfaceContainer,
+    },
+    segmentActive: {
+      backgroundColor: theme.primaryContainer,
+    },
+    segmentText: {
+      fontSize: 14,
+      color: theme.onSurfaceVariant,
+    },
+    segmentTextActive: {
+      color: theme.onPrimaryContainer,
+      fontWeight: '600',
+    },
+    navRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: theme.surfaceContainer,
+      borderRadius: 10,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      marginBottom: 16,
+      borderWidth: 1,
+      borderColor: theme.outlineVariant,
+    },
+    navRowText: {
+      fontSize: 15,
+      color: theme.onSurface,
     },
     saveButton: {
       marginTop: 8,

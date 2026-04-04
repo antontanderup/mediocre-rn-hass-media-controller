@@ -1,5 +1,7 @@
 export type { AppTheme } from './theme';
 
+export type { AppConfig, MediaPlayerConfig, AppOptions } from './config';
+
 export type {
   HassAuthState,
   HassConfig,

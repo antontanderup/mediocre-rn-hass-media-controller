@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { useHassContext } from '@/context';
 import { useTheme } from '@/hooks';
+import { Icon } from '@/components';
 import { createUseStyles } from '@/utils';
 import { PlayerCardItem } from './_components/PlayerCardItem';
 
@@ -31,10 +32,6 @@ const useStyles = createUseStyles(theme => ({
     backgroundColor: theme.surfaceContainer,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  settingsIcon: {
-    fontSize: 20,
-    color: theme.onSurfaceVariant,
   },
   connectionBanner: {
     marginHorizontal: 16,
@@ -89,7 +86,7 @@ export default function HomeScreen() {
           accessibilityLabel="Open settings"
           accessibilityRole="button"
         >
-          <Text style={styles.settingsIcon}>⚙</Text>
+          <Icon name="settings-4-line" size={22} color={theme.onSurfaceVariant} />
         </Pressable>
       </View>
 
