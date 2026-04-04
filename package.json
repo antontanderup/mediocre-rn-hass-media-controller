@@ -24,6 +24,8 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.4.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@tanstack/react-form": "^1.28.6",
+    "arktype": "^2.2.0",
     "expo": "~54.0.33",
     "expo-constants": "~18.0.13",
     "expo-linking": "~8.0.11",
