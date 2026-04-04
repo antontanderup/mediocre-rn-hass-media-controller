@@ -1,4 +1,4 @@
-export { useHassConnection } from './useHassConnection';
+export { useHassConnection, ERR_CANNOT_CONNECT, ERR_CONNECTION_LOST, ERR_INVALID_AUTH, ERR_INVALID_HTTPS_TO_HTTP } from './useHassConnection';
 export type { HassConnectionState } from './useHassConnection';
 
 export { useMediaPlayers } from './useMediaPlayers';
