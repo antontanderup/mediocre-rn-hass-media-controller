@@ -1,10 +1,9 @@
 import { useRouter } from 'expo-router';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
-import { MediaCard } from '@/components';
 import { useHassContext } from '@/context';
-import { useMediaPlayerControls, useTheme } from '@/hooks';
-import type { MediaPlayerEntity } from '@/types';
+import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
+import { PlayerCardItem } from './_components/PlayerCardItem';
 
 const useStyles = createUseStyles(theme => ({
   container: {
@@ -64,24 +63,6 @@ const useStyles = createUseStyles(theme => ({
     color: theme.onSurfaceVariant,
   },
 }));
-
-interface PlayerCardItemProps {
-  player: MediaPlayerEntity;
-  onPress: () => void;
-}
-
-const PlayerCardItem = ({ player, onPress }: PlayerCardItemProps): React.JSX.Element => {
-  const controls = useMediaPlayerControls(player.entity_id);
-  const isPlaying = player.state === 'playing' || player.state === 'buffering';
-
-  return (
-    <MediaCard
-      player={player}
-      onPress={onPress}
-      onPlayPause={() => (isPlaying ? controls.pause() : controls.play())}
-    />
-  );
-};
 
 export default function HomeScreen() {
   const theme = useTheme();
