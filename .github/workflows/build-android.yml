@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  NDK_VERSION: 28.0.13004108
+
 jobs:
   build:
     name: Build Android APK
@@ -29,8 +32,26 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Cache NDK
+        id: cache-ndk
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.ANDROID_SDK_ROOT }}/ndk/${{ env.NDK_VERSION }}
+          key: android-ndk-${{ env.NDK_VERSION }}
+
       - name: Install NDK
-        run: sdkmanager "ndk;28.0.13004108"
+        if: steps.cache-ndk.outputs.cache-hit != 'true'
+        run: sdkmanager "ndk;${{ env.NDK_VERSION }}"
+
+      - name: Cache Gradle wrapper and caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper/dists
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('yarn.lock', 'app.json') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -50,6 +71,7 @@ jobs:
           cd android
           ./gradlew assembleRelease \
             --no-daemon \
+            --build-cache \
             -PreactNativeArchitectures=arm64-v8a,x86_64
 
       - name: Upload APK artifact
