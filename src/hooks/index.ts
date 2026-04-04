@@ -5,3 +5,6 @@ export { useMediaPlayers } from './useMediaPlayers';
 export type { MediaPlayersState } from './useMediaPlayers';
 
 export { useTheme } from './useTheme';
+
+export { useHassConfig } from './useHassConfig';
+export type { HassConfigState } from './useHassConfig';
