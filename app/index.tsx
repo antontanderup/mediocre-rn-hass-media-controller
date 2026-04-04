@@ -103,7 +103,7 @@ export default function HomeScreen() {
     if (!showError) return null;
     if (connectionErrorCode === ERR_CANNOT_CONNECT) {
       const attempted = hassConfig ? ` (${buildHassUrl(hassConfig)})` : '';
-      return `Could not reach Home Assistant${attempted}. Check your host, port, and SSL settings.`;
+      return `Could not connect to Home Assistant${attempted}. Check your host, port, and SSL settings — or verify Home Assistant is running and reachable. If settings look correct, your token may also be invalid.`;
     }
     if (connectionErrorCode === ERR_INVALID_HTTPS_TO_HTTP) {
       return 'SSL mismatch: the server responded over HTTP but SSL is enabled. Disable SSL in settings.';
