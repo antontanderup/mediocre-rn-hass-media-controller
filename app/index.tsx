@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { useHassContext } from '@/context';
 import { useTheme } from '@/hooks';
+import { ERR_CANNOT_CONNECT, ERR_CONNECTION_LOST, ERR_INVALID_HTTPS_TO_HTTP } from '@/hooks';
 import { Icon } from '@/components';
 import { createUseStyles } from '@/utils';
 import { PlayerCardItem } from './_components/PlayerCardItem';
@@ -66,7 +67,7 @@ export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
   const styles = useStyles();
-  const { players, isLoading, authState, isConfigLoaded, hasConfig } = useHassContext();
+  const { players, isLoading, authState, connectionErrorCode, isConfigLoaded, hasConfig } = useHassContext();
 
   useEffect(() => {
     if (authState === 'auth_invalid') {
@@ -75,6 +76,20 @@ export default function HomeScreen() {
   }, [authState, router]);
 
   const showError = authState === 'error';
+
+  const connectionErrorMessage = (() => {
+    if (!showError) return null;
+    if (connectionErrorCode === ERR_CANNOT_CONNECT) {
+      return 'Could not reach Home Assistant. Check your host, port, and SSL settings.';
+    }
+    if (connectionErrorCode === ERR_INVALID_HTTPS_TO_HTTP) {
+      return 'SSL mismatch: the server responded over HTTP but SSL is enabled. Disable SSL in settings.';
+    }
+    if (connectionErrorCode === ERR_CONNECTION_LOST) {
+      return 'Connection to Home Assistant was lost. Attempting to reconnect…';
+    }
+    return 'Unable to connect to Home Assistant. Check your settings.';
+  })();
 
   return (
     <View style={styles.container}>
@@ -90,11 +105,9 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      {showError && (
+      {connectionErrorMessage !== null && (
         <View style={styles.connectionBanner}>
-          <Text style={styles.connectionBannerText}>
-            Unable to connect to Home Assistant. Check your settings.
-          </Text>
+          <Text style={styles.connectionBannerText}>{connectionErrorMessage}</Text>
         </View>
       )}
 

@@ -5,6 +5,7 @@ import { useHassConfig, useHassConnection, useMediaPlayers } from '@/hooks';
 
 interface HassContextValue {
   authState: HassAuthState;
+  connectionErrorCode: number | null;
   players: MediaPlayerEntity[];
   isLoading: boolean;
   isConfigLoaded: boolean;
@@ -25,7 +26,7 @@ interface HassProviderProps {
 
 export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element => {
   const { config, isLoaded: isConfigLoaded, clearConfig } = useHassConfig();
-  const { authState, connection } = useHassConnection(config);
+  const { authState, connection, connectionErrorCode } = useHassConnection(config);
   const { players, isLoading } = useMediaPlayers(connection);
 
   useEffect(() => {
@@ -52,8 +53,8 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
   );
 
   const value = useMemo(
-    () => ({ authState, players, isLoading, isConfigLoaded, hasConfig: config !== null, callService }),
-    [authState, players, isLoading, isConfigLoaded, config, callService],
+    () => ({ authState, connectionErrorCode, players, isLoading, isConfigLoaded, hasConfig: config !== null, callService }),
+    [authState, connectionErrorCode, players, isLoading, isConfigLoaded, config, callService],
   );
 
   return <HassContext.Provider value={value}>{children}</HassContext.Provider>;
