@@ -71,7 +71,9 @@ export const useHassConnection = (config: HassConfig | null): HassConnectionStat
       ws.onclose = () => {
         if (cancelled || isAuthInvalidRef.current) return;
 
-        setAuthState('connecting');
+        // Keep authState as 'error' during the backoff window so the UI can
+        // show an error banner. connect() will reset it to 'connecting' when
+        // the next attempt actually starts.
         const delay = reconnectDelayRef.current;
         reconnectDelayRef.current = Math.min(delay * 2, BACKOFF_MAX_MS);
         reconnectTimer = setTimeout(connect, delay);
