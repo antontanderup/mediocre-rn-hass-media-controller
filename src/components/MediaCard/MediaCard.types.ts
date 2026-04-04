@@ -4,4 +4,5 @@ export interface MediaCardProps {
   player: MediaPlayerEntity;
   onPress: () => void;
   onPlayPause: () => void;
+  nameOverride?: string;
 }

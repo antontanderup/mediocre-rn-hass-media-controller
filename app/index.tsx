@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { useHassContext } from '@/context';
-import { useTheme } from '@/hooks';
+import { useAppConfig, useTheme } from '@/hooks';
 import { ERR_CANNOT_CONNECT, ERR_CONNECTION_LOST, ERR_INVALID_HTTPS_TO_HTTP } from '@/hooks';
 import { Icon } from '@/components';
+import type { MediaPlayerEntity } from '@/types';
 import { createUseStyles } from '@/utils';
 import { PlayerCardItem } from './_components/PlayerCardItem';
 
@@ -68,6 +69,26 @@ export default function HomeScreen() {
   const router = useRouter();
   const styles = useStyles();
   const { players, isLoading, authState, connectionErrorCode, isConfigLoaded, hasConfig } = useHassContext();
+  const { config: appConfig } = useAppConfig();
+
+  // If players are configured, filter and order by config; otherwise show all.
+  const displayedPlayers: Array<{ player: MediaPlayerEntity; nameOverride?: string }> =
+    useMemo(() => {
+      const configured = appConfig?.mediaPlayers;
+      if (!configured?.length) {
+        return players.map(p => ({ player: p }));
+      }
+      return configured
+        .map(cfg => {
+          const entity = players.find(p => p.entity_id === cfg.entityId);
+          if (!entity) return null;
+          return {
+            player: entity,
+            nameOverride: cfg.name ?? undefined,
+          };
+        })
+        .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+    }, [players, appConfig]);
 
   useEffect(() => {
     if (authState === 'auth_invalid') {
@@ -112,13 +133,14 @@ export default function HomeScreen() {
       )}
 
       <FlatList
-        data={players}
-        keyExtractor={p => p.entity_id}
-        contentContainerStyle={players.length === 0 ? { flex: 1 } : styles.listContent}
-        renderItem={({ item }) => (
+        data={displayedPlayers}
+        keyExtractor={({ player }) => player.entity_id}
+        contentContainerStyle={displayedPlayers.length === 0 ? { flex: 1 } : styles.listContent}
+        renderItem={({ item: { player, nameOverride } }) => (
           <PlayerCardItem
-            player={item}
-            onPress={() => router.push(`/player/${item.entity_id}`)}
+            player={player}
+            nameOverride={nameOverride}
+            onPress={() => router.push(`/player/${player.entity_id}`)}
           />
         )}
         ListEmptyComponent={

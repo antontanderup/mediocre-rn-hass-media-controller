@@ -89,12 +89,12 @@ const useStyles = createUseStyles(theme => ({
   },
 }));
 
-export const MediaCard = ({ player, onPress, onPlayPause }: MediaCardProps): React.JSX.Element => {
+export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaCardProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
   const { attributes, state } = player;
 
-  const name = attributes.friendly_name ?? player.entity_id;
+  const name = nameOverride ?? attributes.friendly_name ?? player.entity_id;
   const stateLabel = STATE_LABELS[state] ?? state;
   const isPlaying = state === 'playing' || state === 'buffering';
 
