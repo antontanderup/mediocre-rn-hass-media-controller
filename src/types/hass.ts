@@ -3,7 +3,7 @@
  * Reference: https://developers.home-assistant.io/docs/api/websocket
  */
 
-export type HassAuthState = 'connecting' | 'authenticating' | 'authenticated' | 'error';
+export type HassAuthState = 'connecting' | 'authenticating' | 'authenticated' | 'error' | 'auth_invalid';
 
 export interface HassConfig {
   host: string;

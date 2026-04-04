@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useMemo } from 'react';
 import type { HassAuthState, HassOutboundMessage, MediaPlayerEntity } from '@/types';
 import { useHassConfig, useHassConnection, useMediaPlayers } from '@/hooks';
 
@@ -16,9 +16,17 @@ interface HassProviderProps {
 }
 
 export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element => {
-  const { config } = useHassConfig();
+  const { config, clearConfig } = useHassConfig();
   const { authState, send, lastMessage } = useHassConnection(config);
   const { players, isLoading } = useMediaPlayers(lastMessage);
+
+  useEffect(() => {
+    if (authState === 'auth_invalid') {
+      clearConfig().catch(() => {
+        // Non-fatal — token is already invalidated on the server side
+      });
+    }
+  }, [authState, clearConfig]);
 
   const value = useMemo(
     () => ({ authState, players, isLoading, send }),

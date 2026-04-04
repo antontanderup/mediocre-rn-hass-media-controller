@@ -11,6 +11,9 @@ export interface HassConnectionState {
 let messageId = 1;
 const nextId = (): number => messageId++;
 
+const BACKOFF_INITIAL_MS = 1000;
+const BACKOFF_MAX_MS = 30_000;
+
 export const useHassConnection = (config: HassConfig | null): HassConnectionState => {
   const wsRef = useRef<WebSocket | null>(null);
   const [authState, setAuthState] = useState<HassAuthState>('connecting');
@@ -25,39 +28,63 @@ export const useHassConnection = (config: HassConfig | null): HassConnectionStat
   useEffect(() => {
     if (!config) return;
 
-    const ws = new WebSocket(buildWsUrl(config));
-    wsRef.current = ws;
-    setAuthState('connecting');
+    // Refs that survive across reconnects within this effect
+    const isAuthInvalidRef = { current: false };
+    const reconnectDelayRef = { current: BACKOFF_INITIAL_MS };
+    let cancelled = false;
+    let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
-    ws.onmessage = (event: MessageEvent<string>) => {
-      const msg = JSON.parse(event.data) as HassInboundMessage;
-      setLastMessage(msg);
+    const connect = (): void => {
+      if (cancelled) return;
 
-      if (msg.type === 'auth_required') {
-        setAuthState('authenticating');
-        ws.send(JSON.stringify({ type: 'auth', access_token: config.token }));
-      } else if (msg.type === 'auth_ok') {
-        setAuthState('authenticated');
-        // Subscribe to state_changed events
-        ws.send(
-          JSON.stringify({
-            id: nextId(),
-            type: 'subscribe_events',
-            event_type: 'state_changed',
-          }),
-        );
-        // Fetch initial states
-        ws.send(JSON.stringify({ id: nextId(), type: 'get_states' }));
-      } else if (msg.type === 'auth_invalid') {
-        setAuthState('error');
-      }
+      const ws = new WebSocket(buildWsUrl(config));
+      wsRef.current = ws;
+      setAuthState('connecting');
+
+      ws.onmessage = (event: MessageEvent<string>) => {
+        const msg = JSON.parse(event.data) as HassInboundMessage;
+        setLastMessage(msg);
+
+        if (msg.type === 'auth_required') {
+          setAuthState('authenticating');
+          ws.send(JSON.stringify({ type: 'auth', access_token: config.token }));
+        } else if (msg.type === 'auth_ok') {
+          // Reset backoff on successful auth
+          reconnectDelayRef.current = BACKOFF_INITIAL_MS;
+          setAuthState('authenticated');
+          ws.send(
+            JSON.stringify({
+              id: nextId(),
+              type: 'subscribe_events',
+              event_type: 'state_changed',
+            }),
+          );
+          ws.send(JSON.stringify({ id: nextId(), type: 'get_states' }));
+        } else if (msg.type === 'auth_invalid') {
+          isAuthInvalidRef.current = true;
+          setAuthState('auth_invalid');
+        }
+      };
+
+      ws.onerror = () => setAuthState('error');
+
+      ws.onclose = () => {
+        if (cancelled || isAuthInvalidRef.current) return;
+
+        setAuthState('connecting');
+        const delay = reconnectDelayRef.current;
+        reconnectDelayRef.current = Math.min(delay * 2, BACKOFF_MAX_MS);
+        reconnectTimer = setTimeout(connect, delay);
+      };
     };
 
-    ws.onerror = () => setAuthState('error');
-    ws.onclose = () => setAuthState('connecting');
+    connect();
 
     return () => {
-      ws.close();
+      cancelled = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      wsRef.current?.close();
+      wsRef.current = null;
     };
   }, [config]);
 
