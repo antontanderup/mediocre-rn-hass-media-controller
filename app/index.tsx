@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { useHassContext } from '@/context';
 import { useTheme } from '@/hooks';
@@ -69,6 +70,12 @@ export default function HomeScreen() {
   const router = useRouter();
   const styles = useStyles();
   const { players, isLoading, authState } = useHassContext();
+
+  useEffect(() => {
+    if (authState === 'auth_invalid') {
+      router.replace('/settings?error=invalid_token');
+    }
+  }, [authState, router]);
 
   const showError = authState === 'error';
 

@@ -8,6 +8,7 @@ export interface HassConfigState {
   config: HassConfig | null;
   isLoaded: boolean;
   saveConfig: (c: HassConfig) => Promise<void>;
+  clearConfig: () => Promise<void>;
 }
 
 export const useHassConfig = (): HassConfigState => {
@@ -35,5 +36,10 @@ export const useHassConfig = (): HassConfigState => {
     setConfig(c);
   }, []);
 
-  return { config, isLoaded, saveConfig };
+  const clearConfig = useCallback(async (): Promise<void> => {
+    await SecureStore.deleteItemAsync(STORAGE_KEY);
+    setConfig(null);
+  }, []);
+
+  return { config, isLoaded, saveConfig, clearConfig };
 };

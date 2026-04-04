@@ -1,5 +1,5 @@
 import { type } from 'arktype';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useForm } from '@tanstack/react-form';
 import {
   KeyboardAvoidingView,
@@ -36,6 +36,8 @@ export default function SettingsScreen() {
   const { config, saveConfig } = useHassConfig();
   const router = useRouter();
   const styles = useStyles();
+  const { error } = useLocalSearchParams<{ error?: string }>();
+  const showInvalidTokenError = error === 'invalid_token';
 
   const form = useForm({
     defaultValues: {
@@ -78,6 +80,14 @@ export default function SettingsScreen() {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
+        {showInvalidTokenError && (
+          <View style={styles.errorBanner}>
+            <Text style={styles.errorBannerText}>
+              Invalid token. Your access token was rejected by Home Assistant. Please enter a new one.
+            </Text>
+          </View>
+        )}
+
         <Text style={styles.sectionLabel}>Home Assistant</Text>
 
         {/* Host */}
@@ -250,6 +260,17 @@ const useStyles = createUseStyles(theme => ({
     content: {
       padding: 20,
       paddingBottom: 40,
+    },
+    errorBanner: {
+      backgroundColor: theme.errorContainer,
+      borderRadius: 10,
+      padding: 14,
+      marginBottom: 20,
+    },
+    errorBannerText: {
+      color: theme.onErrorContainer,
+      fontSize: 14,
+      lineHeight: 20,
     },
     sectionLabel: {
       fontSize: 13,
