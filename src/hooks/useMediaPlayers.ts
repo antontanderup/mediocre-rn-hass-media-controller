@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import type { HassEntity, HassInboundMessage, HassResultMessage, MediaPlayerEntity } from '@/types';
+import { subscribeEntities, type Connection } from 'home-assistant-js-websocket';
+import type { HassEntity, MediaPlayerEntity } from '@/types';
 import { isMediaPlayerEntity } from '@/utils';
 
 export interface MediaPlayersState {
@@ -8,36 +9,34 @@ export interface MediaPlayersState {
 }
 
 /**
- * Derives the list of media_player entities from raw HASS WebSocket messages.
- * Pass in `lastMessage` from `useHassConnection`.
+ * Subscribes to all Home Assistant entities and derives the list of
+ * media_player entities. Automatically stays in sync with state changes.
  */
-export const useMediaPlayers = (lastMessage: HassInboundMessage | null): MediaPlayersState => {
+export const useMediaPlayers = (connection: Connection | null): MediaPlayersState => {
   const [players, setPlayers] = useState<MediaPlayerEntity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!lastMessage) return;
+    if (!connection) {
+      setPlayers([]);
+      setIsLoading(true);
+      return;
+    }
 
-    if (lastMessage.type === 'result') {
-      const result = lastMessage as HassResultMessage<HassEntity[]>;
-      if (!result.success || !Array.isArray(result.result)) return;
+    let cancelled = false;
 
-      const mediaPlayers = result.result.filter(isMediaPlayerEntity);
+    const unsubscribe = subscribeEntities(connection, entities => {
+      if (cancelled) return;
+      const mediaPlayers = (Object.values(entities) as HassEntity[]).filter(isMediaPlayerEntity);
       setPlayers(mediaPlayers);
       setIsLoading(false);
-    } else if (lastMessage.type === 'event') {
-      const { new_state } = lastMessage.event.data;
-      if (!new_state || !isMediaPlayerEntity(new_state)) return;
+    });
 
-      setPlayers(prev => {
-        const idx = prev.findIndex(p => p.entity_id === new_state.entity_id);
-        if (idx === -1) return [...prev, new_state];
-        const next = [...prev];
-        next[idx] = new_state;
-        return next;
-      });
-    }
-  }, [lastMessage]);
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, [connection]);
 
   return { players, isLoading };
 };
