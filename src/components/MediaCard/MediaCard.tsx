@@ -1,4 +1,5 @@
 import { Image, Pressable, Text, View } from 'react-native';
+import type { ImageStyle } from 'react-native';
 import { createUseStyles } from '@/utils';
 import type { MediaCardProps } from './MediaCard.types';
 
@@ -110,7 +111,7 @@ export const MediaCard = ({ player, onPress, onPlayPause }: MediaCardProps): Rea
       accessibilityRole="button"
     >
       {attributes.entity_picture ? (
-        <Image source={{ uri: attributes.entity_picture }} style={styles.artwork} />
+        <Image source={{ uri: attributes.entity_picture }} style={styles.artwork as ImageStyle} />
       ) : (
         <View style={styles.artworkPlaceholder}>
           <Text style={styles.artworkPlaceholderText}>♪</Text>
