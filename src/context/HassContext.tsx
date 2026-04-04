@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useEffect, useMemo } from 'react';
-import type { HassAuthState, HassOutboundMessage, MediaPlayerEntity } from '@/types';
+import React, { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
+import { callService as hassCallService } from 'home-assistant-js-websocket';
+import type { HassAuthState, MediaPlayerEntity } from '@/types';
 import { useHassConfig, useHassConnection, useMediaPlayers } from '@/hooks';
 
 interface HassContextValue {
@@ -8,7 +9,12 @@ interface HassContextValue {
   isLoading: boolean;
   isConfigLoaded: boolean;
   hasConfig: boolean;
-  send: (msg: HassOutboundMessage) => void;
+  callService: (
+    domain: string,
+    service: string,
+    serviceData?: Record<string, unknown>,
+    target?: { entity_id?: string | string[] },
+  ) => void;
 }
 
 const HassContext = createContext<HassContextValue | null>(null);
@@ -19,8 +25,8 @@ interface HassProviderProps {
 
 export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element => {
   const { config, isLoaded: isConfigLoaded, clearConfig } = useHassConfig();
-  const { authState, send, lastMessage } = useHassConnection(config);
-  const { players, isLoading } = useMediaPlayers(lastMessage);
+  const { authState, connection } = useHassConnection(config);
+  const { players, isLoading } = useMediaPlayers(connection);
 
   useEffect(() => {
     if (authState === 'auth_invalid') {
@@ -30,9 +36,24 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
     }
   }, [authState, clearConfig]);
 
+  const callService = useCallback(
+    (
+      domain: string,
+      service: string,
+      serviceData?: Record<string, unknown>,
+      target?: { entity_id?: string | string[] },
+    ) => {
+      if (!connection) return;
+      hassCallService(connection, domain, service, serviceData, target).catch(() => {
+        // Service call errors are non-fatal from the UI's perspective
+      });
+    },
+    [connection],
+  );
+
   const value = useMemo(
-    () => ({ authState, players, isLoading, isConfigLoaded, hasConfig: config !== null, send }),
-    [authState, players, isLoading, isConfigLoaded, config, send],
+    () => ({ authState, players, isLoading, isConfigLoaded, hasConfig: config !== null, callService }),
+    [authState, players, isLoading, isConfigLoaded, config, callService],
   );
 
   return <HassContext.Provider value={value}>{children}</HassContext.Provider>;

@@ -8,17 +8,6 @@ export type {
   MediaType,
   MediaPlayerAttributes,
   MediaPlayerEntity,
-  HassAuthMessage,
-  HassSubscribeMessage,
-  HassCallServiceMessage,
-  HassGetStatesMessage,
-  HassOutboundMessage,
-  HassResultMessage,
-  HassEventMessage,
-  HassAuthRequiredMessage,
-  HassAuthOkMessage,
-  HassAuthInvalidMessage,
-  HassInboundMessage,
   PlaybackCommand,
 } from './hass';
 

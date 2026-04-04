@@ -1,6 +1,6 @@
 /**
- * Core Home Assistant WebSocket API types.
- * Reference: https://developers.home-assistant.io/docs/api/websocket
+ * Core Home Assistant domain types.
+ * WebSocket plumbing is handled by home-assistant-js-websocket.
  */
 
 export type HassAuthState = 'connecting' | 'authenticating' | 'authenticated' | 'error' | 'auth_invalid';
@@ -9,7 +9,7 @@ export interface HassConfig {
   host: string;
   /** Long-lived access token */
   token: string;
-  /** Whether to use wss:// instead of ws:// */
+  /** Whether to use https:// instead of http:// */
   ssl: boolean;
   port: number;
 }
@@ -69,85 +69,6 @@ export interface MediaPlayerEntity extends HassEntity {
   state: MediaPlayerState;
   attributes: MediaPlayerAttributes;
 }
-
-// ─── WebSocket Messages ───────────────────────────────────────────────────────
-
-export interface HassAuthMessage {
-  type: 'auth';
-  access_token: string;
-}
-
-export interface HassSubscribeMessage {
-  id: number;
-  type: 'subscribe_events';
-  event_type: string;
-}
-
-export interface HassCallServiceMessage {
-  id: number;
-  type: 'call_service';
-  domain: string;
-  service: string;
-  service_data?: Record<string, unknown>;
-  target?: {
-    entity_id?: string | string[];
-  };
-}
-
-export interface HassGetStatesMessage {
-  id: number;
-  type: 'get_states';
-}
-
-export type HassOutboundMessage =
-  | HassAuthMessage
-  | HassSubscribeMessage
-  | HassCallServiceMessage
-  | HassGetStatesMessage;
-
-export interface HassResultMessage<T = unknown> {
-  id: number;
-  type: 'result';
-  success: boolean;
-  result: T;
-}
-
-export interface HassEventMessage {
-  id: number;
-  type: 'event';
-  event: {
-    event_type: string;
-    data: {
-      entity_id: string;
-      old_state: HassEntity | null;
-      new_state: HassEntity | null;
-    };
-    origin: string;
-    time_fired: string;
-  };
-}
-
-export interface HassAuthRequiredMessage {
-  type: 'auth_required';
-  ha_version: string;
-}
-
-export interface HassAuthOkMessage {
-  type: 'auth_ok';
-  ha_version: string;
-}
-
-export interface HassAuthInvalidMessage {
-  type: 'auth_invalid';
-  message: string;
-}
-
-export type HassInboundMessage =
-  | HassResultMessage
-  | HassEventMessage
-  | HassAuthRequiredMessage
-  | HassAuthOkMessage
-  | HassAuthInvalidMessage;
 
 // ─── Playback Commands ────────────────────────────────────────────────────────
 
