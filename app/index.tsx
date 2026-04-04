@@ -2,11 +2,11 @@ import { useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { useHassContext } from '@/context';
-import { useAppConfig, useTheme } from '@/hooks';
+import { useAppConfig, useHassConfig, useTheme } from '@/hooks';
 import { ERR_CANNOT_CONNECT, ERR_CONNECTION_LOST, ERR_INVALID_HTTPS_TO_HTTP } from '@/hooks';
 import { Icon } from '@/components';
 import type { MediaPlayerEntity } from '@/types';
-import { createUseStyles } from '@/utils';
+import { buildHassUrl, createUseStyles } from '@/utils';
 import { PlayerCardItem } from './_components/PlayerCardItem';
 
 const useStyles = createUseStyles(theme => ({
@@ -70,6 +70,7 @@ export default function HomeScreen() {
   const styles = useStyles();
   const { players, isLoading, authState, connectionErrorCode, isConfigLoaded, hasConfig } = useHassContext();
   const { config: appConfig } = useAppConfig();
+  const { config: hassConfig } = useHassConfig();
 
   // If players are configured, filter and order by config; otherwise show all.
   const displayedPlayers: Array<{ player: MediaPlayerEntity; nameOverride?: string }> =
@@ -101,7 +102,8 @@ export default function HomeScreen() {
   const connectionErrorMessage = (() => {
     if (!showError) return null;
     if (connectionErrorCode === ERR_CANNOT_CONNECT) {
-      return 'Could not reach Home Assistant. Check your host, port, and SSL settings.';
+      const attempted = hassConfig ? ` (${buildHassUrl(hassConfig)})` : '';
+      return `Could not reach Home Assistant${attempted}. Check your host, port, and SSL settings.`;
     }
     if (connectionErrorCode === ERR_INVALID_HTTPS_TO_HTTP) {
       return 'SSL mismatch: the server responded over HTTP but SSL is enabled. Disable SSL in settings.';
