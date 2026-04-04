@@ -15,6 +15,7 @@ import {
 import { useThemeContext } from '@/context';
 import { useHassConfig, useTheme } from '@/hooks';
 import type { HassConfig } from '@/types';
+import { createUseStyles } from '@/utils';
 
 // ─── Validation schema ────────────────────────────────────────────────────────
 
@@ -35,6 +36,7 @@ export default function SettingsScreen() {
   const { setSourceColor } = useThemeContext();
   const { config, saveConfig } = useHassConfig();
   const router = useRouter();
+  const styles = useStyles();
 
   const form = useForm({
     defaultValues: {
@@ -66,8 +68,6 @@ export default function SettingsScreen() {
       router.back();
     },
   });
-
-  const styles = makeStyles(theme);
 
   return (
     <KeyboardAvoidingView
@@ -240,7 +240,7 @@ export default function SettingsScreen() {
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
-const makeStyles = (theme: ReturnType<typeof useTheme>) =>
+const useStyles = createUseStyles(theme =>
   StyleSheet.create({
     flex: {
       flex: 1,
@@ -329,4 +329,4 @@ const makeStyles = (theme: ReturnType<typeof useTheme>) =>
       fontSize: 16,
       fontWeight: '600',
     },
-  });
+  }));
