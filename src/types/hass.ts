@@ -148,3 +148,15 @@ export type HassInboundMessage =
   | HassAuthRequiredMessage
   | HassAuthOkMessage
   | HassAuthInvalidMessage;
+
+// ─── Playback Commands ────────────────────────────────────────────────────────
+
+export type PlaybackCommand =
+  | { type: 'play' }
+  | { type: 'pause' }
+  | { type: 'next' }
+  | { type: 'previous' };
+
+// Bitmask values from HA supported_features
+export const SUPPORT_PREVIOUS_TRACK = 16;
+export const SUPPORT_NEXT_TRACK = 32;

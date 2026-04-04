@@ -19,4 +19,7 @@ export type {
   HassAuthOkMessage,
   HassAuthInvalidMessage,
   HassInboundMessage,
+  PlaybackCommand,
 } from './hass';
+
+export { SUPPORT_PREVIOUS_TRACK, SUPPORT_NEXT_TRACK } from './hass';
