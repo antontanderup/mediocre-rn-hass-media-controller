@@ -3806,6 +3806,11 @@ expo-router@~4.0.22:
     semver "~7.6.3"
     server-only "^0.0.1"
 
+expo-secure-store@^55.0.11:
+  version "55.0.11"
+  resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-55.0.11.tgz#943aaa4ee3e02f873905fd510e8b067bbe49abd2"
+  integrity sha512-uESAb/yZvWTs0wI/IulCCVI6psoGO8T59XI3dRTkPfc/F8r1AXpVi/jh+gkmjG8lcU6ni2AUC1HNSFW9rLEXlg==
+
 expo-server@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/expo-server/-/expo-server-1.0.5.tgz#2d52002199a2af99c2c8771d0657916004345ca9"
