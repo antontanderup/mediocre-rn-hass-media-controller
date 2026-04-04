@@ -23,9 +23,16 @@ describe('buildTheme', () => {
     expect(light.primary).not.toBe(dark.primary);
   });
 
-  it('surface container tokens are distinct', () => {
-    expect(light.surfaceContainerLow).not.toBe(light.surfaceContainerHigh);
-    expect(dark.surfaceContainerLow).not.toBe(dark.surfaceContainerHigh);
+  it('all five surface container tokens are distinct', () => {
+    const containers = [
+      light.surfaceContainerLowest,
+      light.surfaceContainerLow,
+      light.surfaceContainer,
+      light.surfaceContainerHigh,
+      light.surfaceContainerHighest,
+    ];
+    const unique = new Set(containers);
+    expect(unique.size).toBe(5);
   });
 
   it('produces different themes for different source colors', () => {

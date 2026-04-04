@@ -34,9 +34,11 @@ export interface AppTheme {
   onSurface: string;
   surfaceVariant: string;
   onSurfaceVariant: string;
+  surfaceContainerLowest: string;
   surfaceContainerLow: string;
   surfaceContainer: string;
   surfaceContainerHigh: string;
+  surfaceContainerHighest: string;
 
   // utility
   outline: string;
