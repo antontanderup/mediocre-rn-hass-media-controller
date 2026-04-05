@@ -1,0 +1,67 @@
+import { Tabs, useRouter } from 'expo-router';
+import React from 'react';
+import { Pressable } from 'react-native';
+import { Icon } from '@/components';
+import { useThemeContext } from '@/context';
+import { useTheme } from '@/hooks';
+
+function ThemedTabs(): React.JSX.Element {
+  const { theme } = useThemeContext();
+  const colors = useTheme();
+  const router = useRouter();
+
+  return (
+    <Tabs
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.surface },
+        headerTintColor: theme.onSurface,
+        tabBarStyle: { backgroundColor: theme.surface },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.onSurfaceVariant,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Players',
+          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
+            <Icon name="music-line" size={size} color={color} />
+          ),
+          headerRight: () => (
+            <Pressable
+              style={{ padding: 8, marginRight: 4 }}
+              onPress={() => router.push('/settings')}
+              accessibilityLabel="Open settings"
+              accessibilityRole="button"
+            >
+              <Icon name="settings-4-line" size={22} color={colors.onSurfaceVariant} />
+            </Pressable>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="player"
+        options={{
+          title: 'Now Playing',
+          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
+            <Icon name="play-circle-line" size={size} color={color} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="grouping"
+        options={{
+          title: 'Grouping',
+          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
+            <Icon name="speaker-2-line" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
+  );
+}
+
+export default function TabsLayout(): React.JSX.Element {
+  return <ThemedTabs />;
+}

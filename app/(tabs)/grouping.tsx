@@ -25,8 +25,8 @@ const STATE_LABELS: Record<MediaPlayerState, string> = {
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
-export default function SpeakerGroupingScreen() {
-  const { entityId } = useLocalSearchParams<{ entityId: string }>();
+export default function GroupingTab() {
+  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
   const theme = useTheme();
   const styles = useStyles();
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function SpeakerGroupingScreen() {
   const { config: appConfig } = useAppConfig();
 
   const { groupedSpeakers, ungroupedSpeakers, hasGroupableEntities, toggleGroup, setVolume, setMuted } =
-    useGrouping(entityId);
+    useGrouping(entityId ?? '');
 
   const [syncMainSpeakerVolume, setSyncMainSpeakerVolume] = useState(true);
 
@@ -69,6 +69,16 @@ export default function SpeakerGroupingScreen() {
       })
       .filter((e): e is NonNullable<typeof e> => e !== null);
   }, [players, appConfig]);
+
+  if (!entityId) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
+          Select a player from the Players tab.
+        </Text>
+      </View>
+    );
+  }
 
   const showEmpty = !hasGroupableEntities && disablePlayerFocusSwitching;
 
@@ -175,7 +185,10 @@ export default function SpeakerGroupingScreen() {
               {ungroupedSpeakers.map(speaker => (
                 <Pressable
                   key={speaker.entityId}
-                  style={[styles.chip, { backgroundColor: theme.surfaceContainer, borderColor: theme.outline }]}
+                  style={[
+                    styles.chip,
+                    { backgroundColor: theme.surfaceContainer, borderColor: theme.outline },
+                  ]}
                   onPress={() => toggleGroup(speaker.entityId, false)}
                   disabled={speaker.isLoading}
                   accessibilityLabel={`Add ${speaker.name}`}
@@ -210,12 +223,17 @@ export default function SpeakerGroupingScreen() {
               const isActive = item.player.entity_id === entityId;
               return (
                 <View key={item.player.entity_id}>
-                  {i > 0 && <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />}
+                  {i > 0 && (
+                    <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />
+                  )}
                   <Pressable
                     style={styles.playerRow}
                     onPress={() => {
                       if (!isActive) {
-                        router.replace(`/player/${item.player.entity_id}`);
+                        router.replace({
+                          pathname: '/(tabs)/player',
+                          params: { entityId: item.player.entity_id },
+                        });
                       }
                     }}
                     accessibilityRole="radio"
@@ -370,8 +388,10 @@ const useStyles = createUseStyles(theme => ({
     fontSize: 12,
   },
   emptyContainer: {
+    flex: 1,
     padding: 32,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   emptyText: {
     fontSize: 14,

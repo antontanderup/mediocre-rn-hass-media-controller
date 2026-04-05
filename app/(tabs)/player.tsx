@@ -4,16 +4,36 @@ import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components'
 import { useHassContext } from '@/context';
 import { useAppConfig, useMediaPlayerControls, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
+import { createUseStyles } from '@/utils';
 
-export default function PlayerDetailScreen() {
-  const { entityId } = useLocalSearchParams<{ entityId: string }>();
+const useEmptyStyles = createUseStyles(theme => ({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    backgroundColor: theme.background,
+  },
+  text: {
+    fontSize: 15,
+    textAlign: 'center',
+    lineHeight: 22,
+    color: theme.onSurfaceVariant,
+  },
+}));
+
+export default function PlayerTab() {
+  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
   const theme = useTheme();
   const router = useRouter();
   const { players } = useHassContext();
-  const controls = useMediaPlayerControls(entityId);
+  const controls = useMediaPlayerControls(entityId ?? '');
   const { config: appConfig } = useAppConfig();
-  const hasGroupableEntities = (appConfig?.mediaPlayers.some(p => p.canBeGrouped) ?? false)
-    || !(appConfig?.options.disablePlayerFocusSwitching ?? false);
+  const emptyStyles = useEmptyStyles();
+
+  const hasGroupableEntities =
+    (appConfig?.mediaPlayers.some(p => p.canBeGrouped) ?? false) ||
+    !(appConfig?.options.disablePlayerFocusSwitching ?? false);
 
   const player = players.find(p => p.entity_id === entityId);
 
@@ -36,10 +56,8 @@ export default function PlayerDetailScreen() {
 
   if (!player) {
     return (
-      <View style={[styles.notFound, { backgroundColor: theme.background }]}>
-        <Text style={[styles.notFoundText, { color: theme.onSurfaceVariant }]}>
-          Player not found.
-        </Text>
+      <View style={emptyStyles.container}>
+        <Text style={emptyStyles.text}>Select a player from the Players tab.</Text>
       </View>
     );
   }
@@ -97,7 +115,9 @@ export default function PlayerDetailScreen() {
         {hasGroupableEntities && (
           <Pressable
             style={[styles.groupingButton, { borderTopColor: theme.outlineVariant }]}
-            onPress={() => router.push(`/grouping/${entityId}`)}
+            onPress={() =>
+              router.navigate({ pathname: '/(tabs)/grouping', params: { entityId } })
+            }
             accessibilityRole="button"
             accessibilityLabel="Speaker Grouping"
           >
@@ -119,18 +139,14 @@ export default function PlayerDetailScreen() {
         style={styles.background}
         blurRadius={20}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          {content}
-        </ScrollView>
+        <ScrollView contentContainerStyle={styles.scrollContent}>{content}</ScrollView>
       </ImageBackground>
     );
   }
 
   return (
     <View style={[styles.background, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {content}
-      </ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollContent}>{content}</ScrollView>
     </View>
   );
 }
@@ -191,9 +207,7 @@ const styles = StyleSheet.create({
   controlsContainer: {
     marginBottom: 20,
   },
-  volumeContainer: {
-    // no extra margin needed
-  },
+  volumeContainer: {},
   groupingButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -206,13 +220,5 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontWeight: '500',
-  },
-  notFound: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  notFoundText: {
-    fontSize: 15,
   },
 });
