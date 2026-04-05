@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { EntityPicker } from '@/components';
 import { useAppConfig, useTheme } from '@/hooks';
 import type { AppConfig, MediaPlayerConfig } from '@/types';
 import { createUseStyles } from '@/utils';
@@ -139,15 +140,12 @@ export default function PlayerConfigScreen() {
           {field => (
             <View style={styles.field}>
               <Text style={styles.label}>Speaker group entity ID</Text>
-              <TextInput
-                style={styles.input}
+              <EntityPicker
                 value={field.state.value}
-                onChangeText={field.handleChange}
+                onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
+                domain="media_player."
                 placeholder="media_player.group_entity"
-                placeholderTextColor={theme.onSurfaceVariant}
-                autoCapitalize="none"
-                autoCorrect={false}
               />
             </View>
           )}
@@ -160,15 +158,12 @@ export default function PlayerConfigScreen() {
           {field => (
             <View style={styles.field}>
               <Text style={styles.label}>MA entity ID</Text>
-              <TextInput
-                style={styles.input}
+              <EntityPicker
                 value={field.state.value}
-                onChangeText={field.handleChange}
+                onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
+                domain="media_player."
                 placeholder="media_player.music_assistant_entity"
-                placeholderTextColor={theme.onSurfaceVariant}
-                autoCapitalize="none"
-                autoCorrect={false}
               />
             </View>
           )}
@@ -178,15 +173,11 @@ export default function PlayerConfigScreen() {
           {field => (
             <View style={styles.field}>
               <Text style={styles.label}>MA favorite button entity ID</Text>
-              <TextInput
-                style={styles.input}
+              <EntityPicker
                 value={field.state.value}
-                onChangeText={field.handleChange}
+                onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
                 placeholder="script.ma_favorite"
-                placeholderTextColor={theme.onSurfaceVariant}
-                autoCapitalize="none"
-                autoCorrect={false}
               />
             </View>
           )}
@@ -199,15 +190,12 @@ export default function PlayerConfigScreen() {
           {field => (
             <View style={styles.field}>
               <Text style={styles.label}>LMS entity ID</Text>
-              <TextInput
-                style={styles.input}
+              <EntityPicker
                 value={field.state.value}
-                onChangeText={field.handleChange}
+                onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
+                domain="media_player."
                 placeholder="media_player.lms_entity"
-                placeholderTextColor={theme.onSurfaceVariant}
-                autoCapitalize="none"
-                autoCorrect={false}
               />
             </View>
           )}

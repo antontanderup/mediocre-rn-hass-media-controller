@@ -1,3 +1,6 @@
+export { EntityPicker } from './EntityPicker';
+export type { EntityPickerProps } from './EntityPicker';
+
 export { Icon } from './Icon';
 export type { IconProps, IconName } from './Icon';
 
