@@ -50,6 +50,46 @@ function ThemedTabs(): React.JSX.Element {
         }}
       />
       <Tabs.Screen
+        name="queue"
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            const state = navigation.getState();
+            const playerRoute = state.routes.find(
+              (r: { name: string; params?: unknown }) => r.name === 'player',
+            );
+            const entityId = (playerRoute?.params as { entityId?: string } | undefined)?.entityId;
+            navigation.navigate('queue', entityId ? { entityId } : {});
+          },
+        })}
+        options={{
+          title: 'Queue',
+          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
+            <Icon name="play-list-2-line" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="search"
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            const state = navigation.getState();
+            const playerRoute = state.routes.find(
+              (r: { name: string; params?: unknown }) => r.name === 'player',
+            );
+            const entityId = (playerRoute?.params as { entityId?: string } | undefined)?.entityId;
+            navigation.navigate('search', entityId ? { entityId } : {});
+          },
+        })}
+        options={{
+          title: 'Search',
+          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
+            <Icon name="search-line" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="grouping"
         listeners={({ navigation }) => ({
           tabPress: e => {
@@ -67,6 +107,26 @@ function ThemedTabs(): React.JSX.Element {
           title: 'Grouping',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
             <Icon name="speaker-2-line" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="customButtons"
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            const state = navigation.getState();
+            const playerRoute = state.routes.find(
+              (r: { name: string; params?: unknown }) => r.name === 'player',
+            );
+            const entityId = (playerRoute?.params as { entityId?: string } | undefined)?.entityId;
+            navigation.navigate('customButtons', entityId ? { entityId } : {});
+          },
+        })}
+        options={{
+          title: 'Actions',
+          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
+            <Icon name="apps-2-line" size={size} color={color} />
           ),
         }}
       />
