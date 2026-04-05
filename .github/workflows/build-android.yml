@@ -57,17 +57,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Check if version changed
-        id: should_build
-        run: |
-          bash .github/scripts/should-build.sh
-
-      - name: Stop if version unchanged
-        if: steps.should_build.outcome == 'failure'
-        run: |
-          echo "No version change, skipping build."
-          exit 0
-
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
