@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
 import { useMediaPlayerControls, useTheme } from '@/hooks';
@@ -65,7 +65,13 @@ export default function PlayerTab() {
   const content = (
     <View style={[styles.overlay, { backgroundColor: `${theme.scrim}CC` }]}>
       <View style={styles.artworkContainer}>
-        {!attributes.entity_picture && (
+        {attributes.entity_picture && hassConfig ? (
+          <Image
+            source={{ uri: resolveHassUrl(attributes.entity_picture, hassConfig) }}
+            style={styles.artworkImage}
+            accessibilityIgnoresInvertColors
+          />
+        ) : (
           <View style={[styles.artworkPlaceholder, { backgroundColor: theme.surfaceContainerHigh }]}>
             <Icon name="music-line" size={80} color={theme.onSurfaceVariant} />
           </View>
@@ -143,6 +149,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 32,
     paddingBottom: 16,
+  },
+  artworkImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 16,
   },
   artworkPlaceholder: {
     width: 200,
