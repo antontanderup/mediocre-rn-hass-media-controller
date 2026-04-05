@@ -6,6 +6,7 @@ export type {
   HassAuthState,
   HassConfig,
   HassEntity,
+  HassWsConnection,
   MediaPlayerState,
   MediaType,
   MediaPlayerAttributes,
