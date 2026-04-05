@@ -19,6 +19,7 @@ interface HassContextValue {
     serviceData?: Record<string, unknown>,
     target?: { entity_id?: string | string[] },
   ) => void;
+  sendMessage: <T>(message: { type: string } & Record<string, unknown>) => Promise<T>;
 }
 
 const HassContext = createContext<HassContextValue | null>(null);
@@ -55,9 +56,17 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
     [connection],
   );
 
+  const sendMessage = useCallback(
+    <T,>(message: { type: string } & Record<string, unknown>): Promise<T> => {
+      if (!connection) return Promise.reject(new Error('Not connected'));
+      return connection.sendMessagePromise(message) as Promise<T>;
+    },
+    [connection],
+  );
+
   const value = useMemo(
-    () => ({ authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, hasConfig: config !== null, hassConfig: config, saveConfig, callService }),
-    [authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, config, saveConfig, callService],
+    () => ({ authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, hasConfig: config !== null, hassConfig: config, saveConfig, callService, sendMessage }),
+    [authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, config, saveConfig, callService, sendMessage],
   );
 
   return <HassContext.Provider value={value}>{children}</HassContext.Provider>;

@@ -19,3 +19,11 @@ export { usePingHass } from './usePingHass';
 
 export { useGrouping } from './useGrouping';
 export type { GroupableSpeaker, GroupingState } from './useGrouping';
+
+export { useHassMessagePromise } from './useHassMessagePromise';
+export { useMassQueue } from './useMassQueue';
+export type { MassQueueResult } from './useMassQueue';
+export { useSqueezeboxQueue } from './useSqueezeboxQueue';
+export type { SqueezeboxQueueResult } from './useSqueezeboxQueue';
+export { usePlayerQueue } from './usePlayerQueue';
+export type { UsePlayerQueueResult } from './usePlayerQueue';

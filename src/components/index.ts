@@ -15,3 +15,6 @@ export type { VolumeSliderProps } from './VolumeSlider';
 
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
+
+export { QueueItem } from './QueueItem';
+export type { QueueItemProps } from './QueueItem';
