@@ -178,8 +178,7 @@ export default function MediaPlayersScreen() {
 
       <Modal
         visible={showPicker}
-        animationType="slide"
-        presentationStyle="pageSheet"
+        presentationStyle="formSheet"
         onRequestClose={() => setShowPicker(false)}
       >
         <View style={styles.modalContainer}>
