@@ -51,6 +51,18 @@ function ThemedTabs(): React.JSX.Element {
       />
       <Tabs.Screen
         name="grouping"
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            // Forward the player tab's current entityId to the grouping tab
+            const state = navigation.getState();
+            const playerRoute = state.routes.find(
+              (r: { name: string; params?: unknown }) => r.name === 'player',
+            );
+            const entityId = (playerRoute?.params as { entityId?: string } | undefined)?.entityId;
+            navigation.navigate('grouping', entityId ? { entityId } : {});
+          },
+        })}
         options={{
           title: 'Grouping',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
