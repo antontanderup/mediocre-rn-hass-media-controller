@@ -94,49 +94,38 @@ type PlayerQueue = {
 ### 4. Search — `app/(tabs)/search.tsx`
 **Status: Not started**
 
-**What it shows:** A search interface for finding music to play.
+**Note:** The original card has Search and Media Browser as separate tabs. In the app they are combined into one tab: the browser is the default view, and the search field activates search mode when tapped.
 
-**Functionality:**
-- Text search input (autofocused when tab opens)
+**What it shows:** A combined search + media browser tab.
+
+**Functionality (browser mode — default):**
+- Root shows all available media sources (e.g. Spotify, local library, favorites)
+- Drill down through folders / playlists / albums
+- Breadcrumb or back-button header showing current path
+- Tap a leaf item to play; tap a folder item to drill in
+- Pull-to-refresh at root level
+- Persistent search bar at the top of the screen
+
+**Functionality (search mode — when search field is focused/has text):**
 - Results grouped by media type: Tracks, Albums, Artists, Playlists
 - Tap a result to play it immediately or add to queue
-- When search field is empty: show media browser root (same as the Media Browser tab)
-- Recent searches (stored locally in AsyncStorage)
+- Clear / cancel returns to browser mode
 
-**Backend requirements:**
-- Music Assistant preferred (`maEntityId`): richer metadata, faster results
-- Falls back to Home Assistant's native `media_player.search_media` service
-- Show "Search not available" when neither MA nor search_media is supported
+**Backend:**
+- Browser: `media_player.browse_media` service (supported by all standard HA media players)
+- Search: Music Assistant preferred (`maEntityId`), falls back to HA native `media_player.search_media`
+- MA provides richer results for both browse and search when configured
+- Show "Not available" empty state when browse_media is unsupported
+
+**New hook:** `useMediaBrowser(entityId: string)` in `src/hooks/useMediaBrowser.ts`
+- Returns `{ items, path, browse, goBack, goToRoot, isLoading }`
+- `path` is a stack of `{ mediaContentId, mediaContentType, title }` objects
+- Calls `media_player.browse_media` on drill-down
 
 **New hook:** `useMediaSearch(entityId: string)` in `src/hooks/useMediaSearch.ts`
 - Returns `{ search, results, isSearching, error }`
 - Debounces the query (300 ms)
 - Detects whether MA or native HA search is available
-
-**New component:** `SearchResultItem` in `src/components/SearchResultItem/`
-- Thumbnail, title, subtitle (artist/album), media type icon
-- Play button + add-to-queue button
-
----
-
-### 5. Media Browser — `app/(tabs)/mediaBrowser.tsx`
-**Status: Not started**
-
-**What it shows:** A hierarchical browser for the player's media library.
-
-**Functionality:**
-- Root shows all available media sources (e.g. Spotify, local library, favorites)
-- Drill down through folders / playlists / albums
-- Breadcrumb header showing current path with back navigation
-- Tap a leaf item to play; tap a folder item to drill in
-- Pull-to-refresh at root level
-
-**Backend:** Uses `media_player.browse_media` service, which all standard HA media players support. MA provides richer results when configured.
-
-**New hook:** `useMediaBrowser(entityId: string)` in `src/hooks/useMediaBrowser.ts`
-- Returns `{ browse, items, path, goBack, goToRoot, isLoading }`
-- `path` is a stack of `{ mediaContentId, mediaContentType, title }` objects
-- Calls `media_player.browse_media` on drill-down
 
 **Key types to add (`src/types/mediaBrowser.ts`):**
 ```typescript
@@ -155,6 +144,13 @@ type MediaBrowserItem = {
 **New component:** `MediaBrowserItem` in `src/components/MediaBrowserItem/`
 - Thumbnail (or icon fallback), title, subtitle
 - Chevron for expandable items; play button for playable items
+
+**New component:** `SearchResultItem` in `src/components/SearchResultItem/`
+- Thumbnail, title, subtitle (artist/album), media type icon
+- Play button + add-to-queue button
+
+### 5. Media Browser
+Merged into the Search tab above.
 
 ---
 
@@ -210,13 +206,12 @@ Players (index) | Now Playing (player) | Grouping (grouping)
 The full set after implementation:
 
 ```
-Players | Now Playing | Queue | Search | Browse | Grouping | Custom Buttons
+Players | Now Playing | Queue | Search+Browse | Grouping | Custom Buttons
 ```
 
-**Open questions:**
-- Should tabs only appear when the player supports them? (e.g. hide Queue if no MA/LMS configured — recommended yes, hide with config awareness)
-- Should Search and Media Browser be combined into a single tab that starts in browser mode and activates search when the field is tapped? (matches the original card's behaviour — recommended yes)
-- Custom Buttons tab should only appear when at least one button is configured for the active player.
+**Decisions:**
+- Search and Media Browser are combined into one tab (separate in the original card, merged here for a cleaner mobile UX)
+- Tabs only appear when supported: Queue hidden if no MA/LMS configured, Custom Buttons hidden if no buttons configured for the active player
 
 ---
 
@@ -225,8 +220,7 @@ Players | Now Playing | Queue | Search | Browse | Grouping | Custom Buttons
 | File | Purpose |
 |---|---|
 | `app/(tabs)/queue.tsx` | Queue tab screen |
-| `app/(tabs)/search.tsx` | Search tab screen |
-| `app/(tabs)/mediaBrowser.tsx` | Media browser tab screen |
+| `app/(tabs)/search.tsx` | Combined search + media browser tab screen |
 | `app/(tabs)/customButtons.tsx` | Custom buttons tab screen |
 | `src/hooks/usePlayerQueue.ts` | Queue data + actions |
 | `src/hooks/useMediaSearch.ts` | Search query + results |
@@ -253,13 +247,13 @@ All new components barrel-exported from `src/components/index.ts`.
    - `app/(tabs)/queue.tsx`
    - Wire into tab layout; hide when not supported
 
-2. **Search + Media Browser tab** — combine into one tab
+2. **Search + Media Browser tab** (combined, browser default / search on focus)
    - `src/types/mediaBrowser.ts`
    - `src/hooks/useMediaBrowser.ts`
    - `src/hooks/useMediaSearch.ts`
    - `src/components/MediaBrowserItem/`
    - `src/components/SearchResultItem/`
-   - `app/(tabs)/search.tsx` (browser by default, search on focus)
+   - `app/(tabs)/search.tsx`
 
 3. **Custom Buttons tab**
    - Extend `CustomButton` type into `src/types/config.ts`
