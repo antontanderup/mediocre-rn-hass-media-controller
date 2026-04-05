@@ -8,3 +8,4 @@ export { getHassMessageWithCache, clearHassMessageCache } from './getHassMessage
 export { getIsMassPlayer } from './getIsMassPlayer';
 export { getIsLmsPlayer } from './getIsLmsPlayer';
 export { getHasMassFeatures } from './getHasMassFeatures';
+export { resolveHassUrl } from './resolveHassUrl';

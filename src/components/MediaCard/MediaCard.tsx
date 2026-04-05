@@ -1,7 +1,8 @@
 import { Image, Pressable, Text, View } from 'react-native';
 import type { ImageStyle } from 'react-native';
+import { useHassContext } from '@/context';
 import { useTheme } from '@/hooks';
-import { createUseStyles } from '@/utils';
+import { createUseStyles, resolveHassUrl } from '@/utils';
 import { Icon } from '@/components/Icon';
 import type { MediaCardProps } from './MediaCard.types';
 
@@ -92,6 +93,7 @@ const useStyles = createUseStyles(theme => ({
 export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaCardProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const { hassConfig } = useHassContext();
   const { attributes, state } = player;
 
   const name = nameOverride ?? attributes.friendly_name ?? player.entity_id;
@@ -105,8 +107,8 @@ export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaC
       accessibilityLabel={`${name}, ${stateLabel}`}
       accessibilityRole="button"
     >
-      {attributes.entity_picture ? (
-        <Image source={{ uri: attributes.entity_picture }} style={styles.artwork as ImageStyle} />
+      {attributes.entity_picture && hassConfig ? (
+        <Image source={{ uri: resolveHassUrl(attributes.entity_picture, hassConfig) }} style={styles.artwork as ImageStyle} />
       ) : (
         <View style={styles.artworkPlaceholder}>
           <Icon name="music-line" size={28} color={theme.onSurfaceVariant} />
