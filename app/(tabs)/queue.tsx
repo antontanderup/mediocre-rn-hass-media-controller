@@ -16,6 +16,7 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
+    backgroundColor: theme.background,
   },
   emptyText: {
     fontSize: 15,

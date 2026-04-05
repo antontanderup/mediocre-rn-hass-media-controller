@@ -51,6 +51,8 @@ export const useSqueezeboxQueue = (entityId: string, enabled: boolean): Squeezeb
         entity_id: entityId,
         parameters: ['move', fromIndex, toIndex],
       });
+      // Small delay to allow backend to process before refetching
+      await new Promise(resolve => setTimeout(resolve, 300));
       refetch();
     },
     [callService, entityId, refetch],
@@ -113,8 +115,9 @@ export const useSqueezeboxQueue = (entityId: string, enabled: boolean): Squeezeb
         .slice(newQueue.findIndex(i => !i.isPlaying))
         .filter(item => !item.isPlaying);
 
-      // Optimistically show the queue before artwork loads
-      if (queue.length === 0) setQueue(newQueue);
+      // Optimistically show the queue before artwork loads (use functional
+      // update to avoid capturing queue in deps, which would cause a loop)
+      setQueue(prev => (prev.length === 0 ? newQueue : prev));
 
       const enriched: QueueItem[] = [];
       for (const item of newQueue) {
@@ -164,7 +167,7 @@ export const useSqueezeboxQueue = (entityId: string, enabled: boolean): Squeezeb
 
       setQueue(enriched);
     }, 250);
-  }, [data, entityId, moveItem, skipToItem, deleteItem, queue, serverData, sendMessage]);
+  }, [data, entityId, moveItem, skipToItem, deleteItem, serverData, sendMessage]);
 
   useEffect(() => {
     populateQueueInfo();
