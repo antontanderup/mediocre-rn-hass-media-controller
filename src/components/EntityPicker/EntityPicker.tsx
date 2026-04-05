@@ -31,9 +31,10 @@ export const EntityPicker = ({
     return entities
       .filter(e => {
         if (domain && !e.entity_id.startsWith(domain)) return false;
+        const friendlyName = typeof e.attributes.friendly_name === 'string' ? e.attributes.friendly_name : undefined;
         return (
           e.entity_id.toLowerCase().includes(query) ||
-          (e.attributes.friendly_name?.toLowerCase().includes(query) ?? false)
+          (friendlyName?.toLowerCase().includes(query) ?? false)
         );
       })
       .slice(0, 8);
@@ -79,7 +80,9 @@ export const EntityPicker = ({
                 onPress={() => handleSelect(entity.entity_id)}
               >
                 <Text style={styles.friendlyName} numberOfLines={1}>
-                  {entity.attributes.friendly_name ?? entity.entity_id}
+                  {typeof entity.attributes.friendly_name === 'string'
+                    ? entity.attributes.friendly_name
+                    : entity.entity_id}
                 </Text>
                 <Text style={styles.entityId} numberOfLines={1}>
                   {entity.entity_id}

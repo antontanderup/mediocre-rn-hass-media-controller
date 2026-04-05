@@ -1,6 +1,5 @@
 import { Text, View } from 'react-native';
-import { formatDuration } from '@/utils';
-import { createUseStyles } from '@/utils';
+import { createUseStyles, formatDuration } from '@/utils';
 import type { ProgressBarProps } from './ProgressBar.types';
 
 const useStyles = createUseStyles(theme => ({
