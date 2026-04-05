@@ -4,6 +4,7 @@ import type { HassEntity, MediaPlayerEntity } from '@/types';
 import { isMediaPlayerEntity } from '@/utils';
 
 export interface MediaPlayersState {
+  entities: HassEntity[];
   players: MediaPlayerEntity[];
   isLoading: boolean;
 }
@@ -13,11 +14,13 @@ export interface MediaPlayersState {
  * media_player entities. Automatically stays in sync with state changes.
  */
 export const useMediaPlayers = (connection: Connection | null): MediaPlayersState => {
+  const [entities, setEntities] = useState<HassEntity[]>([]);
   const [players, setPlayers] = useState<MediaPlayerEntity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!connection) {
+      setEntities([]);
       setPlayers([]);
       setIsLoading(true);
       return;
@@ -25,10 +28,11 @@ export const useMediaPlayers = (connection: Connection | null): MediaPlayersStat
 
     let cancelled = false;
 
-    const unsubscribe = subscribeEntities(connection, entities => {
+    const unsubscribe = subscribeEntities(connection, allEntities => {
       if (cancelled) return;
-      const mediaPlayers = (Object.values(entities) as HassEntity[]).filter(isMediaPlayerEntity);
-      setPlayers(mediaPlayers);
+      const all = Object.values(allEntities) as HassEntity[];
+      setEntities(all);
+      setPlayers(all.filter(isMediaPlayerEntity));
       setIsLoading(false);
     });
 
@@ -38,5 +42,5 @@ export const useMediaPlayers = (connection: Connection | null): MediaPlayersStat
     };
   }, [connection]);
 
-  return { players, isLoading };
+  return { entities, players, isLoading };
 };
