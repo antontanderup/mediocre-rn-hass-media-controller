@@ -5,6 +5,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: build-android-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   NDK_VERSION: 28.0.13004108
 
