@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
-import { useActivePlayer, useHassContext } from '@/context';
+import { useHassContext } from '@/context';
 import {
   ERR_CANNOT_CONNECT,
   ERR_CONNECTION_LOST,
@@ -55,7 +55,6 @@ export default function PlayersTab() {
   const styles = useStyles();
   const { players, isLoading, authState, connectionErrorCode, isConfigLoaded, hasConfig } =
     useHassContext();
-  const { setActivePlayerId } = useActivePlayer();
   const { config: appConfig } = useAppConfig();
   const { config: hassConfig } = useHassConfig();
 
@@ -111,8 +110,7 @@ export default function PlayersTab() {
   })();
 
   const handlePlayerPress = (entityId: string) => {
-    setActivePlayerId(entityId);
-    router.push('/(tabs)/player');
+    router.navigate({ pathname: '/(tabs)/player', params: { entityId } });
   };
 
   return (

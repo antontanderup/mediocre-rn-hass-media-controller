@@ -1,7 +1,7 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components';
-import { useActivePlayer, useHassContext } from '@/context';
+import { useHassContext } from '@/context';
 import { useAppConfig, useMediaPlayerControls, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
 import { createUseStyles } from '@/utils';
@@ -23,11 +23,11 @@ const useEmptyStyles = createUseStyles(theme => ({
 }));
 
 export default function PlayerTab() {
-  const { activePlayerId } = useActivePlayer();
+  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
   const theme = useTheme();
   const router = useRouter();
   const { players } = useHassContext();
-  const controls = useMediaPlayerControls(activePlayerId ?? '');
+  const controls = useMediaPlayerControls(entityId ?? '');
   const { config: appConfig } = useAppConfig();
   const emptyStyles = useEmptyStyles();
 
@@ -35,7 +35,7 @@ export default function PlayerTab() {
     (appConfig?.mediaPlayers.some(p => p.canBeGrouped) ?? false) ||
     !(appConfig?.options.disablePlayerFocusSwitching ?? false);
 
-  const player = players.find(p => p.entity_id === activePlayerId);
+  const player = players.find(p => p.entity_id === entityId);
 
   const handleCommand = (cmd: PlaybackCommand) => {
     switch (cmd.type) {
@@ -115,7 +115,9 @@ export default function PlayerTab() {
         {hasGroupableEntities && (
           <Pressable
             style={[styles.groupingButton, { borderTopColor: theme.outlineVariant }]}
-            onPress={() => router.push('/(tabs)/grouping')}
+            onPress={() =>
+              router.navigate({ pathname: '/(tabs)/grouping', params: { entityId } })
+            }
             accessibilityRole="button"
             accessibilityLabel="Speaker Grouping"
           >

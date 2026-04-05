@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import React from 'react';
-import { ActivePlayerProvider, HassProvider, ThemeProvider, useThemeContext } from '@/context';
+import { HassProvider, ThemeProvider, useThemeContext } from '@/context';
 
 function ThemedStack(): React.JSX.Element {
   const { theme } = useThemeContext();
@@ -21,9 +21,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <HassProvider>
-        <ActivePlayerProvider>
-          <ThemedStack />
-        </ActivePlayerProvider>
+        <ThemedStack />
       </HassProvider>
     </ThemeProvider>
   );
