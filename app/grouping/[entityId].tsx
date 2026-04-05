@@ -122,7 +122,7 @@ export default function SpeakerGroupingScreen() {
                       style={styles.iconBtn}
                       accessibilityLabel="Turn on"
                     >
-                      <Icon name="power-line" size={18} color={theme.onSurfaceVariant} />
+                      <Icon name="shut-down-line" size={18} color={theme.onSurfaceVariant} />
                     </Pressable>
                   ) : (
                     <Pressable
