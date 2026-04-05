@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppConfig, useTheme } from '@/hooks';
 import type { AppConfig, MediaPlayerConfig } from '@/types';
 import { createUseStyles } from '@/utils';
@@ -20,6 +21,7 @@ export default function PlayerConfigScreen() {
   const theme = useTheme();
   const router = useRouter();
   const styles = useStyles();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const { index: indexParam } = useLocalSearchParams<{ index: string }>();
   const { config, saveConfig } = useAppConfig();
 
@@ -82,11 +84,11 @@ export default function PlayerConfigScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, { paddingBottom: Math.max(40, bottomInset + 24) }]}
         keyboardShouldPersistTaps="handled"
       >
         {/* Entity ID — read-only */}
