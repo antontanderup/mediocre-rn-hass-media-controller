@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import React from 'react';
-import { HassProvider, ThemeProvider, useThemeContext } from '@/context';
+import { ActivePlayerProvider, HassProvider, ThemeProvider, useThemeContext } from '@/context';
 
 function ThemedStack(): React.JSX.Element {
   const { theme } = useThemeContext();
@@ -9,12 +9,10 @@ function ThemedStack(): React.JSX.Element {
 
   return (
     <Stack screenOptions={{ headerStyle, headerTintColor }}>
-      <Stack.Screen name="index" options={{ title: 'Media Players' }} />
-      <Stack.Screen name="settings" options={{ title: 'Settings' }} />
-      <Stack.Screen name="player/[entityId]" options={{ title: 'Now Playing' }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="settings" options={{ title: 'Settings', presentation: 'modal' }} />
       <Stack.Screen name="media-players" options={{ title: 'Media Players' }} />
       <Stack.Screen name="media-players/[index]" options={{ title: 'Player Settings' }} />
-      <Stack.Screen name="grouping/[entityId]" options={{ title: 'Speaker Grouping' }} />
     </Stack>
   );
 }
@@ -23,7 +21,9 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <HassProvider>
-        <ThemedStack />
+        <ActivePlayerProvider>
+          <ThemedStack />
+        </ActivePlayerProvider>
       </HassProvider>
     </ThemeProvider>
   );
