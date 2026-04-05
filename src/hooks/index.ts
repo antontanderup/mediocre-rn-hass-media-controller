@@ -16,3 +16,6 @@ export { useAppConfig } from './useAppConfig';
 export type { AppConfigState } from './useAppConfig';
 
 export { usePingHass } from './usePingHass';
+
+export { useGrouping } from './useGrouping';
+export type { GroupableSpeaker, GroupingState } from './useGrouping';

@@ -14,6 +14,7 @@ function ThemedStack(): React.JSX.Element {
       <Stack.Screen name="player/[entityId]" options={{ title: 'Now Playing' }} />
       <Stack.Screen name="media-players" options={{ title: 'Media Players' }} />
       <Stack.Screen name="media-players/[index]" options={{ title: 'Player Settings' }} />
+      <Stack.Screen name="grouping/[entityId]" options={{ title: 'Speaker Grouping' }} />
     </Stack>
   );
 }
