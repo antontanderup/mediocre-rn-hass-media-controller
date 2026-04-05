@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { createContext, useCallback, useContext, useMemo } from 'react';
 import { callService as hassCallService } from 'home-assistant-js-websocket';
 import type { HassAuthState, MediaPlayerEntity } from '@/types';
 import { useHassConfig, useHassConnection, useMediaPlayers } from '@/hooks';
@@ -25,17 +25,9 @@ interface HassProviderProps {
 }
 
 export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element => {
-  const { config, isLoaded: isConfigLoaded, clearConfig } = useHassConfig();
+  const { config, isLoaded: isConfigLoaded } = useHassConfig();
   const { authState, connection, connectionErrorCode } = useHassConnection(config);
   const { players, isLoading } = useMediaPlayers(connection);
-
-  useEffect(() => {
-    if (authState === 'auth_invalid') {
-      clearConfig().catch(() => {
-        // Non-fatal — token is already invalidated on the server side
-      });
-    }
-  }, [authState, clearConfig]);
 
   const callService = useCallback(
     (
