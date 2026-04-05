@@ -23,7 +23,7 @@ function ThemedTabs(): React.JSX.Element {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Players',
+          title: 'Mediocre Media Controller',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
             <Icon name="music-line" size={size} color={color} />
           ),
