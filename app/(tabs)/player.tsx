@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
-import { Image, ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
 import { useMediaPlayerControls, useTheme } from '@/hooks';
@@ -28,6 +29,7 @@ export default function PlayerTab() {
   const { players, hassConfig } = useHassContext();
   const controls = useMediaPlayerControls(entityId ?? '');
   const emptyStyles = useEmptyStyles();
+  const insets = useSafeAreaInsets();
 
   const player = players.find(p => p.entity_id === entityId);
 
@@ -62,13 +64,28 @@ export default function PlayerTab() {
   const duration = attributes.media_duration ?? 0;
   const volume = attributes.volume_level ?? 0;
 
+  const artworkUri =
+    attributes.entity_picture && hassConfig
+      ? resolveHassUrl(attributes.entity_picture, hassConfig)
+      : null;
+
   const content = (
-    <View style={[styles.overlay, { backgroundColor: `${theme.scrim}CC` }]}>
+    <View
+      style={[
+        styles.overlay,
+        {
+          backgroundColor: `${theme.scrim}CC`,
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom + 16,
+        },
+      ]}
+    >
       <View style={styles.artworkContainer}>
-        {attributes.entity_picture && hassConfig ? (
+        {artworkUri ? (
           <Image
-            source={{ uri: resolveHassUrl(attributes.entity_picture, hassConfig) }}
+            source={{ uri: artworkUri }}
             style={styles.artworkImage}
+            resizeMode="contain"
             accessibilityIgnoresInvertColors
           />
         ) : (
@@ -115,22 +132,16 @@ export default function PlayerTab() {
     </View>
   );
 
-  if (attributes.entity_picture && hassConfig) {
+  if (artworkUri) {
     return (
-      <ImageBackground
-        source={{ uri: resolveHassUrl(attributes.entity_picture, hassConfig) }}
-        style={styles.background}
-        blurRadius={20}
-      >
-        <ScrollView contentContainerStyle={styles.scrollContent}>{content}</ScrollView>
+      <ImageBackground source={{ uri: artworkUri }} style={styles.background} blurRadius={20}>
+        {content}
       </ImageBackground>
     );
   }
 
   return (
-    <View style={[styles.background, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>{content}</ScrollView>
-    </View>
+    <View style={[styles.background, { backgroundColor: theme.background }]}>{content}</View>
   );
 }
 
@@ -138,26 +149,25 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
   },
-  scrollContent: {
-    flexGrow: 1,
-  },
   overlay: {
     flex: 1,
-    paddingBottom: 32,
+    justifyContent: 'flex-end',
   },
   artworkContainer: {
+    flex: 1,
     alignItems: 'center',
-    paddingTop: 32,
+    justifyContent: 'center',
+    paddingHorizontal: 24,
     paddingBottom: 16,
   },
   artworkImage: {
-    width: 200,
-    height: 200,
+    width: '100%',
+    aspectRatio: 1,
     borderRadius: 16,
   },
   artworkPlaceholder: {
-    width: 200,
-    height: 200,
+    width: '100%',
+    aspectRatio: 1,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
