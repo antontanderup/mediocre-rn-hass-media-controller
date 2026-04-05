@@ -1,8 +1,8 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
-import { useAppConfig, useMediaPlayerControls, useTheme } from '@/hooks';
+import { useMediaPlayerControls, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
 import { createUseStyles } from '@/utils';
 
@@ -25,15 +25,9 @@ const useEmptyStyles = createUseStyles(theme => ({
 export default function PlayerTab() {
   const { entityId } = useLocalSearchParams<{ entityId?: string }>();
   const theme = useTheme();
-  const router = useRouter();
   const { players } = useHassContext();
   const controls = useMediaPlayerControls(entityId ?? '');
-  const { config: appConfig } = useAppConfig();
   const emptyStyles = useEmptyStyles();
-
-  const hasGroupableEntities =
-    (appConfig?.mediaPlayers.some(p => p.canBeGrouped) ?? false) ||
-    !(appConfig?.options.disablePlayerFocusSwitching ?? false);
 
   const player = players.find(p => p.entity_id === entityId);
 
@@ -111,23 +105,6 @@ export default function PlayerTab() {
         <View style={styles.volumeContainer}>
           <VolumeSlider volume={volume} onVolumeChange={controls.setVolume} />
         </View>
-
-        {hasGroupableEntities && (
-          <Pressable
-            style={[styles.groupingButton, { borderTopColor: theme.outlineVariant }]}
-            onPress={() =>
-              router.navigate({ pathname: '/(tabs)/grouping', params: { entityId } })
-            }
-            accessibilityRole="button"
-            accessibilityLabel="Speaker Grouping"
-          >
-            <Icon name="speaker-2-line" size={18} color={theme.onSurfaceVariant} />
-            <Text style={[styles.groupingButtonText, { color: theme.onSurface }]}>
-              Speaker Grouping
-            </Text>
-            <Icon name="arrow-right-s-line" size={18} color={theme.onSurfaceVariant} />
-          </Pressable>
-        )}
       </View>
     </View>
   );
@@ -208,17 +185,4 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   volumeContainer: {},
-  groupingButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
-  },
-  groupingButtonText: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '500',
-  },
 });
