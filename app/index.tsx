@@ -1,9 +1,8 @@
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { useHassContext } from '@/context';
-import { useAppConfig, useHassConfig, usePingHass, useTheme } from '@/hooks';
-import { ERR_CANNOT_CONNECT, ERR_CONNECTION_LOST, ERR_INVALID_HTTPS_TO_HTTP } from '@/hooks';
+import { ERR_CANNOT_CONNECT, ERR_CONNECTION_LOST, ERR_INVALID_HTTPS_TO_HTTP, useAppConfig, useHassConfig, usePingHass, useTheme } from '@/hooks';
 import { Icon } from '@/components';
 import type { MediaPlayerEntity } from '@/types';
 import { buildHassUrl, createUseStyles } from '@/utils';
@@ -14,26 +13,8 @@ const useStyles = createUseStyles(theme => ({
     flex: 1,
     backgroundColor: theme.background,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: theme.onBackground,
-  },
-  settingsButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.surfaceContainer,
-    alignItems: 'center',
-    justifyContent: 'center',
+  headerSettingsButton: {
+    padding: 8,
   },
   connectionBanner: {
     marginHorizontal: 16,
@@ -73,7 +54,7 @@ export default function HomeScreen() {
   const { config: hassConfig } = useHassConfig();
 
   // If players are configured, filter and order by config; otherwise show all.
-  const displayedPlayers: Array<{ player: MediaPlayerEntity; nameOverride?: string }> =
+  const displayedPlayers: { player: MediaPlayerEntity; nameOverride?: string }[] =
     useMemo(() => {
       const configured = appConfig?.mediaPlayers;
       if (!configured?.length) {
@@ -127,17 +108,20 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Media Players</Text>
-        <Pressable
-          style={styles.settingsButton}
-          onPress={() => router.push('/settings')}
-          accessibilityLabel="Open settings"
-          accessibilityRole="button"
-        >
-          <Icon name="settings-4-line" size={22} color={theme.onSurfaceVariant} />
-        </Pressable>
-      </View>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Pressable
+              style={styles.headerSettingsButton}
+              onPress={() => router.push('/settings')}
+              accessibilityLabel="Open settings"
+              accessibilityRole="button"
+            >
+              <Icon name="settings-4-line" size={22} color={theme.onSurfaceVariant} />
+            </Pressable>
+          ),
+        }}
+      />
 
       {connectionErrorMessage !== null && (
         <View style={styles.connectionBanner}>
