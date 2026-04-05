@@ -11,8 +11,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useThemeContext } from '@/context';
-import { useAppConfig, useHassConfig, useTheme } from '@/hooks';
+import { useHassContext, useThemeContext } from '@/context';
+import { useAppConfig, useTheme } from '@/hooks';
 import { Icon } from '@/components';
 import type { AppConfig, AppOptions, HassConfig } from '@/types';
 import { createUseStyles } from '@/utils';
@@ -34,7 +34,7 @@ const HEX_RE = /^#[0-9a-fA-F]{6}$/;
 export default function SettingsScreen() {
   const theme = useTheme();
   const { setSourceColor } = useThemeContext();
-  const { config, saveConfig } = useHassConfig();
+  const { hassConfig: config, saveConfig } = useHassContext();
   const { config: appConfig, saveConfig: saveAppConfig } = useAppConfig();
   const router = useRouter();
   const styles = useStyles();
