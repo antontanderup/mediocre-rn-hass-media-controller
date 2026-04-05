@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 import { callService as hassCallService } from 'home-assistant-js-websocket';
-import type { HassAuthState, HassEntity, MediaPlayerEntity } from '@/types';
+import type { HassAuthState, HassConfig, HassEntity, MediaPlayerEntity } from '@/types';
 import { useHassConfig, useHassConnection, useMediaPlayers } from '@/hooks';
 
 interface HassContextValue {
@@ -11,6 +11,8 @@ interface HassContextValue {
   isLoading: boolean;
   isConfigLoaded: boolean;
   hasConfig: boolean;
+  hassConfig: HassConfig | null;
+  saveConfig: (c: HassConfig) => Promise<void>;
   callService: (
     domain: string,
     service: string,
@@ -26,7 +28,7 @@ interface HassProviderProps {
 }
 
 export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element => {
-  const { config, isLoaded: isConfigLoaded, clearConfig } = useHassConfig();
+  const { config, isLoaded: isConfigLoaded, saveConfig, clearConfig } = useHassConfig();
   const { authState, connection, connectionErrorCode } = useHassConnection(config);
   const { entities, players, isLoading } = useMediaPlayers(connection);
 
@@ -54,8 +56,8 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
   );
 
   const value = useMemo(
-    () => ({ authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, hasConfig: config !== null, callService }),
-    [authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, config, callService],
+    () => ({ authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, hasConfig: config !== null, hassConfig: config, saveConfig, callService }),
+    [authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, config, saveConfig, callService],
   );
 
   return <HassContext.Provider value={value}>{children}</HassContext.Provider>;
