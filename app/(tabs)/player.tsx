@@ -4,7 +4,7 @@ import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components'
 import { useHassContext } from '@/context';
 import { useMediaPlayerControls, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
-import { createUseStyles } from '@/utils';
+import { createUseStyles, resolveHassUrl } from '@/utils';
 
 const useEmptyStyles = createUseStyles(theme => ({
   container: {
@@ -25,7 +25,7 @@ const useEmptyStyles = createUseStyles(theme => ({
 export default function PlayerTab() {
   const { entityId } = useLocalSearchParams<{ entityId?: string }>();
   const theme = useTheme();
-  const { players } = useHassContext();
+  const { players, hassConfig } = useHassContext();
   const controls = useMediaPlayerControls(entityId ?? '');
   const emptyStyles = useEmptyStyles();
 
@@ -109,10 +109,10 @@ export default function PlayerTab() {
     </View>
   );
 
-  if (attributes.entity_picture) {
+  if (attributes.entity_picture && hassConfig) {
     return (
       <ImageBackground
-        source={{ uri: attributes.entity_picture }}
+        source={{ uri: resolveHassUrl(attributes.entity_picture, hassConfig) }}
         style={styles.background}
         blurRadius={20}
       >
