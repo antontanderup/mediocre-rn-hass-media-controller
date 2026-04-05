@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
+import { callService as hassCallService } from 'home-assistant-js-websocket';
 import type { HassAuthState, MediaPlayerEntity } from '@/types';
 import { useHassConfig, useHassConnection, useMediaPlayers } from '@/hooks';
 
@@ -44,7 +45,9 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
       target?: { entity_id?: string | string[] },
     ) => {
       if (!connection) return;
-      connection.callService(domain, service, serviceData, target);
+      hassCallService(connection, domain, service, serviceData, target).catch(() => {
+        // Service call errors are non-fatal from the UI's perspective
+      });
     },
     [connection],
   );

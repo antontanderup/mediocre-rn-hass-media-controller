@@ -6,12 +6,12 @@ export type {
   HassAuthState,
   HassConfig,
   HassEntity,
-  HassWsConnection,
   MediaPlayerState,
   MediaType,
   MediaPlayerAttributes,
   MediaPlayerEntity,
   PlaybackCommand,
+  PingResult,
 } from './hass';
 
 export { SUPPORT_PREVIOUS_TRACK, SUPPORT_NEXT_TRACK } from './hass';
