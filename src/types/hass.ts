@@ -1,5 +1,6 @@
 /**
  * Core Home Assistant domain types.
+ * WebSocket plumbing is handled by home-assistant-js-websocket.
  */
 
 export type HassAuthState = 'connecting' | 'authenticating' | 'authenticated' | 'error' | 'auth_invalid';
@@ -81,21 +82,15 @@ export type PlaybackCommand =
 export const SUPPORT_PREVIOUS_TRACK = 16;
 export const SUPPORT_NEXT_TRACK = 32;
 
-// ─── WebSocket Connection ─────────────────────────────────────────────────────
+// ─── Ping diagnostics ────────────────────────────────────────────────────────
 
-export interface HassWsConnection {
-  /**
-   * Subscribe to entity state updates. The callback receives a snapshot of
-   * ALL known entities on each change. Returns an unsubscribe function.
-   */
-  subscribeEntities: (callback: (entities: Record<string, HassEntity>) => void) => () => void;
-  /** Fire-and-forget HA service call. */
-  callService: (
-    domain: string,
-    service: string,
-    serviceData?: Record<string, unknown>,
-    target?: { entity_id?: string | string[] },
-  ) => void;
-  /** Close the underlying WebSocket. */
-  close: () => void;
+export interface PingResult {
+  /** Whether the HTTP endpoint responded (any status code counts as reachable) */
+  reachable: boolean;
+  /** HTTP status code, if the server responded */
+  statusCode?: number;
+  /** Round-trip time in milliseconds */
+  latencyMs: number;
+  /** Network-level error message when reachable is false */
+  error?: string;
 }

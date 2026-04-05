@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { useHassContext } from '@/context';
-import { useAppConfig, useHassConfig, useTheme } from '@/hooks';
+import { useAppConfig, useHassConfig, usePingHass, useTheme } from '@/hooks';
 import { ERR_CANNOT_CONNECT, ERR_CONNECTION_LOST, ERR_INVALID_HTTPS_TO_HTTP } from '@/hooks';
 import { Icon } from '@/components';
 import type { MediaPlayerEntity } from '@/types';
@@ -99,19 +99,30 @@ export default function HomeScreen() {
 
   const showError = authState === 'error';
 
+  const pingResult = usePingHass(hassConfig, showError);
+
   const connectionErrorMessage = (() => {
     if (!showError) return null;
+
+    let base: string;
     if (connectionErrorCode === ERR_CANNOT_CONNECT) {
       const attempted = hassConfig ? ` (${buildHassUrl(hassConfig)})` : '';
-      return `Could not connect to Home Assistant${attempted}. Check your host, port, and SSL settings — or verify Home Assistant is running and reachable. If settings look correct, your token may also be invalid.`;
+      base = `Could not connect to Home Assistant${attempted}. Check your host, port, and SSL settings — or verify Home Assistant is running and reachable. If settings look correct, your token may also be invalid.`;
+    } else if (connectionErrorCode === ERR_INVALID_HTTPS_TO_HTTP) {
+      base = 'SSL mismatch: the server responded over HTTP but SSL is enabled. Disable SSL in settings.';
+    } else if (connectionErrorCode === ERR_CONNECTION_LOST) {
+      base = 'Connection to Home Assistant was lost. Attempting to reconnect…';
+    } else {
+      base = 'Unable to connect to Home Assistant. Check your settings.';
     }
-    if (connectionErrorCode === ERR_INVALID_HTTPS_TO_HTTP) {
-      return 'SSL mismatch: the server responded over HTTP but SSL is enabled. Disable SSL in settings.';
+
+    if (pingResult === null) {
+      return `${base}\n\nPing: checking…`;
     }
-    if (connectionErrorCode === ERR_CONNECTION_LOST) {
-      return 'Connection to Home Assistant was lost. Attempting to reconnect…';
+    if (pingResult.reachable) {
+      return `${base}\n\nPing: OK — HTTP ${pingResult.statusCode} in ${pingResult.latencyMs} ms. Server is reachable; the issue is specific to the WebSocket connection.`;
     }
-    return 'Unable to connect to Home Assistant. Check your settings.';
+    return `${base}\n\nPing: FAILED — ${pingResult.error ?? 'no response'} (${pingResult.latencyMs} ms). Server does not appear to be reachable.`;
   })();
 
   return (

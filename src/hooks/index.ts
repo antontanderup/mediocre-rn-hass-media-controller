@@ -14,3 +14,5 @@ export type { MediaPlayerControls } from './useMediaPlayerControls';
 
 export { useAppConfig } from './useAppConfig';
 export type { AppConfigState } from './useAppConfig';
+
+export { usePingHass } from './usePingHass';
