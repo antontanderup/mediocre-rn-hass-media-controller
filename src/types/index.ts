@@ -1,5 +1,15 @@
 export type { AppTheme } from './theme';
 
+export type { QueueItem } from './queue';
+
+export type {
+  SqueezeboxPlaylistItem,
+  SqueezeboxStatusResponse,
+  SqueezeboxSongInfoLoopItem,
+  SqueezeboxSonginfoResponse,
+  SqueezeboxServerStatusResponse,
+} from './lyrionCli';
+
 export type { AppConfig, MediaPlayerConfig, AppOptions } from './config';
 
 export type {

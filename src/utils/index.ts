@@ -4,3 +4,7 @@ export { buildHassUrl } from './buildHassUrl';
 export { buildTheme } from './buildTheme';
 export { createUseStyles } from './createUseStyles';
 export { pingHass } from './pingHass';
+export { getHassMessageWithCache, clearHassMessageCache } from './getHassMessageWithCache';
+export { getIsMassPlayer } from './getIsMassPlayer';
+export { getIsLmsPlayer } from './getIsLmsPlayer';
+export { getHasMassFeatures } from './getHasMassFeatures';
