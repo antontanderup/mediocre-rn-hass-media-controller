@@ -29,6 +29,8 @@ export const useMaSearch = (
   // array (not wrapped in a `response` key), so we use sendMessage directly.
   useEffect(() => {
     if (!maEntityId) return;
+    setConfigError(null);
+    setConfigEntryId(null);
     sendMessage<ConfigEntry[]>({ type: 'config/config_entries/entry' })
       .then(entries => {
         const maEntry = entries.find(
