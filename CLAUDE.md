@@ -52,8 +52,6 @@ mediocre-rn-hass-media-controller/
 └── STYLE_GUIDE.md          # Component & coding conventions
 ```
 
-Screens live in `app/`. Everything reusable lives under `src/`. Keep the boundary clear.
-
 ---
 
 ## Home Assistant Integration
@@ -66,16 +64,6 @@ The app connects to a user-configured Home Assistant instance via the **WebSocke
 - **Entity state** — `HassEntity.state` is one of the `MediaPlayerState` union values
 
 Connection logic lives in `src/hooks/useHassConnection.ts` and `src/hooks/useMediaPlayers.ts`. Credential storage is in `src/hooks/useHassConfig.ts`. Raw API types live in `src/types/hass.ts`.
-
----
-
-## UI Goals (replicating mediocre-hass-media-player-cards)
-
-- **Multi-player list** — scrollable list of all `media_player` entities
-- **Now Playing card** — large album art, track info, play/pause/skip controls
-- **Volume control** — native slider per player, with group volume support
-- **Media browser** — browse sources/playlists (stretch goal)
-- **App-like feel** — bottom sheets, shared element transitions, haptic feedback
 
 ---
 
