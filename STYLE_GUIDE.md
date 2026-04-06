@@ -6,23 +6,7 @@
 
 ## 1. Exports — named only, always barrel-exported
 
-```ts
-// GOOD
-export const formatDuration = (seconds: number): string => { ... };
-
-// BAD — never use default exports
-export default function formatDuration() { ... }
-```
-
-Every folder under `src/` has an `index.ts` that re-exports everything:
-
-```ts
-// src/utils/index.ts
-export { formatDuration } from './formatDuration';
-export { buildTheme } from './buildTheme';
-```
-
-Consumers always import from the barrel, never from deep paths:
+No default exports. Every folder under `src/` has an `index.ts` that re-exports everything. Consumers always import from the barrel, never from deep paths:
 
 ```ts
 // GOOD
@@ -36,14 +20,7 @@ import { formatDuration } from '@/utils/formatDuration';
 
 ## 2. Path aliases
 
-`@/` maps to `src/` (configured in `tsconfig.json`). Use it everywhere:
-
-```ts
-import { HassEntity } from '@/types';
-import { formatDuration } from '@/utils';
-import { useMediaPlayers } from '@/hooks';
-import { MediaCard } from '@/components';
-```
+`@/` maps to `src/` (configured in `tsconfig.json`). Use it everywhere: `@/types`, `@/utils`, `@/hooks`, `@/components`.
 
 ---
 
@@ -85,8 +62,6 @@ export interface MediaCardProps {
   onPress: () => void;
 }
 ```
-
-Screens live in `app/` and use default exports (Expo Router requirement). Everything reusable lives under `src/` and uses named exports.
 
 ---
 
@@ -242,18 +217,6 @@ const form = useForm({
     </View>
   )}
 </form.Field>
-```
-
-### Submit button driven by form state
-
-```tsx
-<form.Subscribe selector={state => state.isSubmitting}>
-  {isSubmitting => (
-    <Pressable onPress={form.handleSubmit} disabled={isSubmitting}>
-      <Text>{isSubmitting ? 'Saving…' : 'Save'}</Text>
-    </Pressable>
-  )}
-</form.Subscribe>
 ```
 
 ---
