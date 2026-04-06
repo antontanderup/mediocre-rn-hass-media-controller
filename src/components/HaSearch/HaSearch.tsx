@@ -1,0 +1,428 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { useHaSearch, useSearchProvider, useTheme } from '@/hooks';
+import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
+import { MediaTrackItem } from '@/components/MediaTrackItem';
+import { Icon } from '@/components/Icon';
+import type { IconName } from '@/components/Icon';
+import type { HaEnqueueMode, HaMediaItem } from '@/types';
+import type { HaSearchProps } from './HaSearch.types';
+
+const DEBOUNCE_MS = 600;
+
+const ENQUEUE_OPTIONS: { mode: HaEnqueueMode; label: string; icon: IconName }[] = [
+  { mode: 'play', label: 'Play', icon: 'play-circle-line' },
+  { mode: 'replace', label: 'Replace Queue', icon: 'play-list-2-line' },
+  { mode: 'next', label: 'Add Next', icon: 'skip-forward-line' },
+  { mode: 'add', label: 'Add to Queue', icon: 'add-line' },
+];
+
+export const HaSearch = ({
+  entityId,
+  hassBaseUrl,
+  showFavorites = true,
+  filterConfig,
+}: HaSearchProps): React.JSX.Element => {
+  const styles = useStyles();
+  const theme = useTheme();
+
+  // Provider selection
+  const { providers, selected: selectedProvider, select: selectProvider } =
+    useSearchProvider(entityId);
+
+  const haProviders = providers.filter(p => p.type === 'ha');
+  const hasMultipleProviders = haProviders.length > 1;
+  const activeEntityId =
+    selectedProvider?.type === 'ha' ? selectedProvider.entityId : entityId;
+
+  // Query state with debounce
+  const [rawQuery, setRawQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleQueryChange = useCallback((text: string) => {
+    setRawQuery(text);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => setDebouncedQuery(text), DEBOUNCE_MS);
+  }, []);
+
+  const handleClear = useCallback(() => {
+    setRawQuery('');
+    setDebouncedQuery('');
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, []);
+
+  // Filter & enqueue state
+  const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [enqueueMode, setEnqueueMode] = useState<HaEnqueueMode>('play');
+  const [showEnqueueMenu, setShowEnqueueMenu] = useState(false);
+
+  const haSearch = useHaSearch(debouncedQuery, activeFilter, activeEntityId, showFavorites, filterConfig);
+  const hasQuery = debouncedQuery.trim().length >= 2;
+
+  const renderItemList = (items: HaMediaItem[]): React.JSX.Element => (
+    <FlatList
+      style={styles.list}
+      data={items}
+      keyExtractor={item => item.media_content_id}
+      renderItem={({ item }) => (
+        <MediaTrackItem
+          title={item.title}
+          subtitle={item.media_class}
+          artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
+          fallbackIcon={iconForMediaClass(item.media_class)}
+          onPlay={() => haSearch.playItem(item, activeEntityId, enqueueMode)}
+        />
+      )}
+      contentInsetAdjustmentBehavior="automatic"
+    />
+  );
+
+  // Render helpers
+  const renderHeader = (): React.JSX.Element => (
+    <View style={styles.header}>
+      <View style={styles.searchRow}>
+        <Icon name="search-line" size={18} color={theme.onSurfaceVariant} />
+        <TextInput
+          style={styles.searchInput}
+          value={rawQuery}
+          onChangeText={handleQueryChange}
+          placeholder="Search..."
+          placeholderTextColor={theme.onSurfaceVariant}
+          returnKeyType="search"
+          clearButtonMode="never"
+          autoCorrect={false}
+          autoCapitalize="none"
+        />
+        {rawQuery.length > 0 && (
+          <Pressable
+            style={styles.clearBtn}
+            onPress={handleClear}
+            accessibilityRole="button"
+            accessibilityLabel="Clear search"
+          >
+            <Icon name="close-line" size={16} color={theme.onSurfaceVariant} />
+          </Pressable>
+        )}
+        <Pressable
+          style={styles.enqueueBtn}
+          onPress={() => setShowEnqueueMenu(prev => !prev)}
+          accessibilityRole="button"
+          accessibilityLabel="Change enqueue mode"
+        >
+          <Icon
+            name={ENQUEUE_OPTIONS.find(o => o.mode === enqueueMode)?.icon ?? 'play-circle-line'}
+            size={20}
+            color={theme.primary}
+          />
+        </Pressable>
+      </View>
+
+      {/* Enqueue mode menu */}
+      {showEnqueueMenu && (
+        <View style={styles.enqueueMenu}>
+          {ENQUEUE_OPTIONS.map(option => (
+            <Pressable
+              key={option.mode}
+              style={[
+                styles.enqueueOption,
+                enqueueMode === option.mode && styles.enqueueOptionActive,
+              ]}
+              onPress={() => {
+                setEnqueueMode(option.mode);
+                setShowEnqueueMenu(false);
+              }}
+              accessibilityRole="button"
+            >
+              <Icon
+                name={option.icon}
+                size={16}
+                color={
+                  enqueueMode === option.mode ? theme.onPrimaryContainer : theme.onSurfaceVariant
+                }
+              />
+              <Text
+                style={[
+                  styles.enqueueOptionText,
+                  enqueueMode === option.mode && styles.enqueueOptionTextActive,
+                ]}
+              >
+                {option.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      )}
+
+      {/* Provider chips — only shown when multiple search entries are configured */}
+      {hasMultipleProviders && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.providerRow}
+        >
+          {haProviders.map(p => {
+            const pEntityId = p.type === 'ha' ? p.entityId : '';
+            const isActive = pEntityId === activeEntityId;
+            return (
+              <Pressable
+                key={pEntityId}
+                style={[styles.providerChip, isActive && styles.providerChipSelected]}
+                onPress={() => selectProvider(p)}
+                accessibilityRole="button"
+                accessibilityLabel={`Search using ${p.name}`}
+              >
+                <Text
+                  style={[
+                    styles.providerChipText,
+                    isActive && styles.providerChipTextSelected,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {p.name}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      )}
+
+      {/* Filter chips */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.filterRow}
+      >
+        {haSearch.filterConfig.map(f => {
+          const isActive = f.type === activeFilter;
+          return (
+            <Pressable
+              key={f.type}
+              style={[styles.filterChip, isActive && styles.filterChipSelected]}
+              onPress={() => setActiveFilter(f.type)}
+              accessibilityRole="button"
+              accessibilityLabel={`Filter by ${f.name}`}
+            >
+              {f.icon && (
+                <Icon
+                  name={f.icon as IconName}
+                  size={14}
+                  color={isActive ? theme.onSecondaryContainer : theme.onSurfaceVariant}
+                />
+              )}
+              <Text
+                style={[styles.filterChipText, isActive && styles.filterChipTextSelected]}
+              >
+                {f.name}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+
+  const renderContent = (): React.JSX.Element => {
+    if (!haSearch.isAvailable) {
+      return (
+        <View style={styles.centered}>
+          <Text style={styles.emptyText}>Search is not available for this player.</Text>
+        </View>
+      );
+    }
+
+    if (haSearch.isSearching && hasQuery) {
+      return (
+        <View style={styles.centered}>
+          <ActivityIndicator color={theme.primary} />
+        </View>
+      );
+    }
+
+    // Show favorites when query is empty
+    if (!hasQuery) {
+      if (haSearch.isFetchingFavorites) {
+        return (
+          <View style={styles.centered}>
+            <ActivityIndicator color={theme.primary} />
+          </View>
+        );
+      }
+      if (haSearch.favorites.length === 0) {
+        return (
+          <View style={styles.centered}>
+            <Text style={styles.emptyText}>Type to search.</Text>
+          </View>
+        );
+      }
+      return renderItemList(haSearch.favorites);
+    }
+
+    if (haSearch.results.length === 0) {
+      return (
+        <View style={styles.centered}>
+          <Text style={styles.emptyText}>
+            {'No results for "' + debouncedQuery + '".'}
+          </Text>
+        </View>
+      );
+    }
+
+    return renderItemList(haSearch.results);
+  };
+
+  return (
+    <View style={styles.container}>
+      {renderHeader()}
+      {renderContent()}
+    </View>
+  );
+};
+
+// ─── Styles ──────────────────────────────────────────────────────────────────
+
+const useStyles = createUseStyles(theme => ({
+  container: {
+    flex: 1,
+    backgroundColor: theme.background,
+  },
+  header: {
+    paddingTop: 12,
+    paddingBottom: 8,
+    gap: 8,
+    backgroundColor: theme.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.outlineVariant,
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.surfaceVariant,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginHorizontal: 16,
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
+    color: theme.onSurface,
+    padding: 0,
+  },
+  clearBtn: {
+    padding: 4,
+  },
+  enqueueBtn: {
+    padding: 4,
+  },
+  enqueueMenu: {
+    marginHorizontal: 16,
+    backgroundColor: theme.surfaceContainerHigh,
+    borderRadius: 8,
+    padding: 4,
+    gap: 2,
+  },
+  enqueueOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  enqueueOptionActive: {
+    backgroundColor: theme.primaryContainer,
+  },
+  enqueueOptionText: {
+    fontSize: 13,
+    color: theme.onSurfaceVariant,
+  },
+  enqueueOptionTextActive: {
+    color: theme.onPrimaryContainer,
+    fontWeight: '600',
+  },
+  providerRow: {
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  providerChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 16,
+    backgroundColor: theme.surfaceVariant,
+    borderWidth: 1,
+    borderColor: theme.outlineVariant,
+  },
+  providerChipSelected: {
+    backgroundColor: theme.primaryContainer,
+    borderColor: theme.primary,
+  },
+  providerChipText: {
+    fontSize: 13,
+    color: theme.onSurfaceVariant,
+  },
+  providerChipTextSelected: {
+    color: theme.onPrimaryContainer,
+    fontWeight: '600',
+  },
+  filterRow: {
+    paddingHorizontal: 16,
+    gap: 6,
+  },
+  filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+    backgroundColor: theme.surfaceVariant,
+  },
+  filterChipSelected: {
+    backgroundColor: theme.secondaryContainer,
+  },
+  filterChipText: {
+    fontSize: 12,
+    color: theme.onSurfaceVariant,
+  },
+  filterChipTextSelected: {
+    color: theme.onSecondaryContainer,
+    fontWeight: '600',
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    paddingVertical: 48,
+  },
+  emptyText: {
+    fontSize: 15,
+    textAlign: 'center',
+    lineHeight: 22,
+    color: theme.onSurfaceVariant,
+  },
+  list: {
+    flex: 1,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: theme.outlineVariant,
+    marginLeft: 72,
+  },
+}));

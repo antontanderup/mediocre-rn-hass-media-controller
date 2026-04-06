@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -14,7 +14,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { EntityPicker, Icon } from '@/components';
 import { useAppConfig, useTheme } from '@/hooks';
-import type { AppConfig, MediaBrowserEntry, MediaPlayerConfig } from '@/types';
+import type { AppConfig, MediaBrowserEntry, MediaPlayerConfig, SearchEntry } from '@/types';
 import { createUseStyles } from '@/utils';
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -30,16 +30,26 @@ export default function PlayerConfigScreen() {
   const index = parseInt(indexParam ?? '0', 10);
   const player = config?.mediaPlayers[index] ?? null;
 
+  const [searchEntries, setSearchEntries] = useState<SearchEntry[]>(
+    player?.searchEntries ?? [],
+  );
   const [browserEntries, setBrowserEntries] = useState<MediaBrowserEntry[]>(
     player?.mediaBrowserEntries ?? [],
   );
+
+  // Sync local state when config loads asynchronously
+  useEffect(() => {
+    if (player) {
+      setSearchEntries(player.searchEntries ?? []);
+      setBrowserEntries(player.mediaBrowserEntries ?? []);
+    }
+  }, [player]);
 
   const form = useForm({
     defaultValues: {
       name: player?.name ?? '',
       speakerGroupEntityId: player?.speakerGroupEntityId ?? '',
       canBeGrouped: player?.canBeGrouped ?? false,
-      searchEntityId: player?.search?.[0]?.entity_id ?? '',
       maEntityId: player?.maEntityId ?? '',
       maFavoriteButtonEntityId: player?.maFavoriteButtonEntityId ?? '',
       lmsEntityId: player?.lmsEntityId ?? '',
@@ -47,18 +57,18 @@ export default function PlayerConfigScreen() {
     onSubmit: async ({ value }) => {
       if (!config || !player) return;
 
-      const searchEntityId = value.searchEntityId.trim();
-      const cleanedEntries = browserEntries.filter(e => e.entity_id.trim().length > 0);
+      const cleanedSearchEntries = searchEntries.filter(e => e.entity_id.trim().length > 0);
+      const cleanedBrowserEntries = browserEntries.filter(e => e.entity_id.trim().length > 0);
       const updated: MediaPlayerConfig = {
         entityId: player.entityId,
         name: value.name.trim() || null,
         speakerGroupEntityId: value.speakerGroupEntityId.trim() || null,
         canBeGrouped: value.canBeGrouped || null,
-        search: searchEntityId ? [{ entity_id: searchEntityId }] : undefined,
+        searchEntries: cleanedSearchEntries.length > 0 ? cleanedSearchEntries : undefined,
         maEntityId: value.maEntityId.trim() || null,
         maFavoriteButtonEntityId: value.maFavoriteButtonEntityId.trim() || null,
         lmsEntityId: value.lmsEntityId.trim() || null,
-        mediaBrowserEntries: cleanedEntries.length > 0 ? cleanedEntries : undefined,
+        mediaBrowserEntries: cleanedBrowserEntries.length > 0 ? cleanedBrowserEntries : undefined,
       };
 
       const updatedPlayers = config.mediaPlayers.map((p, i) =>
@@ -163,21 +173,54 @@ export default function PlayerConfigScreen() {
 
         {/* Search */}
         <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Search</Text>
-
-        <form.Field name="searchEntityId">
-          {field => (
-            <View style={styles.field}>
-              <Text style={styles.label}>Search entity ID</Text>
+        <Text style={styles.hint}>
+          Add entities whose media can be searched. When empty, the player&#39;s own entity is used.
+        </Text>
+        {searchEntries.map((entry, i) => (
+          <View key={`se-${i}`} style={styles.browserEntryRow}>
+            <View style={styles.browserEntryFields}>
               <EntityPicker
-                value={field.state.value}
-                onChangeValue={field.handleChange}
-                onBlur={field.handleBlur}
+                value={entry.entity_id}
+                onChangeValue={val => {
+                  const updated = [...searchEntries];
+                  updated[i] = { ...entry, entity_id: val };
+                  setSearchEntries(updated);
+                }}
                 domain="media_player."
-                placeholder={player.entityId}
+                placeholder="media_player.search_entity"
+              />
+              <TextInput
+                style={styles.browserEntryName}
+                value={entry.name ?? ''}
+                onChangeText={val => {
+                  const updated = [...searchEntries];
+                  updated[i] = { ...entry, name: val || null };
+                  setSearchEntries(updated);
+                }}
+                placeholder="Display name (optional)"
+                placeholderTextColor={theme.onSurfaceVariant}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
-          )}
-        </form.Field>
+            <Pressable
+              style={styles.browserEntryRemoveBtn}
+              onPress={() => setSearchEntries(searchEntries.filter((_, j) => j !== i))}
+              accessibilityRole="button"
+              accessibilityLabel="Remove entry"
+            >
+              <Icon name="delete-bin-line" size={18} color={theme.error} />
+            </Pressable>
+          </View>
+        ))}
+        <Pressable
+          style={styles.addEntryButton}
+          onPress={() => setSearchEntries([...searchEntries, { entity_id: '' }])}
+          accessibilityRole="button"
+        >
+          <Icon name="add-line" size={18} color={theme.primary} />
+          <Text style={styles.addEntryText}>Add search entry</Text>
+        </Pressable>
 
         {/* Media Browser */}
         <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Media Browser</Text>

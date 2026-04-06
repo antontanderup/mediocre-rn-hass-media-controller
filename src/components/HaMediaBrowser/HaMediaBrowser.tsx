@@ -9,9 +9,10 @@ import {
   View,
 } from 'react-native';
 import { useTheme, useMediaBrowser } from '@/hooks';
-import { createUseStyles } from '@/utils';
+import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { Icon } from '@/components/Icon';
-import { MediaBrowserItem } from './MediaBrowserItem';
+import { MediaGridItem } from '@/components/MediaGridItem';
+import { MediaTrackItem } from '@/components/MediaTrackItem';
 import type { MediaBrowserEntry, MediaBrowserNode } from '@/types';
 import type { HaMediaBrowserProps } from './HaMediaBrowser.types';
 
@@ -182,12 +183,11 @@ export const HaMediaBrowser = ({
         <View style={styles.grid}>
           {gridItems.map(node => (
             <View key={node.mediaContentId} style={styles.gridCell}>
-              <MediaBrowserItem
-                node={node}
-                variant="grid"
-                hassBaseUrl={hassBaseUrl}
-                onPress={handleBrowse}
-                onPlay={playItem}
+              <MediaGridItem
+                title={node.title}
+                artworkUrl={resolveArtworkUrl(node.thumbnail, hassBaseUrl)}
+                fallbackIcon={iconForMediaClass(node.childrenMediaClass ?? node.mediaClass)}
+                onPress={() => (node.canExpand ? handleBrowse(node) : playItem(node))}
               />
             </View>
           ))}
@@ -222,12 +222,13 @@ export const HaMediaBrowser = ({
       ListHeaderComponent={renderHeader}
       ListEmptyComponent={gridItems.length === 0 ? renderEmpty : undefined}
       renderItem={({ item }) => (
-        <MediaBrowserItem
-          node={item}
-          variant="track"
-          hassBaseUrl={hassBaseUrl}
-          onPress={handleBrowse}
-          onPlay={playItem}
+        <MediaTrackItem
+          title={item.title}
+          artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
+          fallbackIcon={iconForMediaClass(item.mediaClass)}
+          onPress={() => (item.canExpand ? handleBrowse(item) : playItem(item))}
+          onPlay={item.canPlay ? () => playItem(item) : undefined}
+          showChevron={item.canExpand}
         />
       )}
       contentContainerStyle={styles.listContent}

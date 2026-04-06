@@ -10,3 +10,4 @@ export { getIsLmsPlayer } from './getIsLmsPlayer';
 export { getHasMassFeatures } from './getHasMassFeatures';
 export { resolveHassUrl } from './resolveHassUrl';
 export { HA_FILTER_DEFAULTS, MA_FILTER_DEFAULTS } from './searchFilters';
+export { iconForMediaClass, resolveArtworkUrl } from './mediaHelpers';

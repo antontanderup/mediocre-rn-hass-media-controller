@@ -76,7 +76,7 @@ describe('useSearchProvider', () => {
         mediaPlayers: [
           {
             entityId: ENTITY_ID,
-            search: [
+            searchEntries: [
               { entity_id: 'media_player.bedroom', name: 'Bedroom Search' },
             ],
           },

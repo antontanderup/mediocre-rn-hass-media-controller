@@ -7,7 +7,7 @@ const STORAGE_KEY = 'app_config';
 
 // ─── Validation schema ────────────────────────────────────────────────────────
 
-const mediaBrowserEntrySchema = type({
+const entrySchema = type({
   entity_id: 'string',
   'name?': 'string | null',
 });
@@ -20,7 +20,8 @@ const mediaPlayerConfigSchema = type({
   'maEntityId?': 'string | null',
   'maFavoriteButtonEntityId?': 'string | null',
   'lmsEntityId?': 'string | null',
-  'mediaBrowserEntries?': mediaBrowserEntrySchema.array(),
+  'searchEntries?': entrySchema.array(),
+  'mediaBrowserEntries?': entrySchema.array(),
 });
 
 const appOptionsSchema = type({
