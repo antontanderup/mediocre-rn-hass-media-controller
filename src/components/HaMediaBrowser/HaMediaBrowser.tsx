@@ -219,8 +219,8 @@ export const HaMediaBrowser = ({
     <FlatList
       data={trackItems}
       keyExtractor={item => item.mediaContentId}
-      ListHeaderComponent={renderHeader}
-      ListEmptyComponent={gridItems.length === 0 ? renderEmpty : undefined}
+      ListHeaderComponent={renderHeader()}
+      ListEmptyComponent={gridItems.length === 0 ? renderEmpty() : undefined}
       renderItem={({ item }) => (
         <MediaTrackItem
           title={item.title}
