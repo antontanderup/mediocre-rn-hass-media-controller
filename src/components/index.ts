@@ -19,5 +19,14 @@ export type { ProgressBarProps } from './ProgressBar';
 export { QueueItem } from './QueueItem';
 export type { QueueItemProps } from './QueueItem';
 
-export { SearchResultItem } from './SearchResultItem';
-export type { SearchResultItemProps } from './SearchResultItem';
+export { MediaGridItem } from './MediaGridItem';
+export type { MediaGridItemProps } from './MediaGridItem';
+
+export { MediaTrackItem } from './MediaTrackItem';
+export type { MediaTrackItemProps } from './MediaTrackItem';
+
+export { HaMediaBrowser } from './HaMediaBrowser';
+export type { HaMediaBrowserProps } from './HaMediaBrowser';
+
+export { HaSearch } from './HaSearch';
+export type { HaSearchProps } from './HaSearch';

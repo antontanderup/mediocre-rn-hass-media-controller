@@ -1,5 +1,6 @@
 import { useForm } from '@tanstack/react-form';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -11,9 +12,9 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { EntityPicker } from '@/components';
+import { EntityPicker, Icon } from '@/components';
 import { useAppConfig, useTheme } from '@/hooks';
-import type { AppConfig, MediaPlayerConfig } from '@/types';
+import type { AppConfig, MediaBrowserEntry, MediaPlayerConfig, SearchEntry } from '@/types';
 import { createUseStyles } from '@/utils';
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -29,12 +30,26 @@ export default function PlayerConfigScreen() {
   const index = parseInt(indexParam ?? '0', 10);
   const player = config?.mediaPlayers[index] ?? null;
 
+  const [searchEntries, setSearchEntries] = useState<SearchEntry[]>(
+    player?.searchEntries ?? [],
+  );
+  const [browserEntries, setBrowserEntries] = useState<MediaBrowserEntry[]>(
+    player?.mediaBrowserEntries ?? [],
+  );
+
+  // Sync local state when config loads asynchronously
+  useEffect(() => {
+    if (player) {
+      setSearchEntries(player.searchEntries ?? []);
+      setBrowserEntries(player.mediaBrowserEntries ?? []);
+    }
+  }, [player]);
+
   const form = useForm({
     defaultValues: {
       name: player?.name ?? '',
       speakerGroupEntityId: player?.speakerGroupEntityId ?? '',
       canBeGrouped: player?.canBeGrouped ?? false,
-      searchEntityId: player?.search?.[0]?.entity_id ?? '',
       maEntityId: player?.maEntityId ?? '',
       maFavoriteButtonEntityId: player?.maFavoriteButtonEntityId ?? '',
       lmsEntityId: player?.lmsEntityId ?? '',
@@ -42,16 +57,18 @@ export default function PlayerConfigScreen() {
     onSubmit: async ({ value }) => {
       if (!config || !player) return;
 
-      const searchEntityId = value.searchEntityId.trim();
+      const cleanedSearchEntries = searchEntries.filter(e => e.entity_id.trim().length > 0);
+      const cleanedBrowserEntries = browserEntries.filter(e => e.entity_id.trim().length > 0);
       const updated: MediaPlayerConfig = {
         entityId: player.entityId,
         name: value.name.trim() || null,
         speakerGroupEntityId: value.speakerGroupEntityId.trim() || null,
         canBeGrouped: value.canBeGrouped || null,
-        search: searchEntityId ? [{ entity_id: searchEntityId }] : undefined,
+        searchEntries: cleanedSearchEntries.length > 0 ? cleanedSearchEntries : undefined,
         maEntityId: value.maEntityId.trim() || null,
         maFavoriteButtonEntityId: value.maFavoriteButtonEntityId.trim() || null,
         lmsEntityId: value.lmsEntityId.trim() || null,
+        mediaBrowserEntries: cleanedBrowserEntries.length > 0 ? cleanedBrowserEntries : undefined,
       };
 
       const updatedPlayers = config.mediaPlayers.map((p, i) =>
@@ -156,21 +173,106 @@ export default function PlayerConfigScreen() {
 
         {/* Search */}
         <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Search</Text>
-
-        <form.Field name="searchEntityId">
-          {field => (
-            <View style={styles.field}>
-              <Text style={styles.label}>Search entity ID</Text>
+        <Text style={styles.hint}>
+          Add entities whose media can be searched. When empty, the player&#39;s own entity is used.
+        </Text>
+        {searchEntries.map((entry, i) => (
+          <View key={`se-${i}`} style={styles.browserEntryRow}>
+            <View style={styles.browserEntryFields}>
               <EntityPicker
-                value={field.state.value}
-                onChangeValue={field.handleChange}
-                onBlur={field.handleBlur}
+                value={entry.entity_id}
+                onChangeValue={val => {
+                  const updated = [...searchEntries];
+                  updated[i] = { ...entry, entity_id: val };
+                  setSearchEntries(updated);
+                }}
                 domain="media_player."
-                placeholder={player.entityId}
+                placeholder="media_player.search_entity"
+              />
+              <TextInput
+                style={styles.browserEntryName}
+                value={entry.name ?? ''}
+                onChangeText={val => {
+                  const updated = [...searchEntries];
+                  updated[i] = { ...entry, name: val || null };
+                  setSearchEntries(updated);
+                }}
+                placeholder="Display name (optional)"
+                placeholderTextColor={theme.onSurfaceVariant}
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
-          )}
-        </form.Field>
+            <Pressable
+              style={styles.browserEntryRemoveBtn}
+              onPress={() => setSearchEntries(searchEntries.filter((_, j) => j !== i))}
+              accessibilityRole="button"
+              accessibilityLabel="Remove entry"
+            >
+              <Icon name="delete-bin-line" size={18} color={theme.error} />
+            </Pressable>
+          </View>
+        ))}
+        <Pressable
+          style={styles.addEntryButton}
+          onPress={() => setSearchEntries([...searchEntries, { entity_id: '' }])}
+          accessibilityRole="button"
+        >
+          <Icon name="add-line" size={18} color={theme.primary} />
+          <Text style={styles.addEntryText}>Add search entry</Text>
+        </Pressable>
+
+        {/* Media Browser */}
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Media Browser</Text>
+        <Text style={styles.hint}>
+          Add entities whose media libraries can be browsed. When empty, the player&#39;s own entity
+          is used.
+        </Text>
+        {browserEntries.map((entry, i) => (
+          <View key={`mb-${i}`} style={styles.browserEntryRow}>
+            <View style={styles.browserEntryFields}>
+              <EntityPicker
+                value={entry.entity_id}
+                onChangeValue={val => {
+                  const updated = [...browserEntries];
+                  updated[i] = { ...entry, entity_id: val };
+                  setBrowserEntries(updated);
+                }}
+                domain="media_player."
+                placeholder="media_player.browse_entity"
+              />
+              <TextInput
+                style={styles.browserEntryName}
+                value={entry.name ?? ''}
+                onChangeText={val => {
+                  const updated = [...browserEntries];
+                  updated[i] = { ...entry, name: val || null };
+                  setBrowserEntries(updated);
+                }}
+                placeholder="Display name (optional)"
+                placeholderTextColor={theme.onSurfaceVariant}
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
+            <Pressable
+              style={styles.browserEntryRemoveBtn}
+              onPress={() => setBrowserEntries(browserEntries.filter((_, j) => j !== i))}
+              accessibilityRole="button"
+              accessibilityLabel="Remove entry"
+            >
+              <Icon name="delete-bin-line" size={18} color={theme.error} />
+            </Pressable>
+          </View>
+        ))}
+        <Pressable
+          style={styles.addEntryButton}
+          onPress={() => setBrowserEntries([...browserEntries, { entity_id: '' }])}
+          accessibilityRole="button"
+        >
+          <Icon name="add-line" size={18} color={theme.primary} />
+          <Text style={styles.addEntryText}>Add browser entry</Text>
+        </Pressable>
 
         {/* Music Assistant */}
         <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Music Assistant</Text>
@@ -341,6 +443,46 @@ const useStyles = createUseStyles(theme => ({
     color: theme.onPrimary,
     fontSize: 16,
     fontWeight: '600',
+  },
+  hint: {
+    fontSize: 12,
+    color: theme.onSurfaceVariant,
+    marginBottom: 12,
+  },
+  browserEntryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
+  browserEntryFields: {
+    flex: 1,
+    gap: 6,
+  },
+  browserEntryName: {
+    backgroundColor: theme.surfaceContainer,
+    color: theme.onSurface,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 14,
+    borderWidth: 1,
+    borderColor: theme.outline,
+  },
+  browserEntryRemoveBtn: {
+    padding: 8,
+  },
+  addEntryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    marginBottom: 4,
+  },
+  addEntryText: {
+    fontSize: 14,
+    color: theme.primary,
+    fontWeight: '500',
   },
   deleteButton: {
     marginTop: 12,

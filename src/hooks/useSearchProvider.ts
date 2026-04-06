@@ -21,15 +21,15 @@ export const useSearchProvider = (entityId: string): UseSearchProviderResult => 
   const providers = useMemo<SearchProvider[]>(() => {
     const list: SearchProvider[] = [];
 
-    // HA search providers from config; fall back to the player entity itself
-    const searchConfigs = playerConfig?.search;
-    if (searchConfigs && searchConfigs.length > 0) {
-      for (const sc of searchConfigs) {
+    // HA search entries from config; fall back to the player entity itself
+    const searchEntries = playerConfig?.searchEntries;
+    if (searchEntries && searchEntries.length > 0) {
+      for (const entry of searchEntries) {
         const friendlyName =
-          sc.name ??
-          players.find(p => p.entity_id === sc.entity_id)?.attributes.friendly_name ??
-          sc.entity_id;
-        list.push({ type: 'ha', entityId: sc.entity_id, name: friendlyName });
+          entry.name ??
+          players.find(p => p.entity_id === entry.entity_id)?.attributes.friendly_name ??
+          entry.entity_id;
+        list.push({ type: 'ha', entityId: entry.entity_id, name: friendlyName });
       }
     } else {
       const friendlyName =

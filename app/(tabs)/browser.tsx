@@ -1,10 +1,17 @@
 import { useLocalSearchParams } from 'expo-router';
+import { useMemo } from 'react';
 import { Text, View } from 'react-native';
-import { useTheme } from '@/hooks';
-import { createUseStyles } from '@/utils';
+import { HaMediaBrowser } from '@/components';
+import { useHassContext } from '@/context';
+import { useAppConfig, useTheme } from '@/hooks';
+import { buildHassUrl, createUseStyles } from '@/utils';
 
 const useStyles = createUseStyles(theme => ({
   container: {
+    flex: 1,
+    backgroundColor: theme.background,
+  },
+  centered: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -20,13 +27,42 @@ const useStyles = createUseStyles(theme => ({
 }));
 
 export default function BrowserTab() {
-  useLocalSearchParams<{ entityId?: string }>();
+  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
   useTheme();
   const styles = useStyles();
+  const { hassConfig } = useHassContext();
+  const { config } = useAppConfig();
+
+  const playerConfig = useMemo(
+    () => config?.mediaPlayers.find(p => p.entityId === entityId),
+    [config, entityId],
+  );
+
+  if (!entityId) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.text}>Select a player to browse media</Text>
+      </View>
+    );
+  }
+
+  if (!hassConfig) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.text}>Not connected to Home Assistant</Text>
+      </View>
+    );
+  }
+
+  const hassBaseUrl = buildHassUrl(hassConfig);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Media Browser — coming soon</Text>
+      <HaMediaBrowser
+        entityId={entityId}
+        hassBaseUrl={hassBaseUrl}
+        mediaBrowserEntries={playerConfig?.mediaBrowserEntries}
+      />
     </View>
   );
 }

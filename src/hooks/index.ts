@@ -34,3 +34,6 @@ export { useMaSearch } from './useMaSearch';
 export type { UseMaSearchResult } from './useMaSearch';
 export { useSearchProvider } from './useSearchProvider';
 export type { SearchProvider, UseSearchProviderResult } from './useSearchProvider';
+
+export { useMediaBrowser } from './useMediaBrowser';
+export type { UseMediaBrowserResult } from './useMediaBrowser';
