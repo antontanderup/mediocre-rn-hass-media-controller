@@ -34,6 +34,7 @@ export default function PlayerConfigScreen() {
       name: player?.name ?? '',
       speakerGroupEntityId: player?.speakerGroupEntityId ?? '',
       canBeGrouped: player?.canBeGrouped ?? false,
+      searchEntityId: player?.search?.[0]?.entity_id ?? '',
       maEntityId: player?.maEntityId ?? '',
       maFavoriteButtonEntityId: player?.maFavoriteButtonEntityId ?? '',
       lmsEntityId: player?.lmsEntityId ?? '',
@@ -41,11 +42,13 @@ export default function PlayerConfigScreen() {
     onSubmit: async ({ value }) => {
       if (!config || !player) return;
 
+      const searchEntityId = value.searchEntityId.trim();
       const updated: MediaPlayerConfig = {
         entityId: player.entityId,
         name: value.name.trim() || null,
         speakerGroupEntityId: value.speakerGroupEntityId.trim() || null,
         canBeGrouped: value.canBeGrouped || null,
+        search: searchEntityId ? [{ entity_id: searchEntityId }] : undefined,
         maEntityId: value.maEntityId.trim() || null,
         maFavoriteButtonEntityId: value.maFavoriteButtonEntityId.trim() || null,
         lmsEntityId: value.lmsEntityId.trim() || null,
@@ -146,6 +149,24 @@ export default function PlayerConfigScreen() {
                 onBlur={field.handleBlur}
                 domain="media_player."
                 placeholder="media_player.group_entity"
+              />
+            </View>
+          )}
+        </form.Field>
+
+        {/* Search */}
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Search</Text>
+
+        <form.Field name="searchEntityId">
+          {field => (
+            <View style={styles.field}>
+              <Text style={styles.label}>Search entity ID</Text>
+              <EntityPicker
+                value={field.state.value}
+                onChangeValue={field.handleChange}
+                onBlur={field.handleBlur}
+                domain="media_player."
+                placeholder={player.entityId}
               />
             </View>
           )}
