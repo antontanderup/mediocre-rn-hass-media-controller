@@ -27,3 +27,10 @@ export { useSqueezeboxQueue } from './useSqueezeboxQueue';
 export type { SqueezeboxQueueResult } from './useSqueezeboxQueue';
 export { usePlayerQueue } from './usePlayerQueue';
 export type { UsePlayerQueueResult } from './usePlayerQueue';
+
+export { useHaSearch } from './useHaSearch';
+export type { UseHaSearchResult } from './useHaSearch';
+export { useMaSearch } from './useMaSearch';
+export type { UseMaSearchResult } from './useMaSearch';
+export { useSearchProvider } from './useSearchProvider';
+export type { SearchProvider, UseSearchProviderResult } from './useSearchProvider';
