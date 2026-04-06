@@ -2,11 +2,16 @@
 
 ## Overview
 
-Implement `app/(tabs)/search.tsx` — the combined Search + Media Browser tab. The screen stub already exists but shows a "coming soon" placeholder.
+Implement two separate tabs:
 
-**Design decision:** The original Lovelace card has Search and Media Browser as two separate tabs. In the app they are merged into one tab: the browser is the default view, and tapping the persistent search bar activates search mode.
+- **`app/(tabs)/search.tsx`** — Search tab (HA native search or Music Assistant search)
+- **`app/(tabs)/browser.tsx`** — Media Browser tab (navigate the HA media browser tree)
 
-**Source reference:** Logic and data structures are ported from [`mediocre-hass-media-player-cards`](https://github.com/antontanderup/mediocre-hass-media-player-cards), specifically `src/components/HaSearch/`, `src/components/MaSearch/`, and `src/components/MediaSearch/`.
+The stub `app/(tabs)/search.tsx` already exists. `browser.tsx` is new.
+
+**Why they cannot be combined:** The original Lovelace card keeps Search and Media Browser as two separate tabs, and this separation is architecturally necessary. Music Assistant exposes a browseable tree through the HA `media_player.browse_media` API, but the content IDs in that tree are HA-format identifiers. MA's own search API (`music_assistant.search`) returns MA-native URIs. These two ID spaces are incompatible — a MA search result URI cannot be used to navigate the HA browser tree, and a HA browser item ID cannot be passed to MA's play/search services. The tabs share no item identity and must remain strictly separate.
+
+**Source reference:** Logic and data structures are ported from [`mediocre-hass-media-player-cards`](https://github.com/antontanderup/mediocre-hass-media-player-cards), specifically `src/components/HaSearch/`, `src/components/MaSearch/`, `src/components/MediaSearch/`, and `src/components/HaMediaBrowser/`.
 
 ---
 
@@ -15,6 +20,7 @@ Implement `app/(tabs)/search.tsx` — the combined Search + Media Browser tab. T
 | File | Status |
 |---|---|
 | `app/(tabs)/search.tsx` | Stub — renders "coming soon" text |
+| `app/(tabs)/browser.tsx` | Does not exist |
 | `src/types/mediaBrowser.ts` | Does not exist |
 | `src/hooks/useMediaBrowser.ts` | Does not exist |
 | `src/hooks/useHaSearch.ts` | Does not exist |
@@ -436,81 +442,98 @@ Barrel-export both components from `src/components/index.ts`.
 
 ---
 
-## Screen — `app/(tabs)/search.tsx`
+## Screen — `app/(tabs)/search.tsx` (Search only)
 
-### State machine
-
-```
-query === '' && bar not focused  →  BROWSER MODE (or favorites if available)
-bar focused or query !== ''      →  SEARCH MODE
-```
-
-### Layout skeleton
+### Layout
 
 ```
 ┌──────────────────────────────────────────┐
-│  [ Search bar                          ] │  ← always visible
+│  [ Search bar                          ] │
 │  [ Provider picker chip (if > 1)       ] │  ← hidden when only 1 provider
+│  [ Filter chips row                    ] │
 ├──────────────────────────────────────────┤
-│  BROWSER MODE:                           │
-│    Breadcrumb back button (hidden @ root)│
-│    FlatList<MediaBrowserItem>            │
-│    Pull-to-refresh at root               │
 │                                          │
-│  SEARCH MODE:                            │
-│    Filter chips row (per provider type)  │
-│    FlatList<SearchResultItem>            │
-│    Section headers by media type (MA)    │
+│  [empty: favorites list when no query]   │
+│  FlatList<SearchResultItem>  (HA)        │
+│    — OR —                                │
+│  SectionList<SearchResultItem>  (MA)     │
+│    (sections = media type)               │
 │                                          │
 │  [loading spinner]                       │
-│  [empty: favorites list]                 │
 │  [empty: "No results"]                   │
 │  [empty: "Search not available"]         │
-│  [empty: "Browse not available"]         │
 └──────────────────────────────────────────┘
 ```
 
-### Browser mode details
+### Details
 
-- On mount, `useMediaBrowser` fetches the root immediately.
-- Breadcrumb: `← {path[path.length - 1].title}` back button shown when `path.length > 0`. Tapping calls `goBack()`.
-- `RefreshControl` wired only at root (`path.length === 0`).
-- Item press logic:
-  - `canExpand && !canPlay` → `browse(item)`
-  - `canPlay && !canExpand` → `playItem`
-  - Both → `onPress` = `browse`, `onPlay` = `playItem`
-
-### Search mode details
-
+- **No browser mode.** This tab is search-only. `useMediaBrowser` is not used here.
 - Switching providers resets `query`, `filter`, and `results`.
 - **HA provider selected:**
-  - Filter chips rendered from `filterConfig` (default: Artists, Albums, Tracks, Playlists).
-  - Results are a flat `FlatList<SearchResultItem>`.
-  - When `query === ''`: show favorites (from `useHaSearch`'s `favorites` field) if available.
-  - Enqueue mode selector: icon button opening a bottom sheet with "Play now", "Play next", "Add to queue", "Replace queue" options.
+  - Filter chips from `filterConfig` (default: All, Artists, Albums, Tracks, Playlists).
+  - Results: flat `FlatList<SearchResultItem>`.
+  - When `query === ''`: show favorites from `useHaSearch`'s `favorites` field (browse_media favorites, `can_play` only) if available. If no favorites, show an empty prompt.
+  - Enqueue mode selector: icon button opening a menu with "Play now", "Play next", "Add to queue", "Replace queue".
 - **MA provider selected:**
   - Filter chips: All, Artists, Albums, Tracks, Playlists, Radio, Audiobooks, Podcasts.
-  - Results are sectioned by media type — use `SectionList` with section headers showing the type label.
+  - Results: `SectionList` with section headers per media type (only sections with items are rendered).
   - MA enqueue adds "Play next (replace)" option.
-- Cancel / clear: `clear()` + blur → back to browser mode.
-
-### `entityId` wiring
-
-`entityId` from `useLocalSearchParams<{ entityId?: string }>()` — same pattern as other tabs.
+- Only fire search when `query.trim().length >= 2`; show favorites/empty prompt otherwise.
+- `entityId` from `useLocalSearchParams<{ entityId?: string }>()`.
 
 ---
 
-## Filter chip constants
+## Screen — `app/(tabs)/browser.tsx` (Media Browser only)
 
-Define in `src/utils/searchFilters.ts` (or inline in the screen):
+### Layout
+
+```
+┌──────────────────────────────────────────┐
+│  [ ← Back button / breadcrumb title    ] │  ← hidden at root
+├──────────────────────────────────────────┤
+│                                          │
+│  FlatList<MediaBrowserItem>              │
+│  (pull-to-refresh at root)               │
+│                                          │
+│  [loading spinner]                       │
+│  [empty: "Not available"]                │
+└──────────────────────────────────────────┘
+```
+
+### Details
+
+- **No search bar.** This tab is browse-only. `useHaSearch` / `useMaSearch` are not used here.
+- All items (whether from a MA-backed player or a native HA player) use HA content IDs from `media_player.browse_media`. MA search URIs never appear here.
+- On mount, `useMediaBrowser` fetches the root.
+- Breadcrumb: `← {path[path.length - 1].title}` shown when `path.length > 0`. Tapping calls `goBack()`.
+- `RefreshControl` wired only at root (`path.length === 0`).
+- Item press logic:
+  - `canExpand && !canPlay` → `browse(item)`
+  - `canPlay && !canExpand` → `callService('media_player', 'play_media', { media_content_id, media_content_type })`
+  - Both → `onPress` = `browse`; optional `onPlay` prop → play without drilling in
+- `entityId` from `useLocalSearchParams<{ entityId?: string }>()`.
+
+---
+
+## Tab layout change — `app/(tabs)/_layout.tsx`
+
+Add `browser` to the tab list alongside `search`. Both tabs always appear when a player is selected (same visibility rules as existing tabs):
+
+```
+Players | Now Playing | Queue | Search | Browser | Grouping | Custom Buttons
+```
+
+---
+
+## Filter chip constants — `src/utils/searchFilters.ts`
 
 ```typescript
 export const HA_FILTER_DEFAULTS: HaFilterConfig[] = [
-  { type: 'all',      name: 'All',      icon: 'infinity-line' },
-  { type: 'artists',  name: 'Artists',  icon: 'user-3-line' },
-  { type: 'albums',   name: 'Albums',   icon: 'album-line' },
-  { type: 'tracks',   name: 'Tracks',   icon: 'music-2-line' },
-  { type: 'playlists',name: 'Playlists',icon: 'play-list-2-line' },
+  { type: 'all',       name: 'All',       icon: 'infinity-line' },
+  { type: 'artists',   name: 'Artists',   icon: 'user-3-line' },
+  { type: 'albums',    name: 'Albums',    icon: 'album-line' },
+  { type: 'tracks',    name: 'Tracks',    icon: 'music-2-line' },
+  { type: 'playlists', name: 'Playlists', icon: 'play-list-2-line' },
 ];
 
 export const MA_FILTER_DEFAULTS: MaFilterConfig[] = [
@@ -525,8 +548,6 @@ export const MA_FILTER_DEFAULTS: MaFilterConfig[] = [
 ];
 ```
 
-Icons use remix-icon names (the `Icon` component already supports these).
-
 ---
 
 ## Implementation order
@@ -538,12 +559,14 @@ Icons use remix-icon names (the `Icon` component already supports these).
 5. **`useSearchProvider` hook** — provider list + selection state
 6. **`MediaBrowserItem` component** — thumbnail, icon fallback, chevron/play
 7. **`SearchResultItem` component** — thumbnail, icon fallback, play + enqueue
-8. **`app/(tabs)/search.tsx`** — browser mode first (wires `useMediaBrowser` + `MediaBrowserItem`)
-9. **Search mode — HA** — search bar focus, `useHaSearch`, filter chips, flat results list, favorites empty state
-10. **Search mode — MA** — `useMaSearch`, sectioned results, expanded filter chips
+8. **`app/(tabs)/browser.tsx`** — full browser tab (wires `useMediaBrowser` + `MediaBrowserItem`)
+9. **`app/(tabs)/search.tsx`** — HA search: search bar, `useHaSearch`, filter chips, flat results, favorites empty state
+10. **Search — MA** — `useMaSearch`, sectioned results, expanded filter chips, MA enqueue
 11. **Provider picker** — `useSearchProvider`, chip UI (only shown when > 1 provider)
-12. **Polish** — breadcrumbs, pull-to-refresh, all empty/error states, enqueue mode picker
-13. **Pre-commit checks** — `yarn typecheck && yarn lint && yarn test`
+12. **Filter constants** — `src/utils/searchFilters.ts`, barrel-export
+13. **Tab layout** — add `browser` tab to `app/(tabs)/_layout.tsx`
+14. **Polish** — pull-to-refresh, all empty/error states, enqueue mode picker, loading states
+15. **Pre-commit checks** — `yarn typecheck && yarn lint && yarn test`
 
 ---
 
@@ -556,14 +579,16 @@ Icons use remix-icon names (the `Icon` component already supports these).
 | `src/hooks/useHaSearch.ts` | HA `search_media` + favorites |
 | `src/hooks/useMaSearch.ts` | MA config entry fetch + MA search |
 | `src/hooks/useSearchProvider.ts` | Provider list + selection |
+| `src/utils/searchFilters.ts` | HA + MA filter chip constants |
 | `src/components/MediaBrowserItem/MediaBrowserItem.tsx` | Single browser row |
 | `src/components/MediaBrowserItem/MediaBrowserItem.types.ts` | Props type |
 | `src/components/MediaBrowserItem/index.ts` | Barrel |
 | `src/components/SearchResultItem/SearchResultItem.tsx` | Single search result row |
 | `src/components/SearchResultItem/SearchResultItem.types.ts` | Props type |
 | `src/components/SearchResultItem/index.ts` | Barrel |
+| `app/(tabs)/browser.tsx` | Media Browser tab screen |
 
-`app/(tabs)/search.tsx` and `src/types/config.ts` are modified (not created).
+**Modified (not created):** `app/(tabs)/search.tsx`, `app/(tabs)/_layout.tsx`, `src/types/config.ts`, `src/types/index.ts`, `src/hooks/index.ts`, `src/utils/index.ts`, `src/components/index.ts`.
 
 ---
 
@@ -571,12 +596,14 @@ Icons use remix-icon names (the `Icon` component already supports these).
 
 | Topic | Original (naive) plan | Corrected (this plan) |
 |---|---|---|
+| Tab structure | Search + Browse combined | Two separate tabs: `search.tsx` + `browser.tsx` |
+| Why separated | "cleaner mobile UX" | Technically required: MA search URIs ≠ HA browser content IDs |
 | Search backends | MA first, HA fallback | Two separate hooks: `useHaSearch` + `useMaSearch`, user picks provider |
 | MA search | `TODO` stub | Fully specified: config entry fetch + `music_assistant.search` service |
 | MA results | Flat list | Sectioned by type (`MaSearchResults`) |
 | MA play | `media_player.play_media` | `music_assistant.play_media` with `media_id` + `enqueue_mode` |
 | Debounce | 300 ms | 600 ms (matches original card) |
 | Empty state | "No results" text | Favorites from `browse_media?media_content_type=favorites` |
-| Filter chips | Not mentioned | Required for both backends; MA has 8 types including radio/audiobook/podcast |
+| Filter chips | Not mentioned | Required for both backends; MA has 8 types incl. radio/audiobook/podcast |
 | Enqueue modes | Not mentioned | HA: play/replace/next/add; MA adds replace_next |
 | `search` config | Not mentioned | `SearchProviderConfig[]` added to `MediaPlayerConfig` |
