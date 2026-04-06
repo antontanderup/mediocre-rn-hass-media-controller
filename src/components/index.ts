@@ -18,3 +18,6 @@ export type { ProgressBarProps } from './ProgressBar';
 
 export { QueueItem } from './QueueItem';
 export type { QueueItemProps } from './QueueItem';
+
+export { SearchResultItem } from './SearchResultItem';
+export type { SearchResultItemProps } from './SearchResultItem';
