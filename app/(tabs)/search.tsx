@@ -352,7 +352,7 @@ export default function SearchTab(): React.JSX.Element {
     if (haSearch.results.length === 0) {
       return (
         <View style={styles.centered}>
-          <Text style={styles.emptyText}>No results for "{debouncedQuery}".</Text>
+          <Text style={styles.emptyText}>{'No results for "' + debouncedQuery + '".'}</Text>
         </View>
       );
     }
@@ -413,7 +413,7 @@ export default function SearchTab(): React.JSX.Element {
     if (maSectionData.length === 0) {
       return (
         <View style={styles.centered}>
-          <Text style={styles.emptyText}>No results for "{debouncedQuery}".</Text>
+          <Text style={styles.emptyText}>{'No results for "' + debouncedQuery + '".'}</Text>
         </View>
       );
     }

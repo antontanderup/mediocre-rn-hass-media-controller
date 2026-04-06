@@ -3,6 +3,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
+import type { IconName } from '@/components/Icon';
 import type { SearchResultItemProps } from './SearchResultItem.types';
 
 const THUMB_SIZE = 44;
@@ -55,7 +56,7 @@ const useStyles = createUseStyles(theme => ({
   },
 }));
 
-function iconForMediaClass(mediaClass: string | undefined): string {
+function iconForMediaClass(mediaClass: string | undefined): IconName {
   switch (mediaClass) {
     case 'track':
     case 'music':
