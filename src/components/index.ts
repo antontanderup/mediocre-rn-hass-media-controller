@@ -21,3 +21,8 @@ export type { QueueItemProps } from './QueueItem';
 
 export { SearchResultItem } from './SearchResultItem';
 export type { SearchResultItemProps } from './SearchResultItem';
+
+export { HaMediaBrowser } from './HaMediaBrowser';
+export type { HaMediaBrowserProps } from './HaMediaBrowser';
+export { MediaBrowserItem } from './HaMediaBrowser';
+export type { MediaBrowserItemProps } from './HaMediaBrowser';

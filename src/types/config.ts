@@ -7,6 +7,12 @@ export type SearchProviderConfig = {
   name?: string;
 };
 
+/** A media browser entry — an entity whose media library can be browsed. */
+export type MediaBrowserEntry = {
+  entity_id: string;
+  name?: string | null;
+};
+
 export type MediaPlayerConfig = {
   entityId: string;
   name?: string | null;
@@ -17,6 +23,8 @@ export type MediaPlayerConfig = {
   lmsEntityId?: string | null;
   /** Additional HA search providers (e.g. a separate search entity). MA is added automatically when maEntityId is set. */
   search?: SearchProviderConfig[];
+  /** Media browser entries. When empty/omitted the player's own entityId is used. */
+  mediaBrowserEntries?: MediaBrowserEntry[];
 };
 
 export type AppOptions = {
