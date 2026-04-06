@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useHaSearch, useSearchProvider, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
+import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
 import { Icon } from '@/components/Icon';
 import type { IconName } from '@/components/Icon';
@@ -74,23 +75,55 @@ export const HaSearch = ({
   const haSearch = useHaSearch(debouncedQuery, activeFilter, activeEntityId, showFavorites, filterConfig);
   const hasQuery = debouncedQuery.trim().length >= 2;
 
-  const renderItemList = (items: HaMediaItem[]): React.JSX.Element => (
-    <FlatList
-      style={styles.list}
-      data={items}
-      keyExtractor={item => item.media_content_id}
-      renderItem={({ item }) => (
-        <MediaTrackItem
-          title={item.title}
-          subtitle={item.media_class}
-          artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
-          fallbackIcon={iconForMediaClass(item.media_class)}
-          onPlay={() => haSearch.playItem(item, activeEntityId, enqueueMode)}
-        />
-      )}
-      contentInsetAdjustmentBehavior="automatic"
-    />
-  );
+  const renderGridHeader = (items: HaMediaItem[]): React.JSX.Element | null => {
+    const grid = items.filter(i => i.media_class !== 'track');
+    if (grid.length === 0) return null;
+    return (
+      <View style={styles.grid}>
+        {grid.map(item => (
+          <View key={item.media_content_id} style={styles.gridCell}>
+            <MediaGridItem
+              title={item.title}
+              artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
+              fallbackIcon={iconForMediaClass(item.media_class)}
+              onPress={() => haSearch.playItem(item, activeEntityId, enqueueMode)}
+            />
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  const renderItemList = (items: HaMediaItem[]): React.JSX.Element => {
+    const tracks = items.filter(i => i.media_class === 'track');
+    const hasGrid = items.some(i => i.media_class !== 'track');
+
+    return (
+      <FlatList
+        style={styles.list}
+        data={tracks}
+        keyExtractor={item => item.media_content_id}
+        ListHeaderComponent={hasGrid ? renderGridHeader(items) : undefined}
+        ListEmptyComponent={
+          !hasGrid ? (
+            <View style={styles.centered}>
+              <Text style={styles.emptyText}>No results.</Text>
+            </View>
+          ) : undefined
+        }
+        renderItem={({ item }) => (
+          <MediaTrackItem
+            title={item.title}
+            subtitle={item.media_class}
+            artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
+            fallbackIcon={iconForMediaClass(item.media_class)}
+            onPlay={() => haSearch.playItem(item, activeEntityId, enqueueMode)}
+          />
+        )}
+        contentInsetAdjustmentBehavior="automatic"
+      />
+    );
+  };
 
   // Render helpers
   const renderHeader = (): React.JSX.Element => (
@@ -417,12 +450,17 @@ const useStyles = createUseStyles(theme => ({
     lineHeight: 22,
     color: theme.onSurfaceVariant,
   },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 12,
+    paddingTop: 8,
+  },
+  gridCell: {
+    width: `${100 / 3}%` as unknown as number,
+    padding: 4,
+  },
   list: {
     flex: 1,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: theme.outlineVariant,
-    marginLeft: 72,
   },
 }));
