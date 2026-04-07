@@ -1,7 +1,6 @@
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import React, { useCallback, useRef } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
@@ -16,17 +15,16 @@ export const BottomSheetSelect = <T extends string = string>({
 }: BottomSheetSelectProps<T>): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const sheetRef = useRef<TrueSheet>(null);
 
   const handleOpen = useCallback(() => {
-    bottomSheetRef.current?.present();
+    sheetRef.current?.present();
   }, []);
 
   const handleSelect = useCallback(
     (option: T) => {
       onChange(option);
-      bottomSheetRef.current?.dismiss();
+      sheetRef.current?.dismiss();
     },
     [onChange],
   );
@@ -34,13 +32,14 @@ export const BottomSheetSelect = <T extends string = string>({
   return (
     <>
       {renderTrigger(handleOpen)}
-      <BottomSheetModal
-        ref={bottomSheetRef}
-        enableDynamicSizing
-        backgroundStyle={styles.sheetBackground}
-        handleIndicatorStyle={styles.handleIndicator}
+      <TrueSheet
+        ref={sheetRef}
+        detents={['auto']}
+        cornerRadius={16}
+        grabber
+        backgroundColor={theme.surfaceContainerLow}
       >
-        <BottomSheetView style={[styles.content, { paddingBottom: insets.bottom + 16 }]}>
+        <View style={styles.content}>
           {title && <Text style={styles.title}>{title}</Text>}
           <View style={styles.optionList}>
             {options.map(option => {
@@ -71,8 +70,8 @@ export const BottomSheetSelect = <T extends string = string>({
               );
             })}
           </View>
-        </BottomSheetView>
-      </BottomSheetModal>
+        </View>
+      </TrueSheet>
     </>
   );
 };
@@ -80,15 +79,10 @@ export const BottomSheetSelect = <T extends string = string>({
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
 const useStyles = createUseStyles(theme => ({
-  sheetBackground: {
-    backgroundColor: theme.surfaceContainerLow,
-  },
-  handleIndicator: {
-    backgroundColor: theme.outlineVariant,
-  },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: 24,
+    paddingBottom: 16,
     gap: 4,
   },
   title: {
