@@ -17,6 +17,9 @@ export type { AppConfigState } from './useAppConfig';
 
 export { useAutoSelectPlayer } from './useAutoSelectPlayer';
 
+export { useSelectedPlayer } from './useSelectedPlayer';
+export type { SelectedPlayerState } from './useSelectedPlayer';
+
 export { usePingHass } from './usePingHass';
 
 export { useGrouping } from './useGrouping';

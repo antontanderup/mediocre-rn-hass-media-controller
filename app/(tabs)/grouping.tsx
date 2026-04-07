@@ -1,9 +1,8 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { Icon, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
-import { useAppConfig, useGrouping, useTheme } from '@/hooks';
+import { useAppConfig, useGrouping, useSelectedPlayer, useTheme } from '@/hooks';
 import type { GroupableSpeaker } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import type { MediaPlayerEntity, MediaPlayerState } from '@/types';
@@ -26,10 +25,9 @@ const STATE_LABELS: Record<MediaPlayerState, string> = {
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function GroupingTab() {
-  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
+  const { entityId, setSelectedPlayer } = useSelectedPlayer();
   const theme = useTheme();
   const styles = useStyles();
-  const router = useRouter();
   const { players } = useHassContext();
   const { config: appConfig } = useAppConfig();
 
@@ -230,10 +228,7 @@ export default function GroupingTab() {
                     style={styles.playerRow}
                     onPress={() => {
                       if (!isActive) {
-                        router.replace({
-                          pathname: '/(tabs)/player',
-                          params: { entityId: item.player.entity_id },
-                        });
+                        setSelectedPlayer(item.player.entity_id);
                       }
                     }}
                     accessibilityRole="radio"

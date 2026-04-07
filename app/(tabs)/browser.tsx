@@ -1,9 +1,7 @@
-import { useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { HaMediaBrowser } from '@/components';
 import { useHassContext } from '@/context';
-import { useAppConfig, useTheme } from '@/hooks';
+import { useSelectedPlayer, useTheme } from '@/hooks';
 import { buildHassUrl, createUseStyles } from '@/utils';
 
 const useStyles = createUseStyles(theme => ({
@@ -27,16 +25,10 @@ const useStyles = createUseStyles(theme => ({
 }));
 
 export default function BrowserTab() {
-  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
+  const { entityId, config: playerConfig } = useSelectedPlayer();
   useTheme();
   const styles = useStyles();
   const { hassConfig } = useHassContext();
-  const { config } = useAppConfig();
-
-  const playerConfig = useMemo(
-    () => config?.mediaPlayers.find(p => p.entityId === entityId),
-    [config, entityId],
-  );
 
   if (!entityId) {
     return (

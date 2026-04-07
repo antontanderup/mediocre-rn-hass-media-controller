@@ -1,9 +1,8 @@
-import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { HaSearch } from '@/components';
 import { useHassContext } from '@/context';
-import { useTheme } from '@/hooks';
+import { useSelectedPlayer, useTheme } from '@/hooks';
 import { buildHassUrl, createUseStyles } from '@/utils';
 
 const useStyles = createUseStyles(theme => ({
@@ -27,7 +26,7 @@ const useStyles = createUseStyles(theme => ({
 }));
 
 export default function SearchTab(): React.JSX.Element {
-  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
+  const { entityId } = useSelectedPlayer();
   useTheme();
   const styles = useStyles();
   const { hassConfig } = useHassContext();

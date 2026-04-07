@@ -1,8 +1,8 @@
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useNavigation } from 'expo-router';
 import { useLayoutEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { QueueItem as QueueItemComponent } from '@/components';
-import { usePlayerQueue, useTheme } from '@/hooks';
+import { usePlayerQueue, useSelectedPlayer, useTheme } from '@/hooks';
 import type { QueueItem } from '@/types';
 import { createUseStyles } from '@/utils';
 
@@ -43,7 +43,7 @@ const useStyles = createUseStyles(theme => ({
 }));
 
 export default function QueueTab() {
-  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
+  const { entityId } = useSelectedPlayer();
   const theme = useTheme();
   const styles = useStyles();
   const navigation = useNavigation();
