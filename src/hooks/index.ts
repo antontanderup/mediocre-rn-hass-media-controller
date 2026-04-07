@@ -15,6 +15,8 @@ export type { MediaPlayerControls } from './useMediaPlayerControls';
 export { useAppConfig } from './useAppConfig';
 export type { AppConfigState } from './useAppConfig';
 
+export { useAutoSelectPlayer } from './useAutoSelectPlayer';
+
 export { usePingHass } from './usePingHass';
 
 export { useGrouping } from './useGrouping';

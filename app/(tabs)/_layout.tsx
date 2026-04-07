@@ -3,12 +3,14 @@ import React from 'react';
 import { Pressable } from 'react-native';
 import { Icon } from '@/components';
 import { useThemeContext } from '@/context';
-import { useTheme } from '@/hooks';
+import { useAutoSelectPlayer, useTheme } from '@/hooks';
 
 function ThemedTabs(): React.JSX.Element {
   const { theme } = useThemeContext();
   const colors = useTheme();
   const router = useRouter();
+
+  useAutoSelectPlayer();
 
   return (
     <Tabs
