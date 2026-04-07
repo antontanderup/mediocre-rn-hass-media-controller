@@ -1,3 +1,6 @@
+export { BottomSheetSelect } from './BottomSheetSelect';
+export type { BottomSheetSelectProps, BottomSheetSelectOption } from './BottomSheetSelect';
+
 export { EntityPicker } from './EntityPicker';
 export type { EntityPickerProps } from './EntityPicker';
 

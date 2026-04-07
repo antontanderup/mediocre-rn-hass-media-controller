@@ -10,20 +10,21 @@ import {
 } from 'react-native';
 import { useHaSearch, useSearchProvider, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
+import { BottomSheetSelect } from '@/components/BottomSheetSelect';
+import type { BottomSheetSelectOption } from '@/components/BottomSheetSelect';
 import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
 import { Icon } from '@/components/Icon';
-import type { IconName } from '@/components/Icon';
 import type { HaEnqueueMode, HaMediaItem } from '@/types';
 import type { HaSearchProps } from './HaSearch.types';
 
 const DEBOUNCE_MS = 600;
 
-const ENQUEUE_OPTIONS: { mode: HaEnqueueMode; label: string; icon: IconName }[] = [
-  { mode: 'play', label: 'Play', icon: 'play-circle-outline' },
-  { mode: 'replace', label: 'Replace Queue', icon: 'playlist-remove' },
-  { mode: 'next', label: 'Add Next', icon: 'playlist-play' },
-  { mode: 'add', label: 'Add to Queue', icon: 'playlist-add' },
+const ENQUEUE_OPTIONS: BottomSheetSelectOption<HaEnqueueMode>[] = [
+  { value: 'play', label: 'Play', icon: 'play-circle-outline' },
+  { value: 'replace', label: 'Replace Queue', icon: 'playlist-remove' },
+  { value: 'next', label: 'Add Next', icon: 'playlist-play' },
+  { value: 'add', label: 'Add to Queue', icon: 'playlist-add' },
 ];
 
 export const HaSearch = ({
@@ -70,7 +71,6 @@ export const HaSearch = ({
   // Filter & enqueue state
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [enqueueMode, setEnqueueMode] = useState<HaEnqueueMode>('replace');
-  const [showEnqueueMenu, setShowEnqueueMenu] = useState(false);
 
   const haSearch = useHaSearch(debouncedQuery, activeFilter, activeEntityId, showFavorites, filterConfig);
   const hasQuery = debouncedQuery.trim().length >= 2;
@@ -150,55 +150,27 @@ export const HaSearch = ({
             <Icon name="close" size={16} color={theme.onSurfaceVariant} />
           </Pressable>
         )}
-        <Pressable
-          style={styles.enqueueBtn}
-          onPress={() => setShowEnqueueMenu(prev => !prev)}
-          accessibilityRole="button"
-          accessibilityLabel="Change enqueue mode"
-        >
-          <Icon
-            name={ENQUEUE_OPTIONS.find(o => o.mode === enqueueMode)?.icon ?? 'play-circle-outline'}
-            size={20}
-            color={theme.primary}
-          />
-        </Pressable>
-      </View>
-
-      {/* Enqueue mode menu */}
-      {showEnqueueMenu && (
-        <View style={styles.enqueueMenu}>
-          {ENQUEUE_OPTIONS.map(option => (
+        <BottomSheetSelect
+          options={ENQUEUE_OPTIONS}
+          value={enqueueMode}
+          onChange={setEnqueueMode}
+          title="Playback Mode"
+          renderTrigger={onOpen => (
             <Pressable
-              key={option.mode}
-              style={[
-                styles.enqueueOption,
-                enqueueMode === option.mode && styles.enqueueOptionActive,
-              ]}
-              onPress={() => {
-                setEnqueueMode(option.mode);
-                setShowEnqueueMenu(false);
-              }}
+              style={styles.enqueueBtn}
+              onPress={onOpen}
               accessibilityRole="button"
+              accessibilityLabel="Change enqueue mode"
             >
               <Icon
-                name={option.icon}
-                size={16}
-                color={
-                  enqueueMode === option.mode ? theme.onPrimaryContainer : theme.onSurfaceVariant
-                }
+                name={ENQUEUE_OPTIONS.find(o => o.value === enqueueMode)?.icon ?? 'play-circle-outline'}
+                size={20}
+                color={theme.primary}
               />
-              <Text
-                style={[
-                  styles.enqueueOptionText,
-                  enqueueMode === option.mode && styles.enqueueOptionTextActive,
-                ]}
-              >
-                {option.label}
-              </Text>
             </Pressable>
-          ))}
-        </View>
-      )}
+          )}
+        />
+      </View>
 
       {/* Provider chips — only shown when multiple search entries are configured */}
       {hasMultipleProviders && (
@@ -361,32 +333,6 @@ const useStyles = createUseStyles(theme => ({
   },
   enqueueBtn: {
     padding: 4,
-  },
-  enqueueMenu: {
-    marginHorizontal: 16,
-    backgroundColor: theme.surfaceContainerHigh,
-    borderRadius: 8,
-    padding: 4,
-    gap: 2,
-  },
-  enqueueOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
-  },
-  enqueueOptionActive: {
-    backgroundColor: theme.primaryContainer,
-  },
-  enqueueOptionText: {
-    fontSize: 13,
-    color: theme.onSurfaceVariant,
-  },
-  enqueueOptionTextActive: {
-    color: theme.onPrimaryContainer,
-    fontWeight: '600',
   },
   providerRow: {
     paddingHorizontal: 16,

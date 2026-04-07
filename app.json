@@ -39,7 +39,8 @@
     "plugins": [
       "expo-router",
       "./plugins/withAndroidNetworkSecurityConfig",
-      "expo-secure-store"
+      "expo-secure-store",
+      "react-native-reanimated"
     ]
   }
 }
