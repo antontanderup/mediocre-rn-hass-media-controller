@@ -7,6 +7,8 @@ export interface MediaPlayerControls {
   nextTrack: () => void;
   previousTrack: () => void;
   setVolume: (level: number) => void;
+  setShuffle: (shuffle: boolean) => void;
+  setRepeat: (repeat: 'off' | 'one' | 'all') => void;
 }
 
 export const useMediaPlayerControls = (entityId: string): MediaPlayerControls => {
@@ -29,6 +31,14 @@ export const useMediaPlayerControls = (entityId: string): MediaPlayerControls =>
     (level: number) => call('volume_set', { volume_level: level }),
     [call],
   );
+  const setShuffle = useCallback(
+    (shuffle: boolean) => call('shuffle_set', { shuffle }),
+    [call],
+  );
+  const setRepeat = useCallback(
+    (repeat: 'off' | 'one' | 'all') => call('repeat_set', { repeat }),
+    [call],
+  );
 
-  return { play, pause, nextTrack, previousTrack, setVolume };
+  return { play, pause, nextTrack, previousTrack, setVolume, setShuffle, setRepeat };
 };

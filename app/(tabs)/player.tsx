@@ -47,6 +47,12 @@ export default function PlayerTab() {
       case 'previous':
         controls.previousTrack();
         break;
+      case 'shuffle':
+        controls.setShuffle(cmd.shuffle);
+        break;
+      case 'repeat':
+        controls.setRepeat(cmd.repeat);
+        break;
     }
   };
 
