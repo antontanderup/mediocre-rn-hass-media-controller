@@ -20,7 +20,8 @@
         "NSAppTransportSecurity": {
           "NSAllowsLocalNetworking": true
         }
-      }
+      },
+      "bundleIdentifier": "com.anonymous.mediocrernhassmediacontroller"
     },
     "android": {
       "adaptiveIcon": {
@@ -39,8 +40,7 @@
     "plugins": [
       "expo-router",
       "./plugins/withAndroidNetworkSecurityConfig",
-      "expo-secure-store",
-      "react-native-reanimated"
+      "expo-secure-store"
     ]
   }
 }
