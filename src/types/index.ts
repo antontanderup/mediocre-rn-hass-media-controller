@@ -10,7 +10,7 @@ export type {
   SqueezeboxServerStatusResponse,
 } from './lyrionCli';
 
-export type { AppConfig, MediaPlayerConfig, AppOptions, SearchProviderConfig } from './config';
+export type { AppConfig, MediaPlayerConfig, AppOptions, SearchEntry, MediaBrowserEntry } from './config';
 
 export type {
   HaMediaItem,

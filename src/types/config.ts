@@ -1,10 +1,13 @@
-/**
- * Configures a single HA search provider for a media player.
- * When omitted the player's own entityId is used as the sole provider.
- */
-export type SearchProviderConfig = {
+/** A search entry — an entity whose media can be searched. */
+export type SearchEntry = {
   entity_id: string;
-  name?: string;
+  name?: string | null;
+};
+
+/** A media browser entry — an entity whose media library can be browsed. */
+export type MediaBrowserEntry = {
+  entity_id: string;
+  name?: string | null;
 };
 
 export type MediaPlayerConfig = {
@@ -15,8 +18,10 @@ export type MediaPlayerConfig = {
   maEntityId?: string | null;
   maFavoriteButtonEntityId?: string | null;
   lmsEntityId?: string | null;
-  /** Additional HA search providers (e.g. a separate search entity). MA is added automatically when maEntityId is set. */
-  search?: SearchProviderConfig[];
+  /** HA search entries. When empty/omitted the player's own entityId is used. MA is added automatically when maEntityId is set. */
+  searchEntries?: SearchEntry[];
+  /** Media browser entries. When empty/omitted the player's own entityId is used. */
+  mediaBrowserEntries?: MediaBrowserEntry[];
 };
 
 export type AppOptions = {

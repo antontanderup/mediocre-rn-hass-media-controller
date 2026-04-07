@@ -84,7 +84,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         accessibilityLabel="Previous track"
         accessibilityRole="button"
       >
-        <Icon name="skip-back-line" size={24} color={theme.primary} />
+        <Icon name="skip-previous" size={24} color={theme.primary} />
       </Pressable>
 
       <Pressable
@@ -94,7 +94,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         accessibilityRole="button"
       >
         <Icon
-          name={isPlaying ? 'pause-line' : 'play-line'}
+          name={isPlaying ? 'pause' : 'play-arrow'}
           size={28}
           color={theme.onPrimary}
         />
@@ -107,7 +107,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         accessibilityLabel="Next track"
         accessibilityRole="button"
       >
-        <Icon name="skip-forward-line" size={24} color={theme.primary} />
+        <Icon name="skip-next" size={24} color={theme.primary} />
       </Pressable>
 
       {hasRepeat && (

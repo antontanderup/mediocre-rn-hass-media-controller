@@ -99,7 +99,7 @@ export default function MediaPlayersScreen() {
                   accessibilityLabel="Move up"
                   accessibilityRole="button"
                 >
-                  <Icon name="arrow-up-s-line" size={18} color={theme.onSurfaceVariant} />
+                  <Icon name="keyboard-arrow-up" size={18} color={theme.onSurfaceVariant} />
                 </Pressable>
                 <Pressable
                   onPress={() => handleMoveDown(index)}
@@ -111,7 +111,7 @@ export default function MediaPlayersScreen() {
                   accessibilityLabel="Move down"
                   accessibilityRole="button"
                 >
-                  <Icon name="arrow-down-s-line" size={18} color={theme.onSurfaceVariant} />
+                  <Icon name="keyboard-arrow-down" size={18} color={theme.onSurfaceVariant} />
                 </Pressable>
               </View>
 
@@ -130,7 +130,7 @@ export default function MediaPlayersScreen() {
                 accessibilityLabel="Edit player"
                 accessibilityRole="button"
               >
-                <Icon name="edit-line" size={18} color={theme.onSurfaceVariant} />
+                <Icon name="edit" size={18} color={theme.onSurfaceVariant} />
               </Pressable>
 
               <Pressable
@@ -139,7 +139,7 @@ export default function MediaPlayersScreen() {
                 accessibilityLabel="Delete player"
                 accessibilityRole="button"
               >
-                <Icon name="delete-bin-line" size={18} color={theme.error} />
+                <Icon name="delete" size={18} color={theme.error} />
               </Pressable>
             </View>
           )}
@@ -160,7 +160,7 @@ export default function MediaPlayersScreen() {
               onPress={() => setShowPicker(true)}
               accessibilityRole="button"
             >
-              <Icon name="add-line" size={18} color={theme.onPrimary} />
+              <Icon name="add" size={18} color={theme.onPrimary} />
               <Text style={styles.addButtonText}>Add Player</Text>
             </Pressable>
             {availableToAdd.length > 1 && (
@@ -189,7 +189,7 @@ export default function MediaPlayersScreen() {
               accessibilityLabel="Close"
               accessibilityRole="button"
             >
-              <Icon name="close-line" size={24} color={theme.onSurface} />
+              <Icon name="close" size={24} color={theme.onSurface} />
             </Pressable>
           </View>
           <ScrollView contentContainerStyle={styles.pickerList}>

@@ -1,11 +1,11 @@
 import type { HaFilterConfig, MaFilterConfig } from '@/types';
 
 export const HA_FILTER_DEFAULTS: HaFilterConfig[] = [
-  { type: 'all', name: 'All', icon: 'infinity-line' },
-  { type: 'artists', name: 'Artists', icon: 'user-3-line' },
-  { type: 'albums', name: 'Albums', icon: 'album-line' },
-  { type: 'tracks', name: 'Tracks', icon: 'music-2-line' },
-  { type: 'playlists', name: 'Playlists', icon: 'play-list-2-line' },
+  { type: 'all', name: 'All', icon: 'all-inclusive' },
+  { type: 'artists', name: 'Artists', icon: 'person' },
+  { type: 'albums', name: 'Albums', icon: 'album' },
+  { type: 'tracks', name: 'Tracks', icon: 'music-note' },
+  { type: 'playlists', name: 'Playlists', icon: 'playlist-play' },
 ];
 
 export const MA_FILTER_DEFAULTS: MaFilterConfig[] = [

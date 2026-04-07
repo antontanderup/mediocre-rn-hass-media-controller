@@ -1,5 +1,8 @@
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Stack } from 'expo-router';
 import React from 'react';
+import { StyleSheet } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HassProvider, ThemeProvider, useThemeContext } from '@/context';
 
 function ThemedStack(): React.JSX.Element {
@@ -19,10 +22,18 @@ function ThemedStack(): React.JSX.Element {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <HassProvider>
-        <ThemedStack />
-      </HassProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={styles.root}>
+      <ThemeProvider>
+        <HassProvider>
+          <BottomSheetModalProvider>
+            <ThemedStack />
+          </BottomSheetModalProvider>
+        </HassProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});

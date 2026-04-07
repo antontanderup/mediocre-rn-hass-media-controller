@@ -9,4 +9,6 @@ export { getIsMassPlayer } from './getIsMassPlayer';
 export { getIsLmsPlayer } from './getIsLmsPlayer';
 export { getHasMassFeatures } from './getHasMassFeatures';
 export { resolveHassUrl } from './resolveHassUrl';
+export { selectActiveMediaPlayer } from './selectActiveMediaPlayer';
 export { HA_FILTER_DEFAULTS, MA_FILTER_DEFAULTS } from './searchFilters';
+export { iconForMediaClass, resolveArtworkUrl } from './mediaHelpers';

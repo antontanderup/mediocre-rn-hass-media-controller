@@ -3,12 +3,14 @@ import React from 'react';
 import { Pressable } from 'react-native';
 import { Icon } from '@/components';
 import { useThemeContext } from '@/context';
-import { useTheme } from '@/hooks';
+import { useAutoSelectPlayer, useTheme } from '@/hooks';
 
 function ThemedTabs(): React.JSX.Element {
   const { theme } = useThemeContext();
   const colors = useTheme();
   const router = useRouter();
+
+  useAutoSelectPlayer();
 
   return (
     <Tabs
@@ -25,7 +27,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Players',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="music-line" size={size} color={color} />
+            <Icon name="music-note" size={size} color={color} />
           ),
           headerRight: () => (
             <Pressable
@@ -34,7 +36,7 @@ function ThemedTabs(): React.JSX.Element {
               accessibilityLabel="Open settings"
               accessibilityRole="button"
             >
-              <Icon name="settings-4-line" size={22} color={colors.onSurfaceVariant} />
+              <Icon name="settings" size={22} color={colors.onSurfaceVariant} />
             </Pressable>
           ),
         }}
@@ -44,7 +46,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Now Playing',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="play-circle-line" size={size} color={color} />
+            <Icon name="play-circle-outline" size={size} color={color} />
           ),
           headerShown: false,
         }}
@@ -65,7 +67,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Queue',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="play-list-2-line" size={size} color={color} />
+            <Icon name="playlist-play" size={size} color={color} />
           ),
         }}
       />
@@ -85,7 +87,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Search',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="search-line" size={size} color={color} />
+            <Icon name="search" size={size} color={color} />
           ),
         }}
       />
@@ -105,7 +107,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Browse',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="folder-music-line" size={size} color={color} />
+            <Icon name="library-music" size={size} color={color} />
           ),
         }}
       />
@@ -126,7 +128,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Grouping',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="speaker-2-line" size={size} color={color} />
+            <Icon name="speaker-group" size={size} color={color} />
           ),
         }}
       />
@@ -146,7 +148,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Actions',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="apps-2-line" size={size} color={color} />
+            <Icon name="apps" size={size} color={color} />
           ),
         }}
       />

@@ -1,9 +1,8 @@
-import { useLocalSearchParams } from 'expo-router';
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
-import { useMediaPlayerControls, useTheme } from '@/hooks';
+import { useMediaPlayerControls, useSelectedPlayer, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
 import { createUseStyles, resolveHassUrl } from '@/utils';
 
@@ -24,14 +23,12 @@ const useEmptyStyles = createUseStyles(theme => ({
 }));
 
 export default function PlayerTab() {
-  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
+  const { entityId, player } = useSelectedPlayer();
   const theme = useTheme();
-  const { players, hassConfig } = useHassContext();
+  const { hassConfig } = useHassContext();
   const controls = useMediaPlayerControls(entityId ?? '');
   const emptyStyles = useEmptyStyles();
   const insets = useSafeAreaInsets();
-
-  const player = players.find(p => p.entity_id === entityId);
 
   const handleCommand = (cmd: PlaybackCommand) => {
     switch (cmd.type) {
@@ -96,7 +93,7 @@ export default function PlayerTab() {
           />
         ) : (
           <View style={[styles.artworkPlaceholder, { backgroundColor: theme.surfaceContainerHigh }]}>
-            <Icon name="music-line" size={80} color={theme.onSurfaceVariant} />
+            <Icon name="music-note" size={80} color={theme.onSurfaceVariant} />
           </View>
         )}
       </View>

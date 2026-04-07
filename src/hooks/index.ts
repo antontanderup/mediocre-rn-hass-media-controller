@@ -15,6 +15,11 @@ export type { MediaPlayerControls } from './useMediaPlayerControls';
 export { useAppConfig } from './useAppConfig';
 export type { AppConfigState } from './useAppConfig';
 
+export { useAutoSelectPlayer } from './useAutoSelectPlayer';
+
+export { useSelectedPlayer } from './useSelectedPlayer';
+export type { SelectedPlayerState } from './useSelectedPlayer';
+
 export { usePingHass } from './usePingHass';
 
 export { useGrouping } from './useGrouping';
@@ -34,3 +39,6 @@ export { useMaSearch } from './useMaSearch';
 export type { UseMaSearchResult } from './useMaSearch';
 export { useSearchProvider } from './useSearchProvider';
 export type { SearchProvider, UseSearchProviderResult } from './useSearchProvider';
+
+export { useMediaBrowser } from './useMediaBrowser';
+export type { UseMediaBrowserResult } from './useMediaBrowser';

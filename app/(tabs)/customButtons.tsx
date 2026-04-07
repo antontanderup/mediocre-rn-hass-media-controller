@@ -1,6 +1,5 @@
-import { useLocalSearchParams } from 'expo-router';
 import { Text, View } from 'react-native';
-import { useTheme } from '@/hooks';
+import { useSelectedPlayer, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 
 const useStyles = createUseStyles(theme => ({
@@ -20,7 +19,7 @@ const useStyles = createUseStyles(theme => ({
 }));
 
 export default function CustomButtonsTab() {
-  useLocalSearchParams<{ entityId?: string }>();
+  useSelectedPlayer();
   useTheme();
   const styles = useStyles();
 
