@@ -36,7 +36,7 @@ function ThemedTabs(): React.JSX.Element {
               accessibilityLabel="Open settings"
               accessibilityRole="button"
             >
-              <Icon name="settings" size={22} color={colors.onSurfaceVariant} />
+              <Icon name="cog" size={22} color={colors.onSurfaceVariant} />
             </Pressable>
           ),
         }}
@@ -87,7 +87,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Search',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="search" size={size} color={color} />
+            <Icon name="magnify" size={size} color={color} />
           ),
         }}
       />
@@ -107,7 +107,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Browse',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="library-music" size={size} color={color} />
+            <Icon name="music-box-multiple" size={size} color={color} />
           ),
         }}
       />
@@ -128,7 +128,7 @@ function ThemedTabs(): React.JSX.Element {
         options={{
           title: 'Grouping',
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="speaker-group" size={size} color={color} />
+            <Icon name="speaker-multiple" size={size} color={color} />
           ),
         }}
       />

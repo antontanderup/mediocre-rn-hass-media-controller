@@ -26,7 +26,7 @@
     "@material/material-color-utilities": "^0.4.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/slider": "5.0.1",
-    "@react-native-vector-icons/material-icons": "^13.0.0",
+    "@react-native-vector-icons/material-design-icons": "^13.0.0",
     "@tanstack/react-form": "^1.28.6",
     "arktype": "^2.2.0",
     "expo": "~54.0.33",

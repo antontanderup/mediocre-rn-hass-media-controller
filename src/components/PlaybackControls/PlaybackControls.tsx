@@ -70,7 +70,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
           accessibilityRole="button"
         >
           <Icon
-            name="shuffle-line"
+            name={shuffle ? 'shuffle-variant' : 'shuffle-disabled'}
             size={20}
             color={shuffle ? theme.primary : theme.onSurfaceVariant}
           />
@@ -94,7 +94,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         accessibilityRole="button"
       >
         <Icon
-          name={isPlaying ? 'pause' : 'play-arrow'}
+          name={isPlaying ? 'pause' : 'play'}
           size={28}
           color={theme.onPrimary}
         />
@@ -118,7 +118,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
           accessibilityRole="button"
         >
           <Icon
-            name={repeat === 'one' ? 'repeat-one-line' : 'repeat-2-line'}
+            name={repeat === 'one' ? 'repeat-once'  : repeat === 'all' ? "repeat" : 'repeat-off'}
             size={20}
             color={repeat !== 'off' ? theme.primary : theme.onSurfaceVariant}
           />

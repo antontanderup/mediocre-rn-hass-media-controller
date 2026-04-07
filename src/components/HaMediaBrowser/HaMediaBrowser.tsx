@@ -133,7 +133,7 @@ export const HaMediaBrowser = ({
       {history.length > 0 && (
         <View style={styles.navBar}>
           <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back">
-            <Icon name="arrow-back" size={20} color={theme.onSurface} />
+            <Icon name="arrow-left" size={20} color={theme.onSurface} />
           </Pressable>
           <Pressable onPress={goToRoot} style={styles.breadcrumbItem}>
             <Icon name="home" size={16} color={theme.onSurfaceVariant} />
@@ -160,7 +160,7 @@ export const HaMediaBrowser = ({
       {/* Filter input (only when browsing inside a folder with many items) */}
       {history.length > 0 && items.length > 6 && (
         <View style={styles.filterContainer}>
-          <Icon name="search" size={16} color={theme.onSurfaceVariant} />
+          <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
           <TextInput
             style={styles.filterInput}
             placeholder="Filter items..."
