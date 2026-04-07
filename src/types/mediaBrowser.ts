@@ -1,5 +1,7 @@
 // ─── Shared browse types ──────────────────────────────────────────────────────
 
+import { IconName } from "@/components";
+
 /** Raw item shape returned by media_player.browse_media and search_media */
 export type HaMediaItem = {
   media_class: string;
@@ -39,7 +41,7 @@ export type HaEnqueueMode = 'play' | 'replace' | 'next' | 'add';
 export type HaFilterConfig = {
   type: HaFilterType;
   name: string;
-  icon?: string;
+  icon?: IconName;
 };
 
 // ─── MA Search ───────────────────────────────────────────────────────────────

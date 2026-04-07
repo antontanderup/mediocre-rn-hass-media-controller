@@ -114,7 +114,6 @@ export const HaSearch = ({
         renderItem={({ item }) => (
           <MediaTrackItem
             title={item.title}
-            subtitle={item.media_class}
             artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
             fallbackIcon={iconForMediaClass(item.media_class)}
             onPlay={() => haSearch.playItem(item, activeEntityId, enqueueMode)}
@@ -252,7 +251,7 @@ export const HaSearch = ({
             >
               {f.icon && (
                 <Icon
-                  name={f.icon as IconName}
+                  name={f.icon}
                   size={14}
                   color={isActive ? theme.onSecondaryContainer : theme.onSurfaceVariant}
                 />
