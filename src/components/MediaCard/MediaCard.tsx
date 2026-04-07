@@ -111,7 +111,7 @@ export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaC
         <Image source={{ uri: resolveHassUrl(attributes.entity_picture, hassConfig) }} style={styles.artwork as ImageStyle} />
       ) : (
         <View style={styles.artworkPlaceholder}>
-          <Icon name="music-line" size={28} color={theme.onSurfaceVariant} />
+          <Icon name="music-note" size={28} color={theme.onSurfaceVariant} />
         </View>
       )}
 
@@ -136,7 +136,7 @@ export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaC
         accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
         accessibilityRole="button"
       >
-        <Icon name={isPlaying ? 'pause-line' : 'play-line'} size={18} color={theme.onPrimary} />
+        <Icon name={isPlaying ? 'pause' : 'play-arrow'} size={18} color={theme.onPrimary} />
       </Pressable>
     </Pressable>
   );

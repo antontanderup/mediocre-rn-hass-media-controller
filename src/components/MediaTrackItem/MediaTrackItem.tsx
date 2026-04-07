@@ -11,7 +11,7 @@ export const MediaTrackItem = ({
   title,
   subtitle,
   artworkUrl,
-  fallbackIcon = 'music-2-line',
+  fallbackIcon = 'music-note',
   onPress,
   onPlay,
   showChevron,
@@ -53,11 +53,11 @@ export const MediaTrackItem = ({
           accessibilityRole="button"
           accessibilityLabel={`Play ${title}`}
         >
-          <Icon name="play-circle-line" size={20} color={theme.primary} />
+          <Icon name="play-circle-outline" size={20} color={theme.primary} />
         </Pressable>
       )}
       {showChevron && (
-        <Icon name="arrow-right-s-line" size={20} color={theme.onSurfaceVariant} />
+        <Icon name="chevron-right" size={20} color={theme.onSurfaceVariant} />
       )}
     </Pressable>
   );

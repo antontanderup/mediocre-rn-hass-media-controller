@@ -1,6 +1,6 @@
-import type { IconName } from 'react-native-remix-icon';
+import type { MaterialIconsIconName } from '@react-native-vector-icons/material-icons';
 
-export type { IconName };
+export type IconName = MaterialIconsIconName;
 
 export interface IconProps {
   name: IconName;

@@ -133,10 +133,10 @@ export const HaMediaBrowser = ({
       {history.length > 0 && (
         <View style={styles.navBar}>
           <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back">
-            <Icon name="arrow-left-line" size={20} color={theme.onSurface} />
+            <Icon name="arrow-back" size={20} color={theme.onSurface} />
           </Pressable>
           <Pressable onPress={goToRoot} style={styles.breadcrumbItem}>
-            <Icon name="home-4-line" size={16} color={theme.onSurfaceVariant} />
+            <Icon name="home" size={16} color={theme.onSurfaceVariant} />
           </Pressable>
           {history.map((entry, idx) => (
             <React.Fragment key={`bc-${entry.mediaContentId}`}>
@@ -160,7 +160,7 @@ export const HaMediaBrowser = ({
       {/* Filter input (only when browsing inside a folder with many items) */}
       {history.length > 0 && items.length > 6 && (
         <View style={styles.filterContainer}>
-          <Icon name="search-line" size={16} color={theme.onSurfaceVariant} />
+          <Icon name="search" size={16} color={theme.onSurfaceVariant} />
           <TextInput
             style={styles.filterInput}
             placeholder="Filter items..."
@@ -172,7 +172,7 @@ export const HaMediaBrowser = ({
           />
           {filter.length > 0 && (
             <Pressable onPress={() => setFilter('')}>
-              <Icon name="close-line" size={16} color={theme.onSurfaceVariant} />
+              <Icon name="close" size={16} color={theme.onSurfaceVariant} />
             </Pressable>
           )}
         </View>

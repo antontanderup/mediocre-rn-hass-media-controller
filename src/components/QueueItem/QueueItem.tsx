@@ -93,7 +93,7 @@ export const QueueItem = ({
             accessibilityIgnoresInvertColors
           />
         ) : (
-          <Icon name="music-2-line" size={20} color={theme.onSurfaceVariant} />
+          <Icon name="music-note" size={20} color={theme.onSurfaceVariant} />
         )}
       </View>
 
@@ -122,7 +122,7 @@ export const QueueItem = ({
             accessibilityRole="button"
             accessibilityLabel="Move up"
           >
-            <Icon name="arrow-up-s-line" size={20} color={iconColor} />
+            <Icon name="keyboard-arrow-up" size={20} color={iconColor} />
           </Pressable>
         )}
         {onMoveDown && !item.isLast && (
@@ -132,7 +132,7 @@ export const QueueItem = ({
             accessibilityRole="button"
             accessibilityLabel="Move down"
           >
-            <Icon name="arrow-down-s-line" size={20} color={iconColor} />
+            <Icon name="keyboard-arrow-down" size={20} color={iconColor} />
           </Pressable>
         )}
         <Pressable
@@ -141,7 +141,7 @@ export const QueueItem = ({
           accessibilityRole="button"
           accessibilityLabel="Remove from queue"
         >
-          <Icon name="delete-bin-2-line" size={20} color={iconColor} />
+          <Icon name="delete" size={20} color={iconColor} />
         </Pressable>
       </View>
     </Pressable>

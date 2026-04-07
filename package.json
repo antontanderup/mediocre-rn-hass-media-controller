@@ -25,6 +25,7 @@
     "@material/material-color-utilities": "^0.4.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/slider": "5.0.1",
+    "@react-native-vector-icons/material-icons": "^13.0.0",
     "@tanstack/react-form": "^1.28.6",
     "arktype": "^2.2.0",
     "expo": "~54.0.33",
@@ -36,7 +37,6 @@
     "home-assistant-js-websocket": "^9.6.0",
     "react": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-remix-icon": "^4.7.0",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
     "react-native-svg": "15.12.1"

@@ -8,7 +8,7 @@ import type { MediaGridItemProps } from './MediaGridItem.types';
 export const MediaGridItem = ({
   title,
   artworkUrl,
-  fallbackIcon = 'folder-line',
+  fallbackIcon = 'folder',
   onPress,
 }: MediaGridItemProps): React.JSX.Element => {
   const styles = useStyles();

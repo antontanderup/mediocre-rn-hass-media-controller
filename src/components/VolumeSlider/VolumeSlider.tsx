@@ -40,7 +40,7 @@ export const VolumeSlider = ({ volume, onVolumeChange }: VolumeSliderProps): Rea
 
   return (
     <View style={styles.container}>
-      <Icon name="volume-down-line" size={20} color={theme.onSurfaceVariant} />
+      <Icon name="volume-down" size={20} color={theme.onSurfaceVariant} />
       <Slider
         style={styles.slider}
         minimumValue={0}
@@ -52,7 +52,7 @@ export const VolumeSlider = ({ volume, onVolumeChange }: VolumeSliderProps): Rea
         maximumTrackTintColor={theme.surfaceVariant}
         accessibilityLabel="Volume"
       />
-      <Icon name="volume-up-line" size={20} color={theme.onSurfaceVariant} />
+      <Icon name="volume-up" size={20} color={theme.onSurfaceVariant} />
     </View>
   );
 };

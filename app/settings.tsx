@@ -344,7 +344,7 @@ export default function SettingsScreen() {
           accessibilityRole="button"
         >
           <Text style={styles.navRowText}>Configure media players</Text>
-          <Icon name="arrow-right-s-line" size={20} color={theme.onSurfaceVariant} />
+          <Icon name="chevron-right" size={20} color={theme.onSurfaceVariant} />
         </Pressable>
 
         <form.Subscribe selector={state => state.isSubmitting}>

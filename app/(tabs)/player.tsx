@@ -87,7 +87,7 @@ export default function PlayerTab() {
           />
         ) : (
           <View style={[styles.artworkPlaceholder, { backgroundColor: theme.surfaceContainerHigh }]}>
-            <Icon name="music-line" size={80} color={theme.onSurfaceVariant} />
+            <Icon name="music-note" size={80} color={theme.onSurfaceVariant} />
           </View>
         )}
       </View>

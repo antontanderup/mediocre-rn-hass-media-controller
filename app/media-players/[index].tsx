@@ -209,7 +209,7 @@ export default function PlayerConfigScreen() {
               accessibilityRole="button"
               accessibilityLabel="Remove entry"
             >
-              <Icon name="delete-bin-line" size={18} color={theme.error} />
+              <Icon name="delete" size={18} color={theme.error} />
             </Pressable>
           </View>
         ))}
@@ -218,7 +218,7 @@ export default function PlayerConfigScreen() {
           onPress={() => setSearchEntries([...searchEntries, { entity_id: '' }])}
           accessibilityRole="button"
         >
-          <Icon name="add-line" size={18} color={theme.primary} />
+          <Icon name="add" size={18} color={theme.primary} />
           <Text style={styles.addEntryText}>Add search entry</Text>
         </Pressable>
 
@@ -261,7 +261,7 @@ export default function PlayerConfigScreen() {
               accessibilityRole="button"
               accessibilityLabel="Remove entry"
             >
-              <Icon name="delete-bin-line" size={18} color={theme.error} />
+              <Icon name="delete" size={18} color={theme.error} />
             </Pressable>
           </View>
         ))}
@@ -270,7 +270,7 @@ export default function PlayerConfigScreen() {
           onPress={() => setBrowserEntries([...browserEntries, { entity_id: '' }])}
           accessibilityRole="button"
         >
-          <Icon name="add-line" size={18} color={theme.primary} />
+          <Icon name="add" size={18} color={theme.primary} />
           <Text style={styles.addEntryText}>Add browser entry</Text>
         </Pressable>
 

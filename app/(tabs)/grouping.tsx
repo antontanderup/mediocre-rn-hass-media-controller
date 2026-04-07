@@ -101,7 +101,7 @@ export default function GroupingTab() {
             >
               <Text style={[styles.syncText, { color: theme.onSurfaceVariant }]}>Link volume</Text>
               <Icon
-                name={syncMainSpeakerVolume ? 'checkbox-circle-line' : 'checkbox-blank-circle-line'}
+                name={syncMainSpeakerVolume ? 'check-circle' : 'radio-button-unchecked'}
                 size={18}
                 color={syncMainSpeakerVolume ? theme.primary : theme.onSurfaceVariant}
               />
@@ -130,7 +130,7 @@ export default function GroupingTab() {
                       style={styles.iconBtn}
                       accessibilityLabel="Turn on"
                     >
-                      <Icon name="shut-down-line" size={18} color={theme.onSurfaceVariant} />
+                      <Icon name="power-settings-new" size={18} color={theme.onSurfaceVariant} />
                     </Pressable>
                   ) : (
                     <Pressable
@@ -139,7 +139,7 @@ export default function GroupingTab() {
                       accessibilityLabel={speaker.isMuted ? 'Unmute' : 'Mute'}
                     >
                       <Icon
-                        name={speaker.isMuted ? 'volume-mute-line' : 'volume-up-line'}
+                        name={speaker.isMuted ? 'volume-mute' : 'volume-up'}
                         size={18}
                         color={theme.onSurfaceVariant}
                       />
@@ -161,7 +161,7 @@ export default function GroupingTab() {
                       <ActivityIndicator size="small" color={theme.primary} />
                     ) : (
                       <Icon
-                        name="close-line"
+                        name="close"
                         size={18}
                         color={speaker.isMainSpeaker ? theme.outlineVariant : theme.onSurfaceVariant}
                       />
@@ -194,7 +194,7 @@ export default function GroupingTab() {
                   {speaker.isLoading ? (
                     <ActivityIndicator size="small" color={theme.primary} />
                   ) : (
-                    <Icon name="add-line" size={14} color={theme.primary} />
+                    <Icon name="add" size={14} color={theme.primary} />
                   )}
                   <Text style={[styles.chipText, { color: theme.onSurface }]}>{speaker.name}</Text>
                 </Pressable>
@@ -235,7 +235,7 @@ export default function GroupingTab() {
                     accessibilityState={{ selected: isActive }}
                   >
                     <Icon
-                      name={isActive ? 'radio-button-line' : 'circle-line'}
+                      name={isActive ? 'radio-button-checked' : 'radio-button-unchecked'}
                       size={18}
                       color={isActive ? theme.primary : theme.onSurfaceVariant}
                     />

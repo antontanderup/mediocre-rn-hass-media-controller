@@ -20,10 +20,10 @@ import type { HaSearchProps } from './HaSearch.types';
 const DEBOUNCE_MS = 600;
 
 const ENQUEUE_OPTIONS: { mode: HaEnqueueMode; label: string; icon: IconName }[] = [
-  { mode: 'play', label: 'Play', icon: 'play-circle-line' },
-  { mode: 'replace', label: 'Replace Queue', icon: 'play-list-2-line' },
-  { mode: 'next', label: 'Add Next', icon: 'skip-forward-line' },
-  { mode: 'add', label: 'Add to Queue', icon: 'add-line' },
+  { mode: 'play', label: 'Play', icon: 'play-circle-outline' },
+  { mode: 'replace', label: 'Replace Queue', icon: 'playlist-remove' },
+  { mode: 'next', label: 'Add Next', icon: 'playlist-play' },
+  { mode: 'add', label: 'Add to Queue', icon: 'playlist-add' },
 ];
 
 export const HaSearch = ({
@@ -69,7 +69,7 @@ export const HaSearch = ({
 
   // Filter & enqueue state
   const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [enqueueMode, setEnqueueMode] = useState<HaEnqueueMode>('play');
+  const [enqueueMode, setEnqueueMode] = useState<HaEnqueueMode>('replace');
   const [showEnqueueMenu, setShowEnqueueMenu] = useState(false);
 
   const haSearch = useHaSearch(debouncedQuery, activeFilter, activeEntityId, showFavorites, filterConfig);
@@ -129,7 +129,7 @@ export const HaSearch = ({
   const renderHeader = (): React.JSX.Element => (
     <View style={styles.header}>
       <View style={styles.searchRow}>
-        <Icon name="search-line" size={18} color={theme.onSurfaceVariant} />
+        <Icon name="search" size={18} color={theme.onSurfaceVariant} />
         <TextInput
           style={styles.searchInput}
           value={rawQuery}
@@ -148,7 +148,7 @@ export const HaSearch = ({
             accessibilityRole="button"
             accessibilityLabel="Clear search"
           >
-            <Icon name="close-line" size={16} color={theme.onSurfaceVariant} />
+            <Icon name="close" size={16} color={theme.onSurfaceVariant} />
           </Pressable>
         )}
         <Pressable
@@ -158,7 +158,7 @@ export const HaSearch = ({
           accessibilityLabel="Change enqueue mode"
         >
           <Icon
-            name={ENQUEUE_OPTIONS.find(o => o.mode === enqueueMode)?.icon ?? 'play-circle-line'}
+            name={ENQUEUE_OPTIONS.find(o => o.mode === enqueueMode)?.icon ?? 'play-circle-outline'}
             size={20}
             color={theme.primary}
           />

@@ -4,27 +4,27 @@ export function iconForMediaClass(mediaClass: string | undefined): IconName {
   switch (mediaClass) {
     case 'track':
     case 'music':
-      return 'music-2-line';
+      return 'music-note';
     case 'album':
-      return 'album-line';
+      return 'album';
     case 'artist':
-      return 'user-3-line';
+      return 'person';
     case 'playlist':
-      return 'play-list-2-line';
+      return 'playlist-play';
     case 'genre':
-      return 'folder-music-line';
+      return 'library-music';
     case 'podcast':
-      return 'mic-line';
+      return 'mic';
     case 'app':
-      return 'apps-line';
+      return 'apps';
     case 'directory':
-      return 'folder-line';
+      return 'folder';
     case 'radio':
-      return 'radio-line';
+      return 'radio';
     case 'audiobook':
-      return 'book-open-line';
+      return 'menu-book';
     default:
-      return 'folder-line';
+      return 'folder';
   }
 }
 
