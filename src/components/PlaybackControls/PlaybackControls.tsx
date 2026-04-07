@@ -7,19 +7,10 @@ import type { PlaybackControlsProps } from './PlaybackControls.types';
 
 const useStyles = createUseStyles(theme => ({
   container: {
-    gap: 12,
-  },
-  mainRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 24,
-  },
-  secondaryRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 32,
+    gap: 16,
   },
   button: {
     width: 48,
@@ -69,76 +60,69 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
     onCommand({ type: 'repeat', repeat: next });
   };
 
-  const showSecondaryRow = hasShuffle || hasRepeat;
-
   return (
     <View style={styles.container}>
-      <View style={styles.mainRow}>
+      {hasShuffle && (
         <Pressable
-          style={[styles.button, !hasPrev && styles.buttonDisabled]}
-          onPress={() => onCommand({ type: 'previous' })}
-          disabled={!hasPrev}
-          accessibilityLabel="Previous track"
-          accessibilityRole="button"
-        >
-          <Icon name="skip-back-line" size={24} color={theme.primary} />
-        </Pressable>
-
-        <Pressable
-          style={styles.playPauseButton}
-          onPress={() => onCommand({ type: isPlaying ? 'pause' : 'play' })}
-          accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
+          style={styles.secondaryButton}
+          onPress={handleShufflePress}
+          accessibilityLabel={shuffle ? 'Shuffle on' : 'Shuffle off'}
           accessibilityRole="button"
         >
           <Icon
-            name={isPlaying ? 'pause-line' : 'play-line'}
-            size={28}
-            color={theme.onPrimary}
+            name="shuffle-line"
+            size={20}
+            color={shuffle ? theme.primary : theme.onSurfaceVariant}
           />
         </Pressable>
+      )}
 
+      <Pressable
+        style={[styles.button, !hasPrev && styles.buttonDisabled]}
+        onPress={() => onCommand({ type: 'previous' })}
+        disabled={!hasPrev}
+        accessibilityLabel="Previous track"
+        accessibilityRole="button"
+      >
+        <Icon name="skip-back-line" size={24} color={theme.primary} />
+      </Pressable>
+
+      <Pressable
+        style={styles.playPauseButton}
+        onPress={() => onCommand({ type: isPlaying ? 'pause' : 'play' })}
+        accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
+        accessibilityRole="button"
+      >
+        <Icon
+          name={isPlaying ? 'pause-line' : 'play-line'}
+          size={28}
+          color={theme.onPrimary}
+        />
+      </Pressable>
+
+      <Pressable
+        style={[styles.button, !hasNext && styles.buttonDisabled]}
+        onPress={() => onCommand({ type: 'next' })}
+        disabled={!hasNext}
+        accessibilityLabel="Next track"
+        accessibilityRole="button"
+      >
+        <Icon name="skip-forward-line" size={24} color={theme.primary} />
+      </Pressable>
+
+      {hasRepeat && (
         <Pressable
-          style={[styles.button, !hasNext && styles.buttonDisabled]}
-          onPress={() => onCommand({ type: 'next' })}
-          disabled={!hasNext}
-          accessibilityLabel="Next track"
+          style={styles.secondaryButton}
+          onPress={handleRepeatPress}
+          accessibilityLabel={`Repeat ${repeat}`}
           accessibilityRole="button"
         >
-          <Icon name="skip-forward-line" size={24} color={theme.primary} />
+          <Icon
+            name={repeat === 'one' ? 'repeat-one-line' : 'repeat-2-line'}
+            size={20}
+            color={repeat !== 'off' ? theme.primary : theme.onSurfaceVariant}
+          />
         </Pressable>
-      </View>
-
-      {showSecondaryRow && (
-        <View style={styles.secondaryRow}>
-          {hasShuffle && (
-            <Pressable
-              style={styles.secondaryButton}
-              onPress={handleShufflePress}
-              accessibilityLabel={shuffle ? 'Shuffle on' : 'Shuffle off'}
-              accessibilityRole="button"
-            >
-              <Icon
-                name="shuffle-line"
-                size={20}
-                color={shuffle ? theme.primary : theme.onSurfaceVariant}
-              />
-            </Pressable>
-          )}
-          {hasRepeat && (
-            <Pressable
-              style={styles.secondaryButton}
-              onPress={handleRepeatPress}
-              accessibilityLabel={`Repeat ${repeat}`}
-              accessibilityRole="button"
-            >
-              <Icon
-                name={repeat === 'one' ? 'repeat-one-line' : 'repeat-2-line'}
-                size={20}
-                color={repeat !== 'off' ? theme.primary : theme.onSurfaceVariant}
-              />
-            </Pressable>
-          )}
-        </View>
       )}
     </View>
   );
