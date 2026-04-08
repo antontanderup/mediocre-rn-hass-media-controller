@@ -23,6 +23,10 @@ export const BottomSheetSelect = <T extends string = string>({
     setHasOpened(true);
   }, []);
 
+  const handleDidDismiss = useCallback(() => {
+    setHasOpened(false);
+  }, []);
+
   const handleSelect = useCallback(
     (option: T) => {
       onChange(option);
@@ -41,6 +45,7 @@ export const BottomSheetSelect = <T extends string = string>({
           cornerRadius={16}
           initialDetentIndex={0}
           grabber
+          onDidDismiss={handleDidDismiss}
           backgroundColor={theme.surfaceContainerLow}
         >
           <View style={styles.content}>

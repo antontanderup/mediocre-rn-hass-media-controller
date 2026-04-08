@@ -1,13 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { useTheme, useMediaBrowser } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { Icon } from '@/components/Icon';
@@ -15,50 +7,25 @@ import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
 import { MediaItemSheet } from '@/components/MediaItemSheet';
 import type { MediaItemSheetAction } from '@/components/MediaItemSheet';
-import type { MediaBrowserEntry, MediaBrowserNode } from '@/types';
+import type { MediaBrowserNode } from '@/types';
 import type { HaMediaBrowserProps } from './HaMediaBrowser.types';
 
-// ─── Constants ───────────────────────────────────────────────────────────────
-
 const NUM_COLUMNS = 3;
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function resolveEntries(
-  entityId: string,
-  mediaBrowserEntries?: MediaBrowserEntry[],
-): MediaBrowserEntry[] {
-  if (mediaBrowserEntries && mediaBrowserEntries.length > 0) {
-    return mediaBrowserEntries;
-  }
-  return [{ entity_id: entityId }];
-}
-
-// ─── Component ───────────────────────────────────────────────────────────────
 
 export const HaMediaBrowser = ({
   entityId,
   hassBaseUrl,
-  mediaBrowserEntries,
 }: HaMediaBrowserProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
 
-  const entries = useMemo(
-    () => resolveEntries(entityId, mediaBrowserEntries),
-    [entityId, mediaBrowserEntries],
-  );
-  const hasMultipleEntries = entries.length > 1;
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const activeEntry = entries[selectedIndex] ?? entries[0];
-
   const { items, history, loading, browse, goBack, goToRoot, goToIndex, playItem } =
-    useMediaBrowser(activeEntry.entity_id);
+    useMediaBrowser(entityId);
 
   const [filter, setFilter] = useState('');
 
   // Reset filter when navigating
-  const historyKey = `${activeEntry.entity_id}/${history.map(h => h.mediaContentId).join('/')}`;
+  const historyKey = `${entityId}/${history.map(h => h.mediaContentId).join('/')}`;
   const [prevHistoryKey, setPrevHistoryKey] = useState(historyKey);
   if (historyKey !== prevHistoryKey) {
     setPrevHistoryKey(historyKey);
@@ -124,44 +91,8 @@ export const HaMediaBrowser = ({
 
   const needsSheet = (node: MediaBrowserNode): boolean => node.canPlay;
 
-  const handleSelectEntry = (idx: number) => {
-    if (idx === selectedIndex) return;
-    setSelectedIndex(idx);
-    setFilter('');
-  };
-
-  // ─── Header: entry picker + breadcrumbs + filter ─────────────────────────
-
   const renderHeader = (): React.JSX.Element => (
     <View>
-      {/* Entry selector chips */}
-      {hasMultipleEntries && history.length === 0 && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.entryChipsContainer}
-        >
-          {entries.map((entry, idx) => (
-            <Pressable
-              key={entry.entity_id}
-              style={[styles.entryChip, idx === selectedIndex && styles.entryChipActive]}
-              onPress={() => handleSelectEntry(idx)}
-              accessibilityRole="button"
-            >
-              <Text
-                style={[
-                  styles.entryChipText,
-                  idx === selectedIndex && styles.entryChipTextActive,
-                ]}
-                numberOfLines={1}
-              >
-                {entry.name ?? entry.entity_id}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-      )}
-
       {/* Navigation bar */}
       {history.length > 0 && (
         <View style={styles.navBar}>
@@ -317,31 +248,6 @@ export const HaMediaBrowser = ({
 const useStyles = createUseStyles(theme => ({
   listContent: {
     paddingBottom: 24,
-  },
-  entryChipsContainer: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    gap: 8,
-  },
-  entryChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: theme.surfaceContainerHigh,
-    borderWidth: 1,
-    borderColor: theme.outlineVariant,
-  },
-  entryChipActive: {
-    backgroundColor: theme.primaryContainer,
-    borderColor: theme.primary,
-  },
-  entryChipText: {
-    fontSize: 13,
-    color: theme.onSurfaceVariant,
-  },
-  entryChipTextActive: {
-    color: theme.onPrimaryContainer,
-    fontWeight: '600',
   },
   navBar: {
     flexDirection: 'row',

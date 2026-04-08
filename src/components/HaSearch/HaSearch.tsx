@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useHaSearch, useSearchProvider, useTheme } from '@/hooks';
+import { useHaSearch, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { BottomSheetSelect } from '@/components/BottomSheetSelect';
 import type { BottomSheetSelectOption } from '@/components/BottomSheetSelect';
@@ -35,15 +35,6 @@ export const HaSearch = ({
 }: HaSearchProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
-
-  // Provider selection
-  const { providers, selected: selectedProvider, select: selectProvider } =
-    useSearchProvider(entityId);
-
-  const haProviders = providers.filter(p => p.type === 'ha');
-  const hasMultipleProviders = haProviders.length > 1;
-  const activeEntityId =
-    selectedProvider?.type === 'ha' ? selectedProvider.entityId : entityId;
 
   // Query state with debounce
   const [rawQuery, setRawQuery] = useState('');
@@ -72,7 +63,7 @@ export const HaSearch = ({
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [enqueueMode, setEnqueueMode] = useState<HaEnqueueMode>('replace');
 
-  const haSearch = useHaSearch(debouncedQuery, activeFilter, activeEntityId, showFavorites, filterConfig);
+  const haSearch = useHaSearch(debouncedQuery, activeFilter, entityId, showFavorites, filterConfig);
   const hasQuery = debouncedQuery.trim().length >= 2;
 
   const renderGridHeader = (items: HaMediaItem[]): React.JSX.Element | null => {
@@ -86,7 +77,7 @@ export const HaSearch = ({
               title={item.title}
               artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
               fallbackIcon={iconForMediaClass(item.media_class)}
-              onPress={() => haSearch.playItem(item, activeEntityId, enqueueMode)}
+              onPress={() => haSearch.playItem(item, entityId, enqueueMode)}
             />
           </View>
         ))}
@@ -116,7 +107,7 @@ export const HaSearch = ({
             title={item.title}
             artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
             fallbackIcon={iconForMediaClass(item.media_class)}
-            onPlay={() => haSearch.playItem(item, activeEntityId, enqueueMode)}
+            onPlay={() => haSearch.playItem(item, entityId, enqueueMode)}
           />
         )}
         contentInsetAdjustmentBehavior="automatic"
@@ -171,39 +162,6 @@ export const HaSearch = ({
           )}
         />
       </View>
-
-      {/* Provider chips — only shown when multiple search entries are configured */}
-      {hasMultipleProviders && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.providerRow}
-        >
-          {haProviders.map(p => {
-            const pEntityId = p.type === 'ha' ? p.entityId : '';
-            const isActive = pEntityId === activeEntityId;
-            return (
-              <Pressable
-                key={pEntityId}
-                style={[styles.providerChip, isActive && styles.providerChipSelected]}
-                onPress={() => selectProvider(p)}
-                accessibilityRole="button"
-                accessibilityLabel={`Search using ${p.name}`}
-              >
-                <Text
-                  style={[
-                    styles.providerChipText,
-                    isActive && styles.providerChipTextSelected,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {p.name}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-      )}
 
       {/* Filter chips */}
       <ScrollView
@@ -333,30 +291,6 @@ const useStyles = createUseStyles(theme => ({
   },
   enqueueBtn: {
     padding: 4,
-  },
-  providerRow: {
-    paddingHorizontal: 16,
-    gap: 8,
-  },
-  providerChip: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 16,
-    backgroundColor: theme.surfaceVariant,
-    borderWidth: 1,
-    borderColor: theme.outlineVariant,
-  },
-  providerChipSelected: {
-    backgroundColor: theme.primaryContainer,
-    borderColor: theme.primary,
-  },
-  providerChipText: {
-    fontSize: 13,
-    color: theme.onSurfaceVariant,
-  },
-  providerChipTextSelected: {
-    color: theme.onPrimaryContainer,
-    fontWeight: '600',
   },
   filterRow: {
     paddingHorizontal: 16,

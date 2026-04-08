@@ -25,6 +25,10 @@ export const MediaItemSheet = ({
     setHasOpened(true);
   }, []);
 
+  const handleDidDismiss = useCallback(() => {
+    setHasOpened(false);
+  }, []);
+
   const handleAction = useCallback(
     (onPress: () => void) => {
       sheetRef.current?.dismiss();
@@ -42,6 +46,7 @@ export const MediaItemSheet = ({
         detents={['auto']}
         cornerRadius={16}
         grabber
+        onDidDismiss={handleDidDismiss}
         initialDetentIndex={0}
         backgroundColor={theme.surfaceContainerLow}
       >

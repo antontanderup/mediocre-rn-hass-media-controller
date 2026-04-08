@@ -1,9 +1,5 @@
-import type { MediaBrowserEntry } from '@/types';
-
 export interface HaMediaBrowserProps {
-  /** Fallback entity used when no mediaBrowserEntries are configured. */
+  /** The entity ID of the media browser to use. */
   entityId: string;
   hassBaseUrl: string;
-  /** Configured media browser entries. When provided, the user can switch between them. */
-  mediaBrowserEntries?: MediaBrowserEntry[];
 }
