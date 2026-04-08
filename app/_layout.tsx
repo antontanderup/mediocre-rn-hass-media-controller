@@ -1,4 +1,3 @@
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
@@ -25,9 +24,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.root}>
       <ThemeProvider>
         <HassProvider>
-          <BottomSheetModalProvider>
-            <ThemedStack />
-          </BottomSheetModalProvider>
+          <ThemedStack />
         </HassProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

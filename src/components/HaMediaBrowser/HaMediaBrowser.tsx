@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -13,6 +13,8 @@ import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { Icon } from '@/components/Icon';
 import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
+import { MediaItemSheet } from '@/components/MediaItemSheet';
+import type { MediaItemSheetAction } from '@/components/MediaItemSheet';
 import type { MediaBrowserEntry, MediaBrowserNode } from '@/types';
 import type { HaMediaBrowserProps } from './HaMediaBrowser.types';
 
@@ -91,6 +93,37 @@ export const HaMediaBrowser = ({
     browse(node);
   };
 
+  const buildActions = useCallback(
+    (node: MediaBrowserNode): MediaItemSheetAction[] => {
+      const result: MediaItemSheetAction[] = [];
+      if (node.canPlay) {
+        result.push({ label: 'Play', icon: 'play', onPress: () => playItem(node, 'play') });
+        result.push({
+          label: 'Replace queue',
+          icon: 'playlist-play',
+          onPress: () => playItem(node, 'replace'),
+        });
+        result.push({
+          label: 'Play next',
+          icon: 'playlist-music',
+          onPress: () => playItem(node, 'next'),
+        });
+        result.push({
+          label: 'Add to queue',
+          icon: 'playlist-plus',
+          onPress: () => playItem(node, 'add'),
+        });
+      }
+      if (node.canExpand) {
+        result.push({ label: 'Open', icon: 'folder-open', onPress: () => browse(node) });
+      }
+      return result;
+    },
+    [playItem, browse],
+  );
+
+  const needsSheet = (node: MediaBrowserNode): boolean => node.canPlay;
+
   const handleSelectEntry = (idx: number) => {
     if (idx === selectedIndex) return;
     setSelectedIndex(idx);
@@ -133,7 +166,7 @@ export const HaMediaBrowser = ({
       {history.length > 0 && (
         <View style={styles.navBar}>
           <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back">
-            <Icon name="arrow-back" size={20} color={theme.onSurface} />
+            <Icon name="arrow-left" size={20} color={theme.onSurface} />
           </Pressable>
           <Pressable onPress={goToRoot} style={styles.breadcrumbItem}>
             <Icon name="home" size={16} color={theme.onSurfaceVariant} />
@@ -160,7 +193,7 @@ export const HaMediaBrowser = ({
       {/* Filter input (only when browsing inside a folder with many items) */}
       {history.length > 0 && items.length > 6 && (
         <View style={styles.filterContainer}>
-          <Icon name="search" size={16} color={theme.onSurfaceVariant} />
+          <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
           <TextInput
             style={styles.filterInput}
             placeholder="Filter items..."
@@ -181,16 +214,39 @@ export const HaMediaBrowser = ({
       {/* Grid items rendered as header so tracks list below is flat */}
       {gridItems.length > 0 && (
         <View style={styles.grid}>
-          {gridItems.map(node => (
-            <View key={node.mediaContentId} style={styles.gridCell}>
-              <MediaGridItem
-                title={node.title}
-                artworkUrl={resolveArtworkUrl(node.thumbnail, hassBaseUrl)}
-                fallbackIcon={iconForMediaClass(node.childrenMediaClass ?? node.mediaClass)}
-                onPress={() => (node.canExpand ? handleBrowse(node) : playItem(node))}
-              />
-            </View>
-          ))}
+          {gridItems.map(node => {
+            const artworkUrl = resolveArtworkUrl(node.thumbnail, hassBaseUrl);
+            const fallbackIcon = iconForMediaClass(node.childrenMediaClass ?? node.mediaClass);
+            if (!needsSheet(node)) {
+              return (
+                <View key={node.mediaContentId} style={styles.gridCell}>
+                  <MediaGridItem
+                    title={node.title}
+                    artworkUrl={artworkUrl}
+                    fallbackIcon={fallbackIcon}
+                    onPress={() => handleBrowse(node)}
+                  />
+                </View>
+              );
+            }
+            return (
+              <View key={node.mediaContentId} style={styles.gridCell}>
+                <MediaItemSheet
+                  artworkUrl={artworkUrl}
+                  title={node.title}
+                  actions={buildActions(node)}
+                  renderTrigger={onOpen => (
+                    <MediaGridItem
+                      title={node.title}
+                      artworkUrl={artworkUrl}
+                      fallbackIcon={fallbackIcon}
+                      onPress={onOpen}
+                    />
+                  )}
+                />
+              </View>
+            );
+          })}
         </View>
       )}
     </View>
@@ -221,16 +277,36 @@ export const HaMediaBrowser = ({
       keyExtractor={item => item.mediaContentId}
       ListHeaderComponent={renderHeader()}
       ListEmptyComponent={gridItems.length === 0 ? renderEmpty() : undefined}
-      renderItem={({ item }) => (
-        <MediaTrackItem
-          title={item.title}
-          artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
-          fallbackIcon={iconForMediaClass(item.mediaClass)}
-          onPress={() => (item.canExpand ? handleBrowse(item) : playItem(item))}
-          onPlay={item.canPlay ? () => playItem(item) : undefined}
-          showChevron={item.canExpand}
-        />
-      )}
+      renderItem={({ item }) => {
+        const artworkUrl = resolveArtworkUrl(item.thumbnail, hassBaseUrl);
+        const fallbackIcon = iconForMediaClass(item.mediaClass);
+        if (!needsSheet(item)) {
+          return (
+            <MediaTrackItem
+              title={item.title}
+              artworkUrl={artworkUrl}
+              fallbackIcon={fallbackIcon}
+              onPress={() => handleBrowse(item)}
+              showChevron={item.canExpand}
+            />
+          );
+        }
+        return (
+          <MediaItemSheet
+            artworkUrl={artworkUrl}
+            title={item.title}
+            actions={buildActions(item)}
+            renderTrigger={onOpen => (
+              <MediaTrackItem
+                title={item.title}
+                artworkUrl={artworkUrl}
+                fallbackIcon={fallbackIcon}
+                onPress={onOpen}
+              />
+            )}
+          />
+        );
+      }}
       contentContainerStyle={styles.listContent}
     />
   );

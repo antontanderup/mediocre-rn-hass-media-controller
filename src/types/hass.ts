@@ -76,11 +76,15 @@ export type PlaybackCommand =
   | { type: 'play' }
   | { type: 'pause' }
   | { type: 'next' }
-  | { type: 'previous' };
+  | { type: 'previous' }
+  | { type: 'shuffle'; shuffle: boolean }
+  | { type: 'repeat'; repeat: 'off' | 'one' | 'all' };
 
 // Bitmask values from HA supported_features
 export const SUPPORT_PREVIOUS_TRACK = 16;
 export const SUPPORT_NEXT_TRACK = 32;
+export const SUPPORT_SHUFFLE_SET = 32768;
+export const SUPPORT_REPEAT_SET = 262144;
 
 // ─── Ping diagnostics ────────────────────────────────────────────────────────
 

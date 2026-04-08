@@ -136,7 +136,7 @@ export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaC
         accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
         accessibilityRole="button"
       >
-        <Icon name={isPlaying ? 'pause' : 'play-arrow'} size={18} color={theme.onPrimary} />
+        <Icon name={isPlaying ? 'pause' : 'play'} size={18} color={theme.onPrimary} />
       </Pressable>
     </Pressable>
   );

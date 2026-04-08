@@ -99,7 +99,7 @@ export default function MediaPlayersScreen() {
                   accessibilityLabel="Move up"
                   accessibilityRole="button"
                 >
-                  <Icon name="keyboard-arrow-up" size={18} color={theme.onSurfaceVariant} />
+                  <Icon name="chevron-up" size={18} color={theme.onSurfaceVariant} />
                 </Pressable>
                 <Pressable
                   onPress={() => handleMoveDown(index)}
@@ -111,7 +111,7 @@ export default function MediaPlayersScreen() {
                   accessibilityLabel="Move down"
                   accessibilityRole="button"
                 >
-                  <Icon name="keyboard-arrow-down" size={18} color={theme.onSurfaceVariant} />
+                  <Icon name="chevron-down" size={18} color={theme.onSurfaceVariant} />
                 </Pressable>
               </View>
 
@@ -130,7 +130,7 @@ export default function MediaPlayersScreen() {
                 accessibilityLabel="Edit player"
                 accessibilityRole="button"
               >
-                <Icon name="edit" size={18} color={theme.onSurfaceVariant} />
+                <Icon name="pencil" size={18} color={theme.onSurfaceVariant} />
               </Pressable>
 
               <Pressable
@@ -160,7 +160,7 @@ export default function MediaPlayersScreen() {
               onPress={() => setShowPicker(true)}
               accessibilityRole="button"
             >
-              <Icon name="add" size={18} color={theme.onPrimary} />
+              <Icon name="plus" size={18} color={theme.onPrimary} />
               <Text style={styles.addButtonText}>Add Player</Text>
             </Pressable>
             {availableToAdd.length > 1 && (

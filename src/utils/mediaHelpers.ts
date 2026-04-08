@@ -8,13 +8,13 @@ export function iconForMediaClass(mediaClass: string | undefined): IconName {
     case 'album':
       return 'album';
     case 'artist':
-      return 'person';
+      return 'account';
     case 'playlist':
       return 'playlist-play';
     case 'genre':
-      return 'library-music';
+      return 'music-box-multiple';
     case 'podcast':
-      return 'mic';
+      return 'microphone';
     case 'app':
       return 'apps';
     case 'directory':
@@ -22,7 +22,7 @@ export function iconForMediaClass(mediaClass: string | undefined): IconName {
     case 'radio':
       return 'radio';
     case 'audiobook':
-      return 'menu-book';
+      return 'book-open-variant';
     default:
       return 'folder';
   }

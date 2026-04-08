@@ -40,4 +40,4 @@ export type {
   PingResult,
 } from './hass';
 
-export { SUPPORT_PREVIOUS_TRACK, SUPPORT_NEXT_TRACK } from './hass';
+export { SUPPORT_PREVIOUS_TRACK, SUPPORT_NEXT_TRACK, SUPPORT_SHUFFLE_SET, SUPPORT_REPEAT_SET } from './hass';

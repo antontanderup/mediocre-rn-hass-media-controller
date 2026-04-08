@@ -122,7 +122,7 @@ export const QueueItem = ({
             accessibilityRole="button"
             accessibilityLabel="Move up"
           >
-            <Icon name="keyboard-arrow-up" size={20} color={iconColor} />
+            <Icon name="chevron-up" size={20} color={iconColor} />
           </Pressable>
         )}
         {onMoveDown && !item.isLast && (
@@ -132,7 +132,7 @@ export const QueueItem = ({
             accessibilityRole="button"
             accessibilityLabel="Move down"
           >
-            <Icon name="keyboard-arrow-down" size={20} color={iconColor} />
+            <Icon name="chevron-down" size={20} color={iconColor} />
           </Pressable>
         )}
         <Pressable

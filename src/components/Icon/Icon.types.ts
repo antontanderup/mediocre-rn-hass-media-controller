@@ -1,6 +1,6 @@
-import type { MaterialIconsIconName } from '@react-native-vector-icons/material-icons';
+import type { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons';
 
-export type IconName = MaterialIconsIconName;
+export type IconName = MaterialDesignIconsIconName;
 
 export interface IconProps {
   name: IconName;

@@ -218,7 +218,7 @@ export default function PlayerConfigScreen() {
           onPress={() => setSearchEntries([...searchEntries, { entity_id: '' }])}
           accessibilityRole="button"
         >
-          <Icon name="add" size={18} color={theme.primary} />
+          <Icon name="plus" size={18} color={theme.primary} />
           <Text style={styles.addEntryText}>Add search entry</Text>
         </Pressable>
 
@@ -270,7 +270,7 @@ export default function PlayerConfigScreen() {
           onPress={() => setBrowserEntries([...browserEntries, { entity_id: '' }])}
           accessibilityRole="button"
         >
-          <Icon name="add" size={18} color={theme.primary} />
+          <Icon name="plus" size={18} color={theme.primary} />
           <Text style={styles.addEntryText}>Add browser entry</Text>
         </Pressable>
 

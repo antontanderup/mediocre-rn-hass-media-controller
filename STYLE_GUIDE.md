@@ -223,10 +223,12 @@ const form = useForm({
 
 ## 9. File-level organisation
 
-Within a file, keep sections in this order, separated by `// ─── Section ───` dividers:
+Within a file, keep sections in this order:
 
 1. Imports
 2. Validation schema (ArkType, if any)
 3. Constants / module-level values
 4. Component function
 5. Styles (`const useStyles = createUseStyles(...)`)
+
+No section divider comments.

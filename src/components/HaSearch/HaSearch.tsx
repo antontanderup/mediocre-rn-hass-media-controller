@@ -24,7 +24,7 @@ const ENQUEUE_OPTIONS: BottomSheetSelectOption<HaEnqueueMode>[] = [
   { value: 'play', label: 'Play', icon: 'play-circle-outline' },
   { value: 'replace', label: 'Replace Queue', icon: 'playlist-remove' },
   { value: 'next', label: 'Add Next', icon: 'playlist-play' },
-  { value: 'add', label: 'Add to Queue', icon: 'playlist-add' },
+  { value: 'add', label: 'Add to Queue', icon: 'playlist-plus' },
 ];
 
 export const HaSearch = ({
@@ -128,7 +128,7 @@ export const HaSearch = ({
   const renderHeader = (): React.JSX.Element => (
     <View style={styles.header}>
       <View style={styles.searchRow}>
-        <Icon name="search" size={18} color={theme.onSurfaceVariant} />
+        <Icon name="magnify" size={18} color={theme.onSurfaceVariant} />
         <TextInput
           style={styles.searchInput}
           value={rawQuery}
