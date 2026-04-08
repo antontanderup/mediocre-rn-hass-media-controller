@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { HassProvider, ThemeProvider, useThemeContext } from '@/context';
+import { HassProvider, SelectedPlayerProvider, ThemeProvider, useThemeContext } from '@/context';
 
 function ThemedStack(): React.JSX.Element {
   const { theme } = useThemeContext();
@@ -11,7 +11,8 @@ function ThemedStack(): React.JSX.Element {
 
   return (
     <Stack screenOptions={{ headerStyle, headerTintColor }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="media-player" options={{ headerShown: false }} />
       <Stack.Screen name="settings" options={{ title: 'Settings', presentation: 'modal' }} />
       <Stack.Screen name="media-players" options={{ title: 'Media Players' }} />
       <Stack.Screen name="media-players/[index]" options={{ title: 'Player Settings' }} />
@@ -24,7 +25,9 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.root}>
       <ThemeProvider>
         <HassProvider>
-          <ThemedStack />
+          <SelectedPlayerProvider>
+            <ThemedStack />
+          </SelectedPlayerProvider>
         </HassProvider>
       </ThemeProvider>
     </GestureHandlerRootView>

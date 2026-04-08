@@ -1,17 +1,16 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useHassContext } from '@/context';
+import { useHassContext, useSelectedPlayerContext } from '@/context';
 import { useAppConfig } from './useAppConfig';
 import type { MediaPlayerConfig, MediaPlayerEntity } from '@/types';
 
 export interface SelectedPlayerState {
-  /** The entity ID of the currently selected player (from route params). */
+  /** The entity ID of the currently selected player. */
   entityId: string | undefined;
   /** The MediaPlayerConfig for the selected player, if one is configured. */
   config: MediaPlayerConfig | undefined;
   /** The live MediaPlayerEntity for the selected player, if available. */
   player: MediaPlayerEntity | undefined;
-  /** Navigate to a different player by entity ID. */
+  /** Switch to a different player by entity ID. */
   setSelectedPlayer: (entityId: string) => void;
   /** Record a user interaction to suppress automatic player switching. */
   setLastInteraction: () => void;
@@ -20,8 +19,7 @@ export interface SelectedPlayerState {
 }
 
 export const useSelectedPlayer = (): SelectedPlayerState => {
-  const { entityId } = useLocalSearchParams<{ entityId?: string }>();
-  const router = useRouter();
+  const { entityId, setEntityId } = useSelectedPlayerContext();
   const { players } = useHassContext();
   const { config: appConfig } = useAppConfig();
   const lastInteractionRef = useRef<number | null>(null);
@@ -38,9 +36,9 @@ export const useSelectedPlayer = (): SelectedPlayerState => {
 
   const setSelectedPlayer = useCallback(
     (newEntityId: string) => {
-      router.navigate({ pathname: '/(tabs)/player', params: { entityId: newEntityId } });
+      setEntityId(newEntityId);
     },
-    [router],
+    [setEntityId],
   );
 
   const setLastInteraction = useCallback(() => {

@@ -21,8 +21,6 @@ const useStyles = createUseStyles(theme => ({
   card: {
     backgroundColor: theme.surfaceContainer,
     borderRadius: 16,
-    marginHorizontal: 16,
-    marginVertical: 6,
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',

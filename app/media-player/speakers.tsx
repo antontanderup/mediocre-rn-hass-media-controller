@@ -2,35 +2,25 @@ import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { Icon, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
-import { useAppConfig, useGrouping, useSelectedPlayer, useTheme } from '@/hooks';
+import {
+  useAppConfig,
+  useGrouping,
+  useSelectedPlayer,
+  useTheme,
+} from '@/hooks';
 import type { GroupableSpeaker } from '@/hooks';
 import { createUseStyles } from '@/utils';
-import type { MediaPlayerEntity, MediaPlayerState } from '@/types';
-
-type ConfiguredPlayer = { player: MediaPlayerEntity; name: string };
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-const STATE_LABELS: Record<MediaPlayerState, string> = {
-  playing: 'Playing',
-  paused: 'Paused',
-  idle: 'Idle',
-  off: 'Off',
-  unavailable: 'Unavailable',
-  unknown: 'Unknown',
-  standby: 'Standby',
-  buffering: 'Playing',
-};
+import { PlayerCardItem } from '../_components/PlayerCardItem';
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
-export default function GroupingTab() {
+export default function SpeakersTab() {
   const { entityId, setSelectedPlayer } = useSelectedPlayer();
   const theme = useTheme();
   const styles = useStyles();
   const { players } = useHassContext();
   const { config: appConfig } = useAppConfig();
-
+  console.log(`selected entityId in speakers tab: ${entityId}`);
   const { groupedSpeakers, ungroupedSpeakers, hasGroupableEntities, toggleGroup, setVolume, setMuted } =
     useGrouping(entityId ?? '');
 
@@ -67,16 +57,6 @@ export default function GroupingTab() {
       })
       .filter((e): e is NonNullable<typeof e> => e !== null);
   }, [players, appConfig]);
-
-  if (!entityId) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
-          Select a player from the Players tab.
-        </Text>
-      </View>
-    );
-  }
 
   const showEmpty = !hasGroupableEntities && disablePlayerFocusSwitching;
 
@@ -216,47 +196,21 @@ export default function GroupingTab() {
             </View>
           </View>
 
-          <View style={[styles.card, { backgroundColor: theme.surfaceContainer }]}>
-            {configuredPlayers.map((item: ConfiguredPlayer, i: number) => {
-              const isActive = item.player.entity_id === entityId;
-              return (
-                <View key={item.player.entity_id}>
-                  {i > 0 && (
-                    <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />
-                  )}
-                  <Pressable
-                    style={styles.playerRow}
-                    onPress={() => {
-                      if (!isActive) {
-                        setSelectedPlayer(item.player.entity_id);
-                      }
-                    }}
-                    accessibilityRole="radio"
-                    accessibilityState={{ selected: isActive }}
-                  >
-                    <Icon
-                      name={isActive ? 'radiobox-marked' : 'radiobox-blank'}
-                      size={18}
-                      color={isActive ? theme.primary : theme.onSurfaceVariant}
-                    />
-                    <Text
-                      style={[
-                        styles.playerName,
-                        { color: theme.onSurface },
-                        isActive && styles.playerNameActive,
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {item.name}
-                    </Text>
-                    <Text style={[styles.playerState, { color: theme.onSurfaceVariant }]}>
-                      {STATE_LABELS[item.player.state] ?? item.player.state}
-                    </Text>
-                  </Pressable>
-                </View>
-              );
-            })}
-          </View>
+          {configuredPlayers.map(item => {
+            const isActive = item.player.entity_id === entityId;
+            return (
+              <PlayerCardItem
+                key={item.player.entity_id}
+                player={item.player}
+                nameOverride={item.name !== (item.player.attributes.friendly_name ?? item.player.entity_id) ? item.name + (isActive ? ' (Active)' : '') : undefined}
+                onPress={() => {
+                  if (!isActive) {
+                    setSelectedPlayer(item.player.entity_id);
+                  }
+                }}
+              />
+            );
+          })}
         </>
       )}
 
@@ -364,23 +318,6 @@ const useStyles = createUseStyles(theme => ({
   chipText: {
     fontSize: 13,
     fontWeight: '500',
-  },
-  playerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    gap: 12,
-  },
-  playerName: {
-    flex: 1,
-    fontSize: 14,
-  },
-  playerNameActive: {
-    fontWeight: '600',
-  },
-  playerState: {
-    fontSize: 12,
   },
   emptyContainer: {
     flex: 1,

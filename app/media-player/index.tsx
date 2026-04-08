@@ -56,7 +56,7 @@ export default function PlayerTab() {
   if (!player) {
     return (
       <View style={emptyStyles.container}>
-        <Text style={emptyStyles.text}>Select a player from the Players tab.</Text>
+        <Text style={emptyStyles.text}>Player not available.</Text>
       </View>
     );
   }
