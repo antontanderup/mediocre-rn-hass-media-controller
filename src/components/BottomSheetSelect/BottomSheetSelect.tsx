@@ -1,5 +1,5 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
@@ -16,9 +16,11 @@ export const BottomSheetSelect = <T extends string = string>({
   const styles = useStyles();
   const theme = useTheme();
   const sheetRef = useRef<TrueSheet>(null);
+  const [hasOpened, setHasOpened] = useState(false);
 
   const handleOpen = useCallback(() => {
     sheetRef.current?.present();
+    setHasOpened(true);
   }, []);
 
   const handleSelect = useCallback(
@@ -32,46 +34,49 @@ export const BottomSheetSelect = <T extends string = string>({
   return (
     <>
       {renderTrigger(handleOpen)}
-      <TrueSheet
-        ref={sheetRef}
-        detents={['auto']}
-        cornerRadius={16}
-        grabber
-        backgroundColor={theme.surfaceContainerLow}
-      >
-        <View style={styles.content}>
-          {title && <Text style={styles.title}>{title}</Text>}
-          <View style={styles.optionList}>
-            {options.map(option => {
-              const isSelected = option.value === value;
-              return (
-                <Pressable
-                  key={option.value}
-                  style={[styles.option, isSelected && styles.optionSelected]}
-                  onPress={() => handleSelect(option.value)}
-                  accessibilityRole="button"
-                  accessibilityLabel={option.label}
-                  accessibilityState={{ selected: isSelected }}
-                >
-                  {option.icon && (
-                    <Icon
-                      name={option.icon}
-                      size={20}
-                      color={isSelected ? theme.onPrimaryContainer : theme.onSurfaceVariant}
-                    />
-                  )}
-                  <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
-                    {option.label}
-                  </Text>
-                  {isSelected && (
-                    <Icon name="check" size={18} color={theme.onPrimaryContainer} />
-                  )}
-                </Pressable>
-              );
-            })}
+      {hasOpened && (
+        <TrueSheet
+          ref={sheetRef}
+          detents={['auto']}
+          cornerRadius={16}
+          initialDetentIndex={0}
+          grabber
+          backgroundColor={theme.surfaceContainerLow}
+        >
+          <View style={styles.content}>
+            {title && <Text style={styles.title}>{title}</Text>}
+            <View style={styles.optionList}>
+              {options.map(option => {
+                const isSelected = option.value === value;
+                return (
+                  <Pressable
+                    key={option.value}
+                    style={[styles.option, isSelected && styles.optionSelected]}
+                    onPress={() => handleSelect(option.value)}
+                    accessibilityRole="button"
+                    accessibilityLabel={option.label}
+                    accessibilityState={{ selected: isSelected }}
+                  >
+                    {option.icon && (
+                      <Icon
+                        name={option.icon}
+                        size={20}
+                        color={isSelected ? theme.onPrimaryContainer : theme.onSurfaceVariant}
+                      />
+                    )}
+                    <Text style={[styles.optionLabel, isSelected && styles.optionLabelSelected]}>
+                      {option.label}
+                    </Text>
+                    {isSelected && (
+                      <Icon name="check" size={18} color={theme.onPrimaryContainer} />
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
-        </View>
-      </TrueSheet>
+        </TrueSheet>
+      )}
     </>
   );
 };

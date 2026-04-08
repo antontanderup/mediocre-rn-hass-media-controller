@@ -10,6 +10,9 @@ export type { IconProps, IconName } from './Icon';
 export { MediaCard } from './MediaCard';
 export type { MediaCardProps } from './MediaCard';
 
+export { MediaItemSheet } from './MediaItemSheet';
+export type { MediaItemSheetProps, MediaItemSheetAction } from './MediaItemSheet';
+
 export { PlaybackControls } from './PlaybackControls';
 export type { PlaybackControlsProps } from './PlaybackControls';
 

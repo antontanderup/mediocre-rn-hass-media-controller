@@ -5,4 +5,5 @@ export type MediaGridItemProps = {
   artworkUrl?: string;
   fallbackIcon?: IconName;
   onPress: () => void;
+  onLongPress?: () => void;
 };

@@ -10,6 +10,7 @@ export const MediaGridItem = ({
   artworkUrl,
   fallbackIcon = 'folder',
   onPress,
+  onLongPress,
 }: MediaGridItemProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
