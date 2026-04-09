@@ -36,25 +36,6 @@ export default function MediaPlayerLayout(): React.JSX.Element {
         }}
       />
       <Tabs.Screen
-        name="speakers"
-        options={{
-          title: 'Speakers',
-          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="speaker-multiple" size={size} color={color} />
-          ),
-          headerRight: () => (
-            <Pressable
-              style={{ padding: 8, marginRight: 4 }}
-              onPress={() => router.push('/settings')}
-              accessibilityLabel="Open settings"
-              accessibilityRole="button"
-            >
-              <Icon name="cog" size={22} color={colors.onSurfaceVariant} />
-            </Pressable>
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="queue"
         options={{
           title: 'Queue',
@@ -83,12 +64,28 @@ export default function MediaPlayerLayout(): React.JSX.Element {
         }}
       />
       <Tabs.Screen
+        name="speakers"
+        options={{
+          title: 'Speakers',
+          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
+            <Icon name="speaker-multiple" size={size} color={color} />
+          ),
+          headerRight: () => (
+            <Pressable
+              style={{ padding: 8, marginRight: 4 }}
+              onPress={() => router.push('/settings')}
+              accessibilityLabel="Open settings"
+              accessibilityRole="button"
+            >
+              <Icon name="cog" size={22} color={colors.onSurfaceVariant} />
+            </Pressable>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="customButtons"
         options={{
-          title: 'Actions',
-          tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
-            <Icon name="apps" size={size} color={color} />
-          ),
+          href: null,
         }}
       />
     </Tabs>
