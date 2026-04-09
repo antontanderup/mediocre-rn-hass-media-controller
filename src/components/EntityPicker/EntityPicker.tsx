@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Keyboard, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { useHassContext } from '@/context';
 import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
@@ -51,6 +51,7 @@ export const EntityPicker = ({
     setInputText(entityId);
     onChangeValue(entityId);
     setIsFocused(false);
+    Keyboard.dismiss();
   };
 
   return (
@@ -69,6 +70,8 @@ export const EntityPicker = ({
         autoCapitalize="none"
         autoCorrect={false}
         autoComplete="off"
+        returnKeyType="done"
+        blurOnSubmit={true}
       />
       {showSuggestions && (
         <View style={styles.dropdown}>

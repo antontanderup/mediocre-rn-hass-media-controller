@@ -134,6 +134,8 @@ export default function PlayerConfigScreen() {
                 placeholderTextColor={theme.onSurfaceVariant}
                 autoCapitalize="none"
                 autoCorrect={false}
+                returnKeyType="done"
+                blurOnSubmit={true}
               />
             </View>
           )}
@@ -201,6 +203,8 @@ export default function PlayerConfigScreen() {
                 placeholderTextColor={theme.onSurfaceVariant}
                 autoCapitalize="none"
                 autoCorrect={false}
+                returnKeyType="done"
+                blurOnSubmit={true}
               />
             </View>
             <Pressable
@@ -253,6 +257,8 @@ export default function PlayerConfigScreen() {
                 placeholderTextColor={theme.onSurfaceVariant}
                 autoCapitalize="none"
                 autoCorrect={false}
+                returnKeyType="done"
+                blurOnSubmit={true}
               />
             </View>
             <Pressable
