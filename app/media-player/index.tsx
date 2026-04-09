@@ -101,9 +101,18 @@ export default function PlayerTab() {
       </View>
 
       <View style={[styles.infoCard, { backgroundColor: theme.surfaceContainer }]}>
-        <Text style={[styles.playerName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
-          {name}
-        </Text>
+        <View style={styles.playerNameRow}>
+          <Text style={[styles.playerName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
+            {name}
+          </Text>
+          {attributes.source && attributes.source_list && attributes.source_list.length > 1 ? (
+            <SourceSelect
+              entityId={entityId ?? ''}
+              source={attributes.source}
+              sourceList={attributes.source_list}
+            />
+          ) : null}
+        </View>
         {attributes.media_title ? (
           <Text style={[styles.trackTitle, { color: theme.onSurface }]} numberOfLines={2}>
             {attributes.media_title}
@@ -118,16 +127,6 @@ export default function PlayerTab() {
           <Text style={[styles.albumName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
             {attributes.media_album_name}
           </Text>
-        ) : null}
-
-        {attributes.source && attributes.source_list && attributes.source_list.length > 1 ? (
-          <View style={styles.sourceContainer}>
-            <SourceSelect
-              entityId={entityId ?? ''}
-              source={attributes.source}
-              sourceList={attributes.source_list}
-            />
-          </View>
         ) : null}
 
         {duration > 0 && (
@@ -197,12 +196,18 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
   },
+  playerNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
   playerName: {
     fontSize: 12,
     fontWeight: '500',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    marginBottom: 8,
+    flex: 1,
   },
   trackTitle: {
     fontSize: 22,
@@ -218,9 +223,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 16,
     opacity: 0.8,
-  },
-  sourceContainer: {
-    marginBottom: 16,
   },
   progressContainer: {
     marginBottom: 20,
