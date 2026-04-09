@@ -89,7 +89,10 @@ export default function MediaPlayersScreen() {
           data={configuredPlayers}
           keyExtractor={(_, i) => String(i)}
           contentContainerStyle={styles.listContent}
-          renderItem={({ item, index }) => (
+          renderItem={({ item, index }) => {
+            const hassPlayer = hassPlayers.find(p => p.entity_id === item.entityId);
+            const displayName = item.name ?? hassPlayer?.attributes.friendly_name ?? item.entityId;
+            return (
             <View style={styles.playerRow}>
               <View style={styles.reorderButtons}>
                 <Pressable
@@ -117,11 +120,9 @@ export default function MediaPlayersScreen() {
 
               <View style={styles.playerInfo}>
                 <Text style={styles.playerName} numberOfLines={1}>
-                  {item.name ?? item.entityId}
+                  {displayName}
                 </Text>
-                {item.name ? (
-                  <Text style={styles.playerEntityId} numberOfLines={1}>{item.entityId}</Text>
-                ) : null}
+                <Text style={styles.playerEntityId} numberOfLines={1}>{item.entityId}</Text>
               </View>
 
               <Pressable
@@ -142,7 +143,8 @@ export default function MediaPlayersScreen() {
                 <Icon name="delete" size={18} color={theme.error} />
               </Pressable>
             </View>
-          )}
+            );
+          }}
         />
       )}
 
