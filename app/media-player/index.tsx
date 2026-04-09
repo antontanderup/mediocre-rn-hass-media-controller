@@ -61,11 +61,13 @@ export default function PlayerTab() {
     );
   }
 
-  const { attributes } = player;
+  const { attributes, state } = player;
   const name = attributes.friendly_name ?? player.entity_id;
   const position = attributes.media_position ?? 0;
+  const positionUpdatedAt = attributes.media_position_updated_at;
   const duration = attributes.media_duration ?? 0;
   const volume = attributes.volume_level ?? 0;
+  const isPlaying = state === 'playing';
 
   const artworkUri =
     attributes.entity_picture && hassConfig
@@ -120,7 +122,12 @@ export default function PlayerTab() {
 
         {duration > 0 && (
           <View style={styles.progressContainer}>
-            <ProgressBar position={position} duration={duration} />
+            <ProgressBar
+                position={position}
+                positionUpdatedAt={positionUpdatedAt}
+                isPlaying={isPlaying}
+                duration={duration}
+              />
           </View>
         )}
 
