@@ -36,3 +36,6 @@ export type { HaMediaBrowserProps } from './HaMediaBrowser';
 
 export { HaSearch } from './HaSearch';
 export type { HaSearchProps } from './HaSearch';
+
+export { SourceSelect } from './SourceSelect';
+export type { SourceSelectProps } from './SourceSelect';

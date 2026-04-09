@@ -1,6 +1,6 @@
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Icon, PlaybackControls, ProgressBar, VolumeSlider } from '@/components';
+import { Icon, PlaybackControls, ProgressBar, SourceSelect, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
 import { useMediaPlayerControls, useSelectedPlayer, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
@@ -120,6 +120,16 @@ export default function PlayerTab() {
           </Text>
         ) : null}
 
+        {attributes.source && attributes.source_list && attributes.source_list.length > 1 ? (
+          <View style={styles.sourceContainer}>
+            <SourceSelect
+              entityId={entityId ?? ''}
+              source={attributes.source}
+              sourceList={attributes.source_list}
+            />
+          </View>
+        ) : null}
+
         {duration > 0 && (
           <View style={styles.progressContainer}>
             <ProgressBar
@@ -208,6 +218,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 16,
     opacity: 0.8,
+  },
+  sourceContainer: {
+    marginBottom: 16,
   },
   progressContainer: {
     marginBottom: 20,
