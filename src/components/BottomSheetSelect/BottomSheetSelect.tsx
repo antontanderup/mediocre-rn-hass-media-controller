@@ -1,6 +1,6 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import React, { useCallback, useRef, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
@@ -50,7 +50,7 @@ export const BottomSheetSelect = <T extends string = string>({
         >
           <View style={styles.content}>
             {title && <Text style={styles.title}>{title}</Text>}
-            <View style={styles.optionList}>
+            <ScrollView style={styles.optionList} contentContainerStyle={styles.optionListContent} bounces={false}>
               {options.map(option => {
                 const isSelected = option.value === value;
                 return (
@@ -78,7 +78,7 @@ export const BottomSheetSelect = <T extends string = string>({
                   </Pressable>
                 );
               })}
-            </View>
+            </ScrollView>
           </View>
         </TrueSheet>
       )}
@@ -105,6 +105,9 @@ const useStyles = createUseStyles(theme => ({
     paddingBottom: 8,
   },
   optionList: {
+    maxHeight: 400,
+  },
+  optionListContent: {
     gap: 2,
   },
   option: {
