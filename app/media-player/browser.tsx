@@ -6,6 +6,7 @@ import { useHassContext } from '@/context';
 import { useSelectedPlayer, useTheme } from '@/hooks';
 import type { MediaBrowserEntry } from '@/types';
 import { buildHassUrl, createUseStyles } from '@/utils';
+import { t } from '@/localization';
 
 function resolveEntries(
   entityId: string,
@@ -94,13 +95,13 @@ export default function BrowserTab() {
           options={options}
           value={activeEntityId}
           onChange={setSelectedEntityId}
-          title="Media source"
+          title={t('browser.mediaSource')}
           renderTrigger={onOpen => (
             <Pressable
               style={styles.headerRight}
               onPress={onOpen}
               accessibilityRole="button"
-              accessibilityLabel="Select media source"
+              accessibilityLabel={t('browser.selectMediaSource')}
             >
               <Text style={styles.headerRightLabel} numberOfLines={1}>
                 {activeLabel}
@@ -124,7 +125,7 @@ export default function BrowserTab() {
   if (!entityId) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.text}>Select a player to browse media</Text>
+        <Text style={styles.text}>{t('browser.selectPlayer')}</Text>
       </View>
     );
   }
@@ -132,7 +133,7 @@ export default function BrowserTab() {
   if (!hassConfig) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.text}>Not connected to Home Assistant</Text>
+        <Text style={styles.text}>{t('browser.notConnected')}</Text>
       </View>
     );
   }

@@ -5,6 +5,7 @@ import { BottomSheetSelect, HaSearch, Icon } from '@/components';
 import { useHassContext } from '@/context';
 import { useSearchProvider, useSelectedPlayer, useTheme } from '@/hooks';
 import { buildHassUrl, createUseStyles } from '@/utils';
+import { t } from '@/localization';
 
 const useStyles = createUseStyles(theme => ({
   container: {
@@ -84,13 +85,13 @@ export default function SearchTab(): React.JSX.Element {
             );
             if (provider) selectProvider(provider);
           }}
-          title="Search provider"
+          title={t('search.searchProvider')}
           renderTrigger={onOpen => (
             <Pressable
               style={styles.headerRight}
               onPress={onOpen}
               accessibilityRole="button"
-              accessibilityLabel="Select search provider"
+              accessibilityLabel={t('search.selectSearchProvider')}
             >
               <Text style={styles.headerRightLabel} numberOfLines={1}>
                 {activeLabel}
@@ -116,7 +117,7 @@ export default function SearchTab(): React.JSX.Element {
   if (!entityId) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.text}>Select a player to search</Text>
+        <Text style={styles.text}>{t('search.selectPlayer')}</Text>
       </View>
     );
   }
@@ -124,7 +125,7 @@ export default function SearchTab(): React.JSX.Element {
   if (!hassConfig) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.text}>Not connected to Home Assistant</Text>
+        <Text style={styles.text}>{t('search.notConnected')}</Text>
       </View>
     );
   }

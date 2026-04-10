@@ -162,23 +162,21 @@ export default function PlayerConfigScreen() {
         <form.Field name="speakerGroupEntityId">
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>Speaker group entity ID</Text>
+              <Text style={styles.label}>{t('playerConfig.field.speakerGroupEntityId.label')}</Text>
               <EntityPicker
                 value={field.state.value}
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
                 domain="media_player."
-                placeholder="media_player.group_entity"
+                placeholder={t('playerConfig.field.speakerGroupEntityId.placeholder')}
               />
             </View>
           )}
         </form.Field>
 
         {/* Search */}
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Search</Text>
-        <Text style={styles.hint}>
-          Add entities whose media can be searched. When empty, the player&#39;s own entity is used.
-        </Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('playerConfig.section.search')}</Text>
+        <Text style={styles.hint}>{t('playerConfig.search.hint')}</Text>
         {searchEntries.map((entry, i) => (
           <View key={`se-${i}`} style={styles.browserEntryRow}>
             <View style={styles.browserEntryFields}>
@@ -190,7 +188,7 @@ export default function PlayerConfigScreen() {
                   setSearchEntries(updated);
                 }}
                 domain="media_player."
-                placeholder="media_player.search_entity"
+                placeholder={t('playerConfig.field.searchEntity.placeholder')}
               />
               <TextInput
                 style={styles.browserEntryName}
@@ -200,7 +198,7 @@ export default function PlayerConfigScreen() {
                   updated[i] = { ...entry, name: val || null };
                   setSearchEntries(updated);
                 }}
-                placeholder="Display name (optional)"
+                placeholder={t('playerConfig.field.displayName.placeholder')}
                 placeholderTextColor={theme.onSurfaceVariant}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -212,7 +210,7 @@ export default function PlayerConfigScreen() {
               style={styles.browserEntryRemoveBtn}
               onPress={() => setSearchEntries(searchEntries.filter((_, j) => j !== i))}
               accessibilityRole="button"
-              accessibilityLabel="Remove entry"
+              accessibilityLabel={t('playerConfig.removeEntry')}
             >
               <Icon name="delete" size={18} color={theme.error} />
             </Pressable>
@@ -224,15 +222,12 @@ export default function PlayerConfigScreen() {
           accessibilityRole="button"
         >
           <Icon name="plus" size={18} color={theme.primary} />
-          <Text style={styles.addEntryText}>Add search entry</Text>
+          <Text style={styles.addEntryText}>{t('playerConfig.addSearchEntry')}</Text>
         </Pressable>
 
         {/* Media Browser */}
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Media Browser</Text>
-        <Text style={styles.hint}>
-          Add entities whose media libraries can be browsed. When empty, the player&#39;s own entity
-          is used.
-        </Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('playerConfig.section.mediaBrowser')}</Text>
+        <Text style={styles.hint}>{t('playerConfig.mediaBrowser.hint')}</Text>
         {browserEntries.map((entry, i) => (
           <View key={`mb-${i}`} style={styles.browserEntryRow}>
             <View style={styles.browserEntryFields}>
@@ -244,7 +239,7 @@ export default function PlayerConfigScreen() {
                   setBrowserEntries(updated);
                 }}
                 domain="media_player."
-                placeholder="media_player.browse_entity"
+                placeholder={t('playerConfig.field.browseEntity.placeholder')}
               />
               <TextInput
                 style={styles.browserEntryName}
@@ -254,7 +249,7 @@ export default function PlayerConfigScreen() {
                   updated[i] = { ...entry, name: val || null };
                   setBrowserEntries(updated);
                 }}
-                placeholder="Display name (optional)"
+                placeholder={t('playerConfig.field.displayName.placeholder')}
                 placeholderTextColor={theme.onSurfaceVariant}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -266,7 +261,7 @@ export default function PlayerConfigScreen() {
               style={styles.browserEntryRemoveBtn}
               onPress={() => setBrowserEntries(browserEntries.filter((_, j) => j !== i))}
               accessibilityRole="button"
-              accessibilityLabel="Remove entry"
+              accessibilityLabel={t('playerConfig.removeEntry')}
             >
               <Icon name="delete" size={18} color={theme.error} />
             </Pressable>
@@ -278,22 +273,22 @@ export default function PlayerConfigScreen() {
           accessibilityRole="button"
         >
           <Icon name="plus" size={18} color={theme.primary} />
-          <Text style={styles.addEntryText}>Add browser entry</Text>
+          <Text style={styles.addEntryText}>{t('playerConfig.addBrowserEntry')}</Text>
         </Pressable>
 
         {/* Music Assistant */}
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Music Assistant</Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('playerConfig.section.musicAssistant')}</Text>
 
         <form.Field name="maEntityId">
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>MA entity ID</Text>
+              <Text style={styles.label}>{t('playerConfig.field.maEntityId.label')}</Text>
               <EntityPicker
                 value={field.state.value}
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
                 domain="media_player."
-                placeholder="media_player.music_assistant_entity"
+                placeholder={t('playerConfig.field.maEntityId.placeholder')}
               />
             </View>
           )}
@@ -302,30 +297,30 @@ export default function PlayerConfigScreen() {
         <form.Field name="maFavoriteButtonEntityId">
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>MA favorite button entity ID</Text>
+              <Text style={styles.label}>{t('playerConfig.field.maFavoriteButtonEntityId.label')}</Text>
               <EntityPicker
                 value={field.state.value}
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
-                placeholder="script.ma_favorite"
+                placeholder={t('playerConfig.field.maFavoriteButtonEntityId.placeholder')}
               />
             </View>
           )}
         </form.Field>
 
         {/* LMS */}
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Logitech Media Server</Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('playerConfig.section.lms')}</Text>
 
         <form.Field name="lmsEntityId">
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>LMS entity ID</Text>
+              <Text style={styles.label}>{t('playerConfig.field.lmsEntityId.label')}</Text>
               <EntityPicker
                 value={field.state.value}
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
                 domain="media_player."
-                placeholder="media_player.lms_entity"
+                placeholder={t('playerConfig.field.lmsEntityId.placeholder')}
               />
             </View>
           )}
@@ -340,7 +335,7 @@ export default function PlayerConfigScreen() {
               disabled={isSubmitting}
             >
               <Text style={styles.saveButtonText}>
-                {isSubmitting ? 'Saving…' : 'Save'}
+                {isSubmitting ? t('playerConfig.saving') : t('playerConfig.save')}
               </Text>
             </Pressable>
           )}
@@ -351,7 +346,7 @@ export default function PlayerConfigScreen() {
           onPress={handleDelete}
           accessibilityRole="button"
         >
-          <Text style={styles.deleteButtonText}>Remove Player</Text>
+          <Text style={styles.deleteButtonText}>{t('playerConfig.removePlayer')}</Text>
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>

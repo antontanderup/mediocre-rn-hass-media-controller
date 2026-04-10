@@ -4,6 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { Icon } from '@/components/Icon';
 import { useGrouping, useHaptics, useSelectedPlayer, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
+import { t } from '@/localization';
 import type { SpeakersSheetProps } from './SpeakersSheet.types';
 
 export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Element | null => {
@@ -44,7 +45,7 @@ export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Eleme
         style={styles.trigger}
         onPress={handleOpen}
         accessibilityRole="button"
-        accessibilityLabel={connectedCount > 0 ? `Speakers, ${connectedCount} connected` : 'Speakers'}
+        accessibilityLabel={connectedCount > 0 ? t('speakersSheet.speakersConnected', { count: connectedCount }) : t('speakersSheet.speakers')}
       >
         <Icon name="speaker-multiple" size={18} color={theme.onSurfaceVariant} />
         {connectedCount > 0 && (
@@ -64,13 +65,13 @@ export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Eleme
         >
           <View style={styles.content}>
             <View style={styles.header}>
-              <Text style={[styles.headerTitle, { color: theme.onSurface }]}>Speakers</Text>
+              <Text style={[styles.headerTitle, { color: theme.onSurface }]}>{t('speakersSheet.speakers')}</Text>
             </View>
 
             <View style={[styles.card, { backgroundColor: theme.surfaceContainer }]}>
               {allSpeakers.map((speaker, i) => {
                 const isSelected = speaker.configEntityId === selectedEntityId;
-                const subtitle = speaker.mediaTitle ?? (speaker.isOff ? 'Off' : speaker.state);
+                const subtitle = speaker.mediaTitle ?? (speaker.isOff ? t('speakersSheet.off') : speaker.state);
                 return (
                   <View key={speaker.entityId}>
                     {i > 0 && <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />}

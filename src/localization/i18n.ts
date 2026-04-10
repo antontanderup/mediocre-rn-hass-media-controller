@@ -1,13 +1,21 @@
+import { I18n } from 'i18n-js';
+import { getLocales } from 'expo-localization';
 import { en } from './en';
 
-export type TranslationKey = keyof typeof en;
+type LeafPaths<T, Prefix extends string = ''> = T extends string
+  ? Prefix
+  : {
+      [K in keyof T & string]: LeafPaths<
+        T[K],
+        Prefix extends '' ? K : `${Prefix}.${K}`
+      >;
+    }[keyof T & string];
 
-export const t = (key: TranslationKey, params?: Record<string, string | number>): string => {
-  let text: string = en[key];
-  if (params) {
-    for (const [k, v] of Object.entries(params)) {
-      text = text.replace(`{${k}}`, String(v));
-    }
-  }
-  return text;
-};
+export type TranslationKey = LeafPaths<typeof en>;
+
+const i18n = new I18n({ en });
+i18n.locale = getLocales()[0]?.languageCode ?? 'en';
+i18n.enableFallback = true;
+
+export const t = (key: TranslationKey, params?: Record<string, string | number>): string =>
+  i18n.t(key, params);
