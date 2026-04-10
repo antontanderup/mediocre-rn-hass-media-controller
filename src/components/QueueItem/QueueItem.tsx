@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@/hooks';
+import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
 import type { QueueItemProps } from './QueueItem.types';
@@ -26,6 +26,9 @@ const useStyles = createUseStyles(theme => ({
   },
   rowPlaying: {
     backgroundColor: theme.primaryContainer,
+  },
+  rowPressed: {
+    opacity: 0.7,
   },
   thumb: {
     width: THUMB_SIZE,
@@ -63,6 +66,9 @@ const useStyles = createUseStyles(theme => ({
   actionBtn: {
     padding: 4,
   },
+  actionBtnPressed: {
+    opacity: 0.5,
+  },
 }));
 
 export const QueueItem = ({
@@ -74,14 +80,15 @@ export const QueueItem = ({
 }: QueueItemProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const haptics = useHaptics();
 
   const subtitle = [item.artist, item.album].filter(Boolean).join(' • ');
   const iconColor = item.isPlaying ? theme.onPrimaryContainer : theme.onSurfaceVariant;
 
   return (
     <Pressable
-      style={[styles.row, item.isPlaying && styles.rowPlaying]}
-      onPress={onPress}
+      style={({ pressed }) => [styles.row, item.isPlaying && styles.rowPlaying, pressed && styles.rowPressed]}
+      onPress={() => { haptics.light(); onPress(); }}
       accessibilityRole="button"
       accessibilityLabel={`Play ${item.title}`}
     >
@@ -117,8 +124,8 @@ export const QueueItem = ({
       <View style={styles.actions}>
         {onMoveUp && !item.isFirst && (
           <Pressable
-            style={styles.actionBtn}
-            onPress={onMoveUp}
+            style={({ pressed }) => [styles.actionBtn, pressed && styles.actionBtnPressed]}
+            onPress={() => { haptics.selection(); onMoveUp(); }}
             accessibilityRole="button"
             accessibilityLabel="Move up"
           >
@@ -127,8 +134,8 @@ export const QueueItem = ({
         )}
         {onMoveDown && !item.isLast && (
           <Pressable
-            style={styles.actionBtn}
-            onPress={onMoveDown}
+            style={({ pressed }) => [styles.actionBtn, pressed && styles.actionBtnPressed]}
+            onPress={() => { haptics.selection(); onMoveDown(); }}
             accessibilityRole="button"
             accessibilityLabel="Move down"
           >
@@ -136,8 +143,8 @@ export const QueueItem = ({
           </Pressable>
         )}
         <Pressable
-          style={styles.actionBtn}
-          onPress={onRemove}
+          style={({ pressed }) => [styles.actionBtn, pressed && styles.actionBtnPressed]}
+          onPress={() => { haptics.heavy(); onRemove(); }}
           accessibilityRole="button"
           accessibilityLabel="Remove from queue"
         >

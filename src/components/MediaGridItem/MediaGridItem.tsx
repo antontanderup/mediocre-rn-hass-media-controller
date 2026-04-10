@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@/hooks';
+import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
 import type { MediaGridItemProps } from './MediaGridItem.types';
@@ -14,9 +14,15 @@ export const MediaGridItem = ({
 }: MediaGridItemProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const haptics = useHaptics();
 
   return (
-    <Pressable style={styles.container} onPress={onPress} accessibilityRole="button">
+    <Pressable
+      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      onPress={() => { haptics.light(); onPress(); }}
+      onLongPress={onLongPress}
+      accessibilityRole="button"
+    >
       <View style={styles.imageContainer}>
         {artworkUrl ? (
           <Image
@@ -49,6 +55,9 @@ const useStyles = createUseStyles(theme => ({
     flex: 1,
     alignItems: 'center',
     padding: 4,
+  },
+  pressed: {
+    opacity: 0.7,
   },
   imageContainer: {
     width: '100%',

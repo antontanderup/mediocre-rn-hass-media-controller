@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useHaSearch, useTheme } from '@/hooks';
+import { useHaSearch, useHaptics, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { BottomSheetSelect } from '@/components/BottomSheetSelect';
 import type { BottomSheetSelectOption } from '@/components/BottomSheetSelect';
@@ -35,6 +35,7 @@ export const HaSearch = ({
 }: HaSearchProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const haptics = useHaptics();
 
   // Query state with debounce
   const [rawQuery, setRawQuery] = useState('');
@@ -133,8 +134,8 @@ export const HaSearch = ({
         />
         {rawQuery.length > 0 && (
           <Pressable
-            style={styles.clearBtn}
-            onPress={handleClear}
+            style={({ pressed }) => [styles.clearBtn, pressed && styles.btnPressed]}
+            onPress={() => { haptics.light(); handleClear(); }}
             accessibilityRole="button"
             accessibilityLabel="Clear search"
           >
@@ -148,7 +149,7 @@ export const HaSearch = ({
           title="Playback Mode"
           renderTrigger={onOpen => (
             <Pressable
-              style={styles.enqueueBtn}
+              style={({ pressed }) => [styles.enqueueBtn, pressed && styles.btnPressed]}
               onPress={onOpen}
               accessibilityRole="button"
               accessibilityLabel="Change enqueue mode"
@@ -174,8 +175,8 @@ export const HaSearch = ({
           return (
             <Pressable
               key={f.type}
-              style={[styles.filterChip, isActive && styles.filterChipSelected]}
-              onPress={() => setActiveFilter(f.type)}
+              style={({ pressed }) => [styles.filterChip, isActive && styles.filterChipSelected, pressed && styles.filterChipPressed]}
+              onPress={() => { haptics.selection(); setActiveFilter(f.type); }}
               accessibilityRole="button"
               accessibilityLabel={`Filter by ${f.name}`}
             >
@@ -289,6 +290,9 @@ const useStyles = createUseStyles(theme => ({
   clearBtn: {
     padding: 4,
   },
+  btnPressed: {
+    opacity: 0.5,
+  },
   enqueueBtn: {
     padding: 4,
   },
@@ -307,6 +311,9 @@ const useStyles = createUseStyles(theme => ({
   },
   filterChipSelected: {
     backgroundColor: theme.secondaryContainer,
+  },
+  filterChipPressed: {
+    opacity: 0.7,
   },
   filterChipText: {
     fontSize: 12,
