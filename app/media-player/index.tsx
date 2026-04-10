@@ -74,12 +74,16 @@ export default function PlayerTab() {
       ? resolveHassUrl(attributes.entity_picture, hassConfig)
       : null;
 
+  const overlayBackground = artworkUri
+    ? `${theme.scrim}${theme.colorScheme === 'dark' ? 'CC' : '80'}`
+    : 'transparent';
+
   const content = (
     <View
       style={[
         styles.overlay,
         {
-          backgroundColor: `${theme.scrim}CC`,
+          backgroundColor: overlayBackground,
           paddingTop: insets.top,
           paddingBottom: insets.bottom + 16,
         },
