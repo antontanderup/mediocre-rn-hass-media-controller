@@ -70,7 +70,7 @@ export const useGrouping = (entityId: string): GroupingState => {
           entityId: speakerEntityId,
           configEntityId: cfg.entityId,
           name: cfg.name ?? player.attributes.friendly_name ?? speakerEntityId,
-          state: player.state,
+          state: player.state as string,
           mediaTitle: typeof player.attributes.media_title === 'string' ? player.attributes.media_title : undefined,
           volume: typeof player.attributes.volume_level === 'number' ? player.attributes.volume_level : 0,
           isMuted: player.attributes.is_volume_muted === true,
