@@ -16,6 +16,7 @@ import { EntityPicker, Icon } from '@/components';
 import { useAppConfig, useTheme } from '@/hooks';
 import type { AppConfig, MediaBrowserEntry, MediaPlayerConfig, SearchEntry } from '@/types';
 import { createUseStyles } from '@/utils';
+import { t } from '@/localization';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -97,7 +98,7 @@ export default function PlayerConfigScreen() {
   if (!player) {
     return (
       <View style={styles.notFound}>
-        <Text style={styles.notFoundText}>Player not found.</Text>
+        <Text style={styles.notFoundText}>{t('playerConfig.notFound')}</Text>
       </View>
     );
   }
@@ -113,18 +114,18 @@ export default function PlayerConfigScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Entity ID — read-only */}
-        <Text style={styles.sectionLabel}>Entity</Text>
+        <Text style={styles.sectionLabel}>{t('playerConfig.section.entity')}</Text>
         <View style={styles.readOnlyField}>
-          <Text style={styles.readOnlyLabel}>Entity ID</Text>
+          <Text style={styles.readOnlyLabel}>{t('playerConfig.field.entityId')}</Text>
           <Text style={styles.readOnlyValue}>{player.entityId}</Text>
         </View>
 
         {/* Name */}
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Display</Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('playerConfig.section.display')}</Text>
         <form.Field name="name">
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>Name override</Text>
+              <Text style={styles.label}>{t('playerConfig.field.nameOverride')}</Text>
               <TextInput
                 style={styles.input}
                 value={field.state.value}
@@ -142,12 +143,12 @@ export default function PlayerConfigScreen() {
         </form.Field>
 
         {/* Grouping */}
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Grouping</Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('playerConfig.section.grouping')}</Text>
 
         <form.Field name="canBeGrouped">
           {field => (
             <View style={styles.row}>
-              <Text style={styles.label}>Can be grouped</Text>
+              <Text style={styles.label}>{t('playerConfig.field.canBeGrouped')}</Text>
               <Switch
                 value={field.state.value ?? false}
                 onValueChange={field.handleChange}

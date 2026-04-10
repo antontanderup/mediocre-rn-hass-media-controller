@@ -16,6 +16,7 @@ import { useAppConfig, useTheme } from '@/hooks';
 import { Icon } from '@/components';
 import type { AppConfig, AppOptions, HassConfig } from '@/types';
 import { createUseStyles } from '@/utils';
+import { t } from '@/localization';
 
 // ─── Validation schema ────────────────────────────────────────────────────────
 
@@ -100,12 +101,12 @@ export default function SettingsScreen() {
         {showInvalidTokenError && (
           <View style={styles.errorBanner}>
             <Text style={styles.errorBannerText}>
-              Invalid token. Your access token was rejected by Home Assistant. Please enter a new one.
+              {t('settings.invalidToken')}
             </Text>
           </View>
         )}
 
-        <Text style={styles.sectionLabel}>Home Assistant</Text>
+        <Text style={styles.sectionLabel}>{t('settings.section.homeAssistant')}</Text>
 
         {/* Host */}
         <form.Field
@@ -113,13 +114,13 @@ export default function SettingsScreen() {
           validators={{
             onChange: ({ value }) =>
               settingsSchema.get('host')(value) instanceof type.errors
-                ? 'Host is required'
+                ? t('settings.field.host.required')
                 : undefined,
           }}
         >
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>Host / IP</Text>
+              <Text style={styles.label}>{t('settings.field.host.label')}</Text>
               <TextInput
                 style={[
                   styles.input,
@@ -128,7 +129,7 @@ export default function SettingsScreen() {
                 value={field.state.value}
                 onChangeText={field.handleChange}
                 onBlur={field.handleBlur}
-                placeholder="192.168.1.100"
+                placeholder={t('settings.field.host.placeholder')}
                 placeholderTextColor={theme.onSurfaceVariant}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -145,13 +146,13 @@ export default function SettingsScreen() {
         <form.Field name="port">
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>Port</Text>
+              <Text style={styles.label}>{t('settings.field.port.label')}</Text>
               <TextInput
                 style={styles.input}
                 value={field.state.value}
                 onChangeText={field.handleChange}
                 onBlur={field.handleBlur}
-                placeholder="8123"
+                placeholder={t('settings.field.port.placeholder')}
                 placeholderTextColor={theme.onSurfaceVariant}
                 keyboardType="number-pad"
               />
@@ -163,7 +164,7 @@ export default function SettingsScreen() {
         <form.Field name="ssl">
           {field => (
             <View style={styles.row}>
-              <Text style={styles.label}>Use SSL (wss://)</Text>
+              <Text style={styles.label}>{t('settings.field.ssl.label')}</Text>
               <Switch
                 value={field.state.value}
                 onValueChange={field.handleChange}
@@ -180,13 +181,13 @@ export default function SettingsScreen() {
           validators={{
             onChange: ({ value }) =>
               settingsSchema.get('token')(value) instanceof type.errors
-                ? 'Token is required'
+                ? t('settings.field.token.required')
                 : undefined,
           }}
         >
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>Long-lived access token</Text>
+              <Text style={styles.label}>{t('settings.field.token.label')}</Text>
               <TextInput
                 style={[
                   styles.input,
@@ -196,7 +197,7 @@ export default function SettingsScreen() {
                 value={field.state.value}
                 onChangeText={field.handleChange}
                 onBlur={field.handleBlur}
-                placeholder="eyJ..."
+                placeholder={t('settings.field.token.placeholder')}
                 placeholderTextColor={theme.onSurfaceVariant}
                 secureTextEntry
                 autoCapitalize="none"
@@ -209,7 +210,7 @@ export default function SettingsScreen() {
           )}
         </form.Field>
 
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Appearance</Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('settings.section.appearance')}</Text>
 
         {/* Source color */}
         <form.Field name="sourceColor">
@@ -217,14 +218,14 @@ export default function SettingsScreen() {
             const isValidHex = HEX_RE.test(field.state.value);
             return (
               <View style={styles.field}>
-                <Text style={styles.label}>Source color (hex)</Text>
+                <Text style={styles.label}>{t('settings.field.sourceColor.label')}</Text>
                 <View style={styles.colorRow}>
                   <TextInput
                     style={[styles.input, styles.colorInput]}
                     value={field.state.value}
                     onChangeText={field.handleChange}
                     onBlur={field.handleBlur}
-                    placeholder="#6750A4"
+                    placeholder={t('settings.field.sourceColor.placeholder')}
                     placeholderTextColor={theme.onSurfaceVariant}
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -246,13 +247,13 @@ export default function SettingsScreen() {
           }}
         </form.Field>
 
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>App Options</Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('settings.section.appOptions')}</Text>
 
         {/* Use art colors */}
         <form.Field name="useArtColors">
           {field => (
             <View style={styles.row}>
-              <Text style={styles.label}>Use art colors</Text>
+              <Text style={styles.label}>{t('settings.option.useArtColors')}</Text>
               <Switch
                 value={field.state.value}
                 onValueChange={field.handleChange}
@@ -267,7 +268,7 @@ export default function SettingsScreen() {
         <form.Field name="showVolumeStepButtons">
           {field => (
             <View style={styles.row}>
-              <Text style={styles.label}>Show volume step buttons</Text>
+              <Text style={styles.label}>{t('settings.option.showVolumeStepButtons')}</Text>
               <Switch
                 value={field.state.value}
                 onValueChange={field.handleChange}
@@ -282,7 +283,7 @@ export default function SettingsScreen() {
         <form.Field name="disablePlayerFocusSwitching">
           {field => (
             <View style={styles.row}>
-              <Text style={styles.label}>Disable player focus switching</Text>
+              <Text style={styles.label}>{t('settings.option.disablePlayerFocusSwitching')}</Text>
               <Switch
                 value={field.state.value}
                 onValueChange={field.handleChange}
@@ -297,7 +298,7 @@ export default function SettingsScreen() {
         <form.Field name="playerIsActiveWhen">
           {field => (
             <View style={styles.field}>
-              <Text style={styles.label}>Player is active when</Text>
+              <Text style={styles.label}>{t('settings.field.playerIsActiveWhen.label')}</Text>
               <View style={styles.segmentedControl}>
                 <Pressable
                   style={[
@@ -312,7 +313,7 @@ export default function SettingsScreen() {
                       field.state.value === 'playing' && styles.segmentTextActive,
                     ]}
                   >
-                    Playing
+                    {t('settings.field.playerIsActiveWhen.playing')}
                   </Text>
                 </Pressable>
                 <Pressable
@@ -328,7 +329,7 @@ export default function SettingsScreen() {
                       field.state.value === 'playing_or_paused' && styles.segmentTextActive,
                     ]}
                   >
-                    Playing or paused
+                    {t('settings.field.playerIsActiveWhen.playingOrPaused')}
                   </Text>
                 </Pressable>
               </View>
@@ -337,13 +338,13 @@ export default function SettingsScreen() {
         </form.Field>
 
         {/* Media Players — navigation link */}
-        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>Media Players</Text>
+        <Text style={[styles.sectionLabel, styles.sectionLabelSpaced]}>{t('settings.section.mediaPlayers')}</Text>
         <Pressable
           style={styles.navRow}
           onPress={() => router.push('/media-players')}
           accessibilityRole="button"
         >
-          <Text style={styles.navRowText}>Configure media players</Text>
+          <Text style={styles.navRowText}>{t('settings.mediaPlayers.configure')}</Text>
           <Icon name="chevron-right" size={20} color={theme.onSurfaceVariant} />
         </Pressable>
 
@@ -355,7 +356,7 @@ export default function SettingsScreen() {
               disabled={isSubmitting}
             >
               <Text style={styles.saveButtonText}>
-                {isSubmitting ? 'Saving…' : 'Save'}
+                {isSubmitting ? t('settings.saving') : t('settings.save')}
               </Text>
             </Pressable>
           )}
