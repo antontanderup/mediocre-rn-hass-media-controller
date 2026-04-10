@@ -5,6 +5,7 @@ import { useHassContext } from '@/context';
 import {
   useAppConfig,
   useGrouping,
+  useMediaPlayerControls,
   useSelectedPlayer,
   useTheme,
 } from '@/hooks';
@@ -22,17 +23,19 @@ export default function SpeakersTab() {
   const { config: appConfig } = useAppConfig();
   const { groupedSpeakers, ungroupedSpeakers, hasGroupableEntities, toggleGroup, setVolume, setMuted } =
     useGrouping(entityId ?? '');
+  const controls = useMediaPlayerControls(entityId ?? '');
 
   const [syncMainSpeakerVolume, setSyncMainSpeakerVolume] = useState(true);
 
   const handleVolumeChange = useCallback(
     (speaker: GroupableSpeaker, volume: number) => {
-      setVolume(speaker.entityId, volume);
       if (speaker.isMainSpeaker && syncMainSpeakerVolume) {
-        groupedSpeakers.filter(s => !s.isMainSpeaker).forEach(s => setVolume(s.entityId, volume));
+        controls.setVolume(volume, true);
+      } else {
+        setVolume(speaker.entityId, volume);
       }
     },
-    [setVolume, syncMainSpeakerVolume, groupedSpeakers],
+    [controls, setVolume, syncMainSpeakerVolume],
   );
 
   const disablePlayerFocusSwitching = appConfig?.options.disablePlayerFocusSwitching ?? false;
