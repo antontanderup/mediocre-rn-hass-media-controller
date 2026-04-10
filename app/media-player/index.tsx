@@ -109,14 +109,16 @@ export default function PlayerTab() {
           <Text style={[styles.playerName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
             {name}
           </Text>
-          {attributes.source && attributes.source_list && attributes.source_list.length > 1 ? (
-            <SourceSelect
-              entityId={entityId ?? ''}
-              source={attributes.source}
-              sourceList={attributes.source_list}
-            />
-          ) : null}
-          <SpeakersSheet entityId={entityId ?? ''} />
+          <View style={styles.triggerGroup}>
+            {attributes.source && attributes.source_list && attributes.source_list.length > 1 ? (
+              <SourceSelect
+                entityId={entityId ?? ''}
+                source={attributes.source}
+                sourceList={attributes.source_list}
+              />
+            ) : null}
+            <SpeakersSheet entityId={entityId ?? ''} />
+          </View>
         </View>
         {attributes.media_title ? (
           <Text style={[styles.trackTitle, { color: theme.onSurface }]} numberOfLines={2}>
@@ -206,6 +208,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 8,
+  },
+  triggerGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   playerName: {
     fontSize: 12,

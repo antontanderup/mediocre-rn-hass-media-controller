@@ -7,7 +7,11 @@ import type { MediaPlayerConfig } from '@/types';
 
 export interface GroupableSpeaker {
   entityId: string;
+  /** The app config entity ID — use this when calling setSelectedPlayer. */
+  configEntityId: string;
   name: string;
+  state: string;
+  mediaTitle: string | undefined;
   volume: number;
   isMuted: boolean;
   isOff: boolean;
@@ -18,6 +22,7 @@ export interface GroupableSpeaker {
 
 export interface GroupingState {
   mainEntityId: string;
+  allSpeakers: GroupableSpeaker[];
   groupedSpeakers: GroupableSpeaker[];
   ungroupedSpeakers: GroupableSpeaker[];
   hasGroupableEntities: boolean;
@@ -63,7 +68,10 @@ export const useGrouping = (entityId: string): GroupingState => {
         const isMainSpeaker = speakerEntityId === mainEntityId;
         return {
           entityId: speakerEntityId,
+          configEntityId: cfg.entityId,
           name: cfg.name ?? player.attributes.friendly_name ?? speakerEntityId,
+          state: player.state as string,
+          mediaTitle: typeof player.attributes.media_title === 'string' ? player.attributes.media_title : undefined,
           volume: typeof player.attributes.volume_level === 'number' ? player.attributes.volume_level : 0,
           isMuted: player.attributes.is_volume_muted === true,
           isOff: player.state === 'off',
@@ -141,6 +149,7 @@ export const useGrouping = (entityId: string): GroupingState => {
 
   return {
     mainEntityId,
+    allSpeakers: speakers,
     groupedSpeakers,
     ungroupedSpeakers,
     hasGroupableEntities: groupableConfigs.length > 0,
