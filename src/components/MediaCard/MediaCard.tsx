@@ -94,7 +94,7 @@ const useStyles = createUseStyles(theme => ({
   },
 }));
 
-export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaCardProps): React.JSX.Element => {
+export const MediaCard = ({ player, onPress, onPlayPause, nameOverride, isActive }: MediaCardProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
   const haptics = useHaptics();
@@ -107,9 +107,9 @@ export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaC
 
   return (
     <Pressable
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      style={({ pressed }) => [styles.card, { borderWidth: 2, borderColor: isActive ? theme.primary : theme.surfaceContainer }, pressed && styles.cardPressed]}
       onPress={() => { haptics.light(); onPress(); }}
-      accessibilityLabel={`${name}, ${stateLabel}`}
+      accessibilityLabel={`${name}, ${stateLabel}${isActive ? ', selected' : ''}`}
       accessibilityRole="button"
     >
       {attributes.entity_picture && hassConfig ? (

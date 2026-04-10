@@ -6,9 +6,10 @@ export interface PlayerCardItemProps {
   player: MediaPlayerEntity;
   onPress: () => void;
   nameOverride?: string;
+  isActive?: boolean;
 }
 
-export const PlayerCardItem = ({ player, onPress, nameOverride }: PlayerCardItemProps): React.JSX.Element => {
+export const PlayerCardItem = ({ player, onPress, nameOverride, isActive }: PlayerCardItemProps): React.JSX.Element => {
   const controls = useMediaPlayerControls(player.entity_id);
   const isPlaying = player.state === 'playing' || player.state === 'buffering';
 
@@ -18,6 +19,7 @@ export const PlayerCardItem = ({ player, onPress, nameOverride }: PlayerCardItem
       onPress={onPress}
       onPlayPause={() => (isPlaying ? controls.pause() : controls.play())}
       nameOverride={nameOverride}
+      isActive={isActive}
     />
   );
 };

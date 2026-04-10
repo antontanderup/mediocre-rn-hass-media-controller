@@ -20,7 +20,6 @@ export default function SpeakersTab() {
   const styles = useStyles();
   const { players } = useHassContext();
   const { config: appConfig } = useAppConfig();
-  console.log(`selected entityId in speakers tab: ${entityId}`);
   const { groupedSpeakers, ungroupedSpeakers, hasGroupableEntities, toggleGroup, setVolume, setMuted } =
     useGrouping(entityId ?? '');
 
@@ -215,14 +214,15 @@ export default function SpeakersTab() {
               : undefined;
             const displayName = baseName
               ? `${baseName}${groupSuffix}`
-              : groupSuffix || isActive
-                ? `${item.player.attributes.friendly_name ?? item.player.entity_id}${groupSuffix}${isActive ? ' (Active)' : ''}`
+              : groupSuffix
+                ? `${item.player.attributes.friendly_name ?? item.player.entity_id}${groupSuffix}`
                 : undefined;
             return (
               <PlayerCardItem
                 key={item.player.entity_id}
                 player={item.player}
                 nameOverride={displayName}
+                isActive={isActive}
                 onPress={() => {
                   if (!isActive) {
                     setSelectedPlayer(item.player.entity_id);

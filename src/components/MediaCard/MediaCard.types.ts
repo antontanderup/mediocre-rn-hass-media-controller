@@ -5,4 +5,5 @@ export interface MediaCardProps {
   onPress: () => void;
   onPlayPause: () => void;
   nameOverride?: string;
+  isActive?: boolean;
 }
