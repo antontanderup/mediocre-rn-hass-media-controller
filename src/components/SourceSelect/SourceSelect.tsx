@@ -4,6 +4,7 @@ import { BottomSheetSelect } from '@/components/BottomSheetSelect';
 import { Icon } from '@/components/Icon';
 import { useMediaPlayerControls, useTheme } from '@/hooks';
 import { createUseStyles, getSourceIcon } from '@/utils';
+import { t } from '@/localization';
 
 export interface SourceSelectProps {
   entityId: string;
@@ -27,13 +28,13 @@ export const SourceSelect = ({ entityId, source, sourceList }: SourceSelectProps
       options={options}
       value={source}
       onChange={setSource}
-      title="Source"
+      title={t('sourceSelect.title')}
       renderTrigger={onOpen => (
         <Pressable
           style={styles.trigger}
           onPress={onOpen}
           accessibilityRole="button"
-          accessibilityLabel="Select source"
+          accessibilityLabel={t('sourceSelect.selectSource')}
         >
           <Icon name={getSourceIcon(source)} size={18} color={theme.onSurfaceVariant} />
           <Text style={styles.label} numberOfLines={1}>

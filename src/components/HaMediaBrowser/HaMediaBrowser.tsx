@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { useTheme, useMediaBrowser } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
+import { t } from '@/localization';
 import { Icon } from '@/components/Icon';
 import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
@@ -64,25 +65,25 @@ export const HaMediaBrowser = ({
     (node: MediaBrowserNode): MediaItemSheetAction[] => {
       const result: MediaItemSheetAction[] = [];
       if (node.canPlay) {
-        result.push({ label: 'Play', icon: 'play', onPress: () => playItem(node, 'play') });
+        result.push({ label: t('haMediaBrowser.action.play'), icon: 'play', onPress: () => playItem(node, 'play') });
         result.push({
-          label: 'Replace queue',
+          label: t('haMediaBrowser.action.replaceQueue'),
           icon: 'playlist-play',
           onPress: () => playItem(node, 'replace'),
         });
         result.push({
-          label: 'Play next',
+          label: t('haMediaBrowser.action.playNext'),
           icon: 'playlist-music',
           onPress: () => playItem(node, 'next'),
         });
         result.push({
-          label: 'Add to queue',
+          label: t('haMediaBrowser.action.addToQueue'),
           icon: 'playlist-plus',
           onPress: () => playItem(node, 'add'),
         });
       }
       if (node.canExpand) {
-        result.push({ label: 'Open', icon: 'folder-open', onPress: () => browse(node) });
+        result.push({ label: t('haMediaBrowser.action.open'), icon: 'folder-open', onPress: () => browse(node) });
       }
       return result;
     },
@@ -96,7 +97,7 @@ export const HaMediaBrowser = ({
       {/* Navigation bar */}
       {history.length > 0 && (
         <View style={styles.navBar}>
-          <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back">
+          <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel={t('haMediaBrowser.goBack')}>
             <Icon name="arrow-left" size={20} color={theme.onSurface} />
           </Pressable>
           <Pressable onPress={goToRoot} style={styles.breadcrumbItem}>
@@ -127,7 +128,7 @@ export const HaMediaBrowser = ({
           <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
           <TextInput
             style={styles.filterInput}
-            placeholder="Filter items..."
+            placeholder={t('haMediaBrowser.filterItems')}
             placeholderTextColor={theme.onSurfaceVariant}
             value={filter}
             onChangeText={setFilter}
@@ -195,7 +196,7 @@ export const HaMediaBrowser = ({
     }
     return (
       <View style={styles.centered}>
-        <Text style={styles.emptyText}>No media items available.</Text>
+        <Text style={styles.emptyText}>{t('haMediaBrowser.noItems')}</Text>
       </View>
     );
   };

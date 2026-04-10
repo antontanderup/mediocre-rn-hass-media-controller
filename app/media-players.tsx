@@ -13,6 +13,7 @@ import { useAppConfig, useTheme } from '@/hooks';
 import { Icon } from '@/components';
 import type { AppConfig, MediaPlayerConfig } from '@/types';
 import { createUseStyles } from '@/utils';
+import { t } from '@/localization';
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -79,10 +80,8 @@ export default function MediaPlayersScreen() {
     <View style={styles.container}>
       {configuredPlayers.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyTitle}>No players configured</Text>
-          <Text style={styles.emptyText}>
-            Add players from your Home Assistant instance using the buttons below.
-          </Text>
+          <Text style={styles.emptyTitle}>{t('mediaPlayers.empty.title')}</Text>
+          <Text style={styles.emptyText}>{t('mediaPlayers.empty.description')}</Text>
         </View>
       ) : (
         <FlatList
@@ -99,7 +98,7 @@ export default function MediaPlayersScreen() {
                   onPress={() => handleMoveUp(index)}
                   disabled={index === 0}
                   style={[styles.reorderBtn, index === 0 && styles.reorderBtnDisabled]}
-                  accessibilityLabel="Move up"
+                  accessibilityLabel={t('mediaPlayers.action.moveUp')}
                   accessibilityRole="button"
                 >
                   <Icon name="chevron-up" size={18} color={theme.onSurfaceVariant} />
@@ -111,7 +110,7 @@ export default function MediaPlayersScreen() {
                     styles.reorderBtn,
                     index === configuredPlayers.length - 1 && styles.reorderBtnDisabled,
                   ]}
-                  accessibilityLabel="Move down"
+                  accessibilityLabel={t('mediaPlayers.action.moveDown')}
                   accessibilityRole="button"
                 >
                   <Icon name="chevron-down" size={18} color={theme.onSurfaceVariant} />
@@ -128,7 +127,7 @@ export default function MediaPlayersScreen() {
               <Pressable
                 style={styles.iconButton}
                 onPress={() => router.push(`/media-players/${index}`)}
-                accessibilityLabel="Edit player"
+                accessibilityLabel={t('mediaPlayers.action.edit')}
                 accessibilityRole="button"
               >
                 <Icon name="pencil" size={18} color={theme.onSurfaceVariant} />
@@ -137,7 +136,7 @@ export default function MediaPlayersScreen() {
               <Pressable
                 style={styles.iconButton}
                 onPress={() => handleDelete(index)}
-                accessibilityLabel="Delete player"
+                accessibilityLabel={t('mediaPlayers.action.delete')}
                 accessibilityRole="button"
               >
                 <Icon name="delete" size={18} color={theme.error} />
@@ -150,11 +149,9 @@ export default function MediaPlayersScreen() {
 
       <View style={styles.actionsBar}>
         {hassPlayers.length === 0 ? (
-          <Text style={styles.noHassText}>
-            Connect to Home Assistant to add players.
-          </Text>
+          <Text style={styles.noHassText}>{t('mediaPlayers.notConnected')}</Text>
         ) : availableToAdd.length === 0 ? (
-          <Text style={styles.noHassText}>All available players are already configured.</Text>
+          <Text style={styles.noHassText}>{t('mediaPlayers.allConfigured')}</Text>
         ) : (
           <View style={styles.buttonRow}>
             <Pressable
@@ -163,7 +160,7 @@ export default function MediaPlayersScreen() {
               accessibilityRole="button"
             >
               <Icon name="plus" size={18} color={theme.onPrimary} />
-              <Text style={styles.addButtonText}>Add Player</Text>
+              <Text style={styles.addButtonText}>{t('mediaPlayers.addPlayer')}</Text>
             </Pressable>
             {availableToAdd.length > 1 && (
               <Pressable
@@ -171,7 +168,7 @@ export default function MediaPlayersScreen() {
                 onPress={handleAddAll}
                 accessibilityRole="button"
               >
-                <Text style={styles.addAllButtonText}>Add All ({availableToAdd.length})</Text>
+                <Text style={styles.addAllButtonText}>{t('mediaPlayers.addAll', { count: availableToAdd.length })}</Text>
               </Pressable>
             )}
           </View>
@@ -185,10 +182,10 @@ export default function MediaPlayersScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Add Player</Text>
+            <Text style={styles.modalTitle}>{t('mediaPlayers.modal.title')}</Text>
             <Pressable
               onPress={() => setShowPicker(false)}
-              accessibilityLabel="Close"
+              accessibilityLabel={t('mediaPlayers.modal.close')}
               accessibilityRole="button"
             >
               <Icon name="close" size={24} color={theme.onSurface} />

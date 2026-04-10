@@ -5,6 +5,7 @@ import { useHassContext } from '@/context';
 import { useMediaPlayerControls, useSelectedPlayer, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
 import { createUseStyles, resolveHassUrl } from '@/utils';
+import { t } from '@/localization';
 
 const useEmptyStyles = createUseStyles(theme => ({
   container: {
@@ -56,7 +57,7 @@ export default function PlayerTab() {
   if (!player) {
     return (
       <View style={emptyStyles.container}>
-        <Text style={emptyStyles.text}>Player not available.</Text>
+        <Text style={emptyStyles.text}>{t('nowPlaying.playerNotAvailable')}</Text>
       </View>
     );
   }

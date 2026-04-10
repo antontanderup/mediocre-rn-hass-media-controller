@@ -3,18 +3,19 @@ import type { ImageStyle } from 'react-native';
 import { useHassContext } from '@/context';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles, resolveHassUrl } from '@/utils';
+import { t } from '@/localization';
 import { Icon } from '@/components/Icon';
 import type { MediaCardProps } from './MediaCard.types';
 
 const STATE_LABELS: Record<string, string> = {
-  playing: 'Playing',
-  paused: 'Paused',
-  idle: 'Idle',
-  off: 'Off',
-  unavailable: 'Unavailable',
-  unknown: 'Unknown',
-  standby: 'Standby',
-  buffering: 'Buffering',
+  playing: t('mediaCard.state.playing'),
+  paused: t('mediaCard.state.paused'),
+  idle: t('mediaCard.state.idle'),
+  off: t('mediaCard.state.off'),
+  unavailable: t('mediaCard.state.unavailable'),
+  unknown: t('mediaCard.state.unknown'),
+  standby: t('mediaCard.state.standby'),
+  buffering: t('mediaCard.state.buffering'),
 };
 
 const useStyles = createUseStyles(theme => ({
@@ -138,7 +139,7 @@ export const MediaCard = ({ player, onPress, onPlayPause, nameOverride, isActive
       <Pressable
         style={({ pressed }) => [styles.playButton, pressed && styles.playButtonPressed]}
         onPress={e => { e.stopPropagation?.(); haptics.medium(); onPlayPause(); }}
-        accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
+        accessibilityLabel={isPlaying ? t('mediaCard.pause') : t('mediaCard.play')}
         accessibilityRole="button"
       >
         <Icon name={isPlaying ? 'pause' : 'play'} size={18} color={theme.onPrimary} />

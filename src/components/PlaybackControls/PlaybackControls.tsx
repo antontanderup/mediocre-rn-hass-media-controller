@@ -1,6 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { SUPPORT_NEXT_TRACK, SUPPORT_PREVIOUS_TRACK, SUPPORT_REPEAT_SET, SUPPORT_SHUFFLE_SET } from '@/types';
 import { createUseStyles } from '@/utils';
+import { t } from '@/localization';
 import { useHaptics, useTheme } from '@/hooks';
 import { Icon } from '@/components/Icon';
 import type { PlaybackControlsProps } from './PlaybackControls.types';
@@ -72,7 +73,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         <Pressable
           style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
           onPress={handleShufflePress}
-          accessibilityLabel={shuffle ? 'Shuffle on' : 'Shuffle off'}
+          accessibilityLabel={shuffle ? t('playbackControls.shuffleOn') : t('playbackControls.shuffleOff')}
           accessibilityRole="button"
         >
           <Icon
@@ -87,7 +88,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         style={({ pressed }) => [styles.button, !hasPrev && styles.buttonDisabled, pressed && styles.pressed]}
         onPress={() => { haptics.light(); onCommand({ type: 'previous' }); }}
         disabled={!hasPrev}
-        accessibilityLabel="Previous track"
+        accessibilityLabel={t('playbackControls.previousTrack')}
         accessibilityRole="button"
       >
         <Icon name="skip-previous" size={24} color={theme.primary} />
@@ -96,7 +97,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
       <Pressable
         style={({ pressed }) => [styles.playPauseButton, pressed && styles.pressed]}
         onPress={() => { haptics.medium(); onCommand({ type: isPlaying ? 'pause' : 'play' }); }}
-        accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
+        accessibilityLabel={isPlaying ? t('playbackControls.pause') : t('playbackControls.play')}
         accessibilityRole="button"
       >
         <Icon
@@ -110,7 +111,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         style={({ pressed }) => [styles.button, !hasNext && styles.buttonDisabled, pressed && styles.pressed]}
         onPress={() => { haptics.light(); onCommand({ type: 'next' }); }}
         disabled={!hasNext}
-        accessibilityLabel="Next track"
+        accessibilityLabel={t('playbackControls.nextTrack')}
         accessibilityRole="button"
       >
         <Icon name="skip-next" size={24} color={theme.primary} />
@@ -120,7 +121,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
         <Pressable
           style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
           onPress={handleRepeatPress}
-          accessibilityLabel={`Repeat ${repeat}`}
+          accessibilityLabel={t('playbackControls.repeat', { mode: repeat })}
           accessibilityRole="button"
         >
           <Icon

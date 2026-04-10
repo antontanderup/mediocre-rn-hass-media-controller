@@ -11,6 +11,7 @@ import {
 } from '@/hooks';
 import type { GroupableSpeaker } from '@/hooks';
 import { createUseStyles } from '@/utils';
+import { t } from '@/localization';
 import { PlayerCardItem } from '../_components/PlayerCardItem';
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
@@ -79,19 +80,19 @@ export default function SpeakersTab() {
         <>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionTitles}>
-              <Text style={[styles.sectionTitle, { color: theme.onSurface }]}>Join speakers</Text>
+              <Text style={[styles.sectionTitle, { color: theme.onSurface }]}>{t('speakers.joinSpeakers')}</Text>
               <Text style={[styles.sectionSubtitle, { color: theme.onSurfaceVariant }]}>
-                Manage which speakers play together
+                {t('speakers.manageSpeakers')}
               </Text>
             </View>
             <Pressable
               style={styles.syncToggle}
               onPress={() => setSyncMainSpeakerVolume((v: boolean) => !v)}
-              accessibilityLabel="Link volume"
+              accessibilityLabel={t('speakers.linkVolume')}
               accessibilityRole="checkbox"
               accessibilityState={{ checked: syncMainSpeakerVolume }}
             >
-              <Text style={[styles.syncText, { color: theme.onSurfaceVariant }]}>Link volume</Text>
+              <Text style={[styles.syncText, { color: theme.onSurfaceVariant }]}>{t('speakers.linkVolume')}</Text>
               <Icon
                 name={syncMainSpeakerVolume ? 'check-circle' : 'radiobox-blank'}
                 size={18}
@@ -120,7 +121,7 @@ export default function SpeakersTab() {
                     <Pressable
                       onPress={() => toggleGroup(speaker.entityId, false)}
                       style={styles.iconBtn}
-                      accessibilityLabel="Turn on"
+                      accessibilityLabel={t('speakers.turnOn')}
                     >
                       <Icon name="power" size={18} color={theme.onSurfaceVariant} />
                     </Pressable>
@@ -128,7 +129,7 @@ export default function SpeakersTab() {
                     <Pressable
                       onPress={() => setMuted(speaker.entityId, speaker.isMuted)}
                       style={styles.iconBtn}
-                      accessibilityLabel={speaker.isMuted ? 'Unmute' : 'Mute'}
+                      accessibilityLabel={speaker.isMuted ? t('speakers.unmute') : t('speakers.mute')}
                     >
                       <Icon
                         name={speaker.isMuted ? 'volume-mute' : 'volume-high'}
@@ -147,7 +148,7 @@ export default function SpeakersTab() {
                     onPress={() => toggleGroup(speaker.entityId, speaker.isGrouped)}
                     style={styles.iconBtn}
                     disabled={speaker.isMainSpeaker || speaker.isLoading}
-                    accessibilityLabel="Remove from group"
+                    accessibilityLabel={t('speakers.removeFromGroup')}
                   >
                     {speaker.isLoading ? (
                       <ActivityIndicator size="small" color={theme.primary} />
@@ -181,7 +182,7 @@ export default function SpeakersTab() {
                   ]}
                   onPress={() => toggleGroup(speaker.entityId, false)}
                   disabled={speaker.isLoading}
-                  accessibilityLabel={`Add ${speaker.name}`}
+                  accessibilityLabel={t('speakers.addSpeaker', { name: speaker.name })}
                 >
                   {speaker.isLoading ? (
                     <ActivityIndicator size="small" color={theme.primary} />
@@ -201,9 +202,9 @@ export default function SpeakersTab() {
         <>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionTitles}>
-              <Text style={[styles.sectionTitle, { color: theme.onSurface }]}>Switch player</Text>
+              <Text style={[styles.sectionTitle, { color: theme.onSurface }]}>{t('speakers.switchPlayer')}</Text>
               <Text style={[styles.sectionSubtitle, { color: theme.onSurfaceVariant }]}>
-                Focus a different player
+                {t('speakers.focusDifferentPlayer')}
               </Text>
             </View>
           </View>
@@ -241,8 +242,7 @@ export default function SpeakersTab() {
       {showEmpty && (
         <View style={styles.emptyContainer}>
           <Text style={[styles.emptyText, { color: theme.onSurfaceVariant }]}>
-            No speakers configured for grouping. Mark players as groupable in Settings → Media
-            Players.
+            {t('speakers.empty')}
           </Text>
         </View>
       )}

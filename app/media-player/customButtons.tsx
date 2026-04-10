@@ -1,6 +1,7 @@
 import { Text, View } from 'react-native';
 import { useSelectedPlayer, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
+import { t } from '@/localization';
 
 const useStyles = createUseStyles(theme => ({
   container: {
@@ -25,7 +26,7 @@ export default function CustomButtonsTab() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Custom Buttons — coming soon</Text>
+      <Text style={styles.text}>{t('customButtons.comingSoon')}</Text>
     </View>
   );
 }

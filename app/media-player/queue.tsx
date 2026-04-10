@@ -5,6 +5,7 @@ import { QueueItem as QueueItemComponent } from '@/components';
 import { usePlayerQueue, useSelectedPlayer, useTheme } from '@/hooks';
 import type { QueueItem } from '@/types';
 import { createUseStyles } from '@/utils';
+import { t } from '@/localization';
 
 const useStyles = createUseStyles(theme => ({
   container: {
@@ -58,9 +59,9 @@ export default function QueueTab() {
             style={styles.clearBtn}
             onPress={clearQueue}
             accessibilityRole="button"
-            accessibilityLabel="Clear queue"
+            accessibilityLabel={t('queue.clearQueue')}
           >
-            <Text style={styles.clearBtnText}>Clear</Text>
+            <Text style={styles.clearBtnText}>{t('queue.clear')}</Text>
           </Pressable>
         ) : null,
     });
@@ -69,10 +70,7 @@ export default function QueueTab() {
   if (!isAvailable) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.emptyText}>
-          Queue not available — configure Music Assistant or Lyrion Media Server for this player
-          in Settings.
-        </Text>
+        <Text style={styles.emptyText}>{t('queue.notAvailable')}</Text>
       </View>
     );
   }
@@ -88,7 +86,7 @@ export default function QueueTab() {
   if (!loading && queue.length === 0) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.emptyText}>Queue is empty</Text>
+        <Text style={styles.emptyText}>{t('queue.empty')}</Text>
       </View>
     );
   }

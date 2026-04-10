@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useHaSearch, useHaptics, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
+import { t } from '@/localization';
 import { BottomSheetSelect } from '@/components/BottomSheetSelect';
 import type { BottomSheetSelectOption } from '@/components/BottomSheetSelect';
 import { MediaGridItem } from '@/components/MediaGridItem';
@@ -21,10 +22,10 @@ import type { HaSearchProps } from './HaSearch.types';
 const DEBOUNCE_MS = 600;
 
 const ENQUEUE_OPTIONS: BottomSheetSelectOption<HaEnqueueMode>[] = [
-  { value: 'play', label: 'Play', icon: 'play-circle-outline' },
-  { value: 'replace', label: 'Replace Queue', icon: 'playlist-remove' },
-  { value: 'next', label: 'Add Next', icon: 'playlist-play' },
-  { value: 'add', label: 'Add to Queue', icon: 'playlist-plus' },
+  { value: 'play', label: t('haSearch.enqueue.play'), icon: 'play-circle-outline' },
+  { value: 'replace', label: t('haSearch.enqueue.replaceQueue'), icon: 'playlist-remove' },
+  { value: 'next', label: t('haSearch.enqueue.addNext'), icon: 'playlist-play' },
+  { value: 'add', label: t('haSearch.enqueue.addToQueue'), icon: 'playlist-plus' },
 ];
 
 export const HaSearch = ({
@@ -99,7 +100,7 @@ export const HaSearch = ({
         ListEmptyComponent={
           !hasGrid ? (
             <View style={styles.centered}>
-              <Text style={styles.emptyText}>No results.</Text>
+              <Text style={styles.emptyText}>{t('haSearch.noResults')}</Text>
             </View>
           ) : undefined
         }
@@ -125,7 +126,7 @@ export const HaSearch = ({
           style={styles.searchInput}
           value={rawQuery}
           onChangeText={handleQueryChange}
-          placeholder="Search..."
+          placeholder={t('haSearch.placeholder')}
           placeholderTextColor={theme.onSurfaceVariant}
           returnKeyType="search"
           clearButtonMode="never"
@@ -137,7 +138,7 @@ export const HaSearch = ({
             style={({ pressed }) => [styles.clearBtn, pressed && styles.btnPressed]}
             onPress={() => { haptics.light(); handleClear(); }}
             accessibilityRole="button"
-            accessibilityLabel="Clear search"
+            accessibilityLabel={t('haSearch.clearSearch')}
           >
             <Icon name="close" size={16} color={theme.onSurfaceVariant} />
           </Pressable>
@@ -146,13 +147,13 @@ export const HaSearch = ({
           options={ENQUEUE_OPTIONS}
           value={enqueueMode}
           onChange={setEnqueueMode}
-          title="Playback Mode"
+          title={t('haSearch.playbackMode')}
           renderTrigger={onOpen => (
             <Pressable
               style={({ pressed }) => [styles.enqueueBtn, pressed && styles.btnPressed]}
               onPress={onOpen}
               accessibilityRole="button"
-              accessibilityLabel="Change enqueue mode"
+              accessibilityLabel={t('haSearch.changeEnqueueMode')}
             >
               <Icon
                 name={ENQUEUE_OPTIONS.find(o => o.value === enqueueMode)?.icon ?? 'play-circle-outline'}
@@ -178,7 +179,7 @@ export const HaSearch = ({
               style={({ pressed }) => [styles.filterChip, isActive && styles.filterChipSelected, pressed && styles.filterChipPressed]}
               onPress={() => { haptics.selection(); setActiveFilter(f.type); }}
               accessibilityRole="button"
-              accessibilityLabel={`Filter by ${f.name}`}
+              accessibilityLabel={t('haSearch.filterBy', { name: f.name })}
             >
               {f.icon && (
                 <Icon
@@ -203,7 +204,7 @@ export const HaSearch = ({
     if (!haSearch.isAvailable) {
       return (
         <View style={styles.centered}>
-          <Text style={styles.emptyText}>Search is not available for this player.</Text>
+          <Text style={styles.emptyText}>{t('haSearch.notAvailable')}</Text>
         </View>
       );
     }
@@ -228,7 +229,7 @@ export const HaSearch = ({
       if (haSearch.favorites.length === 0) {
         return (
           <View style={styles.centered}>
-            <Text style={styles.emptyText}>Type to search.</Text>
+            <Text style={styles.emptyText}>{t('haSearch.typeToSearch')}</Text>
           </View>
         );
       }
@@ -239,7 +240,7 @@ export const HaSearch = ({
       return (
         <View style={styles.centered}>
           <Text style={styles.emptyText}>
-            {'No results for "' + debouncedQuery + '".'}
+            {t('haSearch.noResultsForQuery', { query: debouncedQuery })}
           </Text>
         </View>
       );

@@ -4,6 +4,7 @@ import { Pressable } from 'react-native';
 import { Icon } from '@/components';
 import { useThemeContext } from '@/context';
 import { useAppConfig, useSelectedPlayer, useTheme } from '@/hooks';
+import { t } from '@/localization';
 
 export default function MediaPlayerLayout(): React.JSX.Element {
   const { theme } = useThemeContext();
@@ -28,7 +29,7 @@ export default function MediaPlayerLayout(): React.JSX.Element {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Now Playing',
+          title: t('tabs.nowPlaying'),
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
             <Icon name="play-circle-outline" size={size} color={color} />
           ),
@@ -38,7 +39,7 @@ export default function MediaPlayerLayout(): React.JSX.Element {
       <Tabs.Screen
         name="queue"
         options={{
-          title: 'Queue',
+          title: t('tabs.queue'),
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
             <Icon name="playlist-play" size={size} color={color} />
           ),
@@ -47,7 +48,7 @@ export default function MediaPlayerLayout(): React.JSX.Element {
       <Tabs.Screen
         name="search"
         options={{
-          title: 'Search',
+          title: t('tabs.search'),
           href: hasSearch ? undefined : null,
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
             <Icon name="magnify" size={size} color={color} />
@@ -57,7 +58,7 @@ export default function MediaPlayerLayout(): React.JSX.Element {
       <Tabs.Screen
         name="browser"
         options={{
-          title: 'Browse',
+          title: t('tabs.browse'),
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
             <Icon name="music-box-multiple" size={size} color={color} />
           ),
@@ -66,7 +67,7 @@ export default function MediaPlayerLayout(): React.JSX.Element {
       <Tabs.Screen
         name="speakers"
         options={{
-          title: 'Speakers',
+          title: t('tabs.speakers'),
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
             <Icon name="speaker-multiple" size={size} color={color} />
           ),
@@ -74,7 +75,7 @@ export default function MediaPlayerLayout(): React.JSX.Element {
             <Pressable
               style={{ padding: 8, marginRight: 4 }}
               onPress={() => router.push('/settings')}
-              accessibilityLabel="Open settings"
+              accessibilityLabel={t('tabs.openSettings')}
               accessibilityRole="button"
             >
               <Icon name="cog" size={22} color={colors.onSurfaceVariant} />
