@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useTheme } from '@/hooks';
+import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
 import type { MediaTrackItemProps } from './MediaTrackItem.types';
@@ -18,11 +18,26 @@ export const MediaTrackItem = ({
 }: MediaTrackItemProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const haptics = useHaptics();
+
+  const handleRowPress = () => {
+    haptics.light();
+    if (onPress) {
+      onPress();
+    } else {
+      onPlay?.();
+    }
+  };
+
+  const handlePlayPress = () => {
+    haptics.medium();
+    onPlay?.();
+  };
 
   return (
     <Pressable
-      style={styles.row}
-      onPress={onPress ?? onPlay}
+      style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
+      onPress={handleRowPress}
       accessibilityRole="button"
     >
       <View style={styles.thumb}>
@@ -48,8 +63,8 @@ export const MediaTrackItem = ({
       </View>
       {onPlay && (
         <Pressable
-          style={styles.playBtn}
-          onPress={onPlay}
+          style={({ pressed }) => [styles.playBtn, pressed && styles.playBtnPressed]}
+          onPress={handlePlayPress}
           accessibilityRole="button"
           accessibilityLabel={`Play ${title}`}
         >
@@ -79,6 +94,9 @@ const useStyles = createUseStyles(theme => ({
     paddingHorizontal: 16,
     gap: 12,
   },
+  rowPressed: {
+    opacity: 0.7,
+  },
   thumb: {
     width: THUMB_SIZE,
     height: THUMB_SIZE,
@@ -103,5 +121,8 @@ const useStyles = createUseStyles(theme => ({
   },
   playBtn: {
     padding: 6,
+  },
+  playBtnPressed: {
+    opacity: 0.5,
   },
 }));

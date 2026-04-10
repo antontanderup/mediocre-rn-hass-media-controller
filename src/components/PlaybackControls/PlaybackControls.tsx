@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { SUPPORT_NEXT_TRACK, SUPPORT_PREVIOUS_TRACK, SUPPORT_REPEAT_SET, SUPPORT_SHUFFLE_SET } from '@/types';
 import { createUseStyles } from '@/utils';
-import { useTheme } from '@/hooks';
+import { useHaptics, useTheme } from '@/hooks';
 import { Icon } from '@/components/Icon';
 import type { PlaybackControlsProps } from './PlaybackControls.types';
 
@@ -37,11 +37,15 @@ const useStyles = createUseStyles(theme => ({
   buttonDisabled: {
     opacity: 0.35,
   },
+  pressed: {
+    opacity: 0.7,
+  },
 }));
 
 export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const haptics = useHaptics();
   const supported = player.attributes.supported_features ?? 0;
   const hasPrev = (supported & SUPPORT_PREVIOUS_TRACK) !== 0;
   const hasNext = (supported & SUPPORT_NEXT_TRACK) !== 0;
@@ -52,10 +56,12 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
   const repeat = player.attributes.repeat ?? 'off';
 
   const handleShufflePress = () => {
+    haptics.selection();
     onCommand({ type: 'shuffle', shuffle: !shuffle });
   };
 
   const handleRepeatPress = () => {
+    haptics.selection();
     const next = repeat === 'off' ? 'all' : repeat === 'all' ? 'one' : 'off';
     onCommand({ type: 'repeat', repeat: next });
   };
@@ -64,7 +70,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
     <View style={styles.container}>
       {hasShuffle && (
         <Pressable
-          style={styles.secondaryButton}
+          style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
           onPress={handleShufflePress}
           accessibilityLabel={shuffle ? 'Shuffle on' : 'Shuffle off'}
           accessibilityRole="button"
@@ -78,8 +84,8 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
       )}
 
       <Pressable
-        style={[styles.button, !hasPrev && styles.buttonDisabled]}
-        onPress={() => onCommand({ type: 'previous' })}
+        style={({ pressed }) => [styles.button, !hasPrev && styles.buttonDisabled, pressed && styles.pressed]}
+        onPress={() => { haptics.light(); onCommand({ type: 'previous' }); }}
         disabled={!hasPrev}
         accessibilityLabel="Previous track"
         accessibilityRole="button"
@@ -88,8 +94,8 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
       </Pressable>
 
       <Pressable
-        style={styles.playPauseButton}
-        onPress={() => onCommand({ type: isPlaying ? 'pause' : 'play' })}
+        style={({ pressed }) => [styles.playPauseButton, pressed && styles.pressed]}
+        onPress={() => { haptics.medium(); onCommand({ type: isPlaying ? 'pause' : 'play' }); }}
         accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
         accessibilityRole="button"
       >
@@ -101,8 +107,8 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
       </Pressable>
 
       <Pressable
-        style={[styles.button, !hasNext && styles.buttonDisabled]}
-        onPress={() => onCommand({ type: 'next' })}
+        style={({ pressed }) => [styles.button, !hasNext && styles.buttonDisabled, pressed && styles.pressed]}
+        onPress={() => { haptics.light(); onCommand({ type: 'next' }); }}
         disabled={!hasNext}
         accessibilityLabel="Next track"
         accessibilityRole="button"
@@ -112,7 +118,7 @@ export const PlaybackControls = ({ player, onCommand }: PlaybackControlsProps): 
 
       {hasRepeat && (
         <Pressable
-          style={styles.secondaryButton}
+          style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
           onPress={handleRepeatPress}
           accessibilityLabel={`Repeat ${repeat}`}
           accessibilityRole="button"

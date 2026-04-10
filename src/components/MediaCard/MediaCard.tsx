@@ -1,7 +1,7 @@
 import { Image, Pressable, Text, View } from 'react-native';
 import type { ImageStyle } from 'react-native';
 import { useHassContext } from '@/context';
-import { useTheme } from '@/hooks';
+import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles, resolveHassUrl } from '@/utils';
 import { Icon } from '@/components/Icon';
 import type { MediaCardProps } from './MediaCard.types';
@@ -24,6 +24,9 @@ const useStyles = createUseStyles(theme => ({
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  cardPressed: {
+    opacity: 0.85,
   },
   artwork: {
     width: 56,
@@ -86,11 +89,15 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  playButtonPressed: {
+    opacity: 0.7,
+  },
 }));
 
 export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaCardProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const haptics = useHaptics();
   const { hassConfig } = useHassContext();
   const { attributes, state } = player;
 
@@ -100,8 +107,8 @@ export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaC
 
   return (
     <Pressable
-      style={styles.card}
-      onPress={onPress}
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      onPress={() => { haptics.light(); onPress(); }}
       accessibilityLabel={`${name}, ${stateLabel}`}
       accessibilityRole="button"
     >
@@ -129,8 +136,8 @@ export const MediaCard = ({ player, onPress, onPlayPause, nameOverride }: MediaC
       </View>
 
       <Pressable
-        style={styles.playButton}
-        onPress={e => { e.stopPropagation?.(); onPlayPause(); }}
+        style={({ pressed }) => [styles.playButton, pressed && styles.playButtonPressed]}
+        onPress={e => { e.stopPropagation?.(); haptics.medium(); onPlayPause(); }}
         accessibilityLabel={isPlaying ? 'Pause' : 'Play'}
         accessibilityRole="button"
       >

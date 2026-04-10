@@ -42,3 +42,5 @@ export type { SearchProvider, UseSearchProviderResult } from './useSearchProvide
 
 export { useMediaBrowser } from './useMediaBrowser';
 export type { UseMediaBrowserResult } from './useMediaBrowser';
+
+export { useHaptics } from './useHaptics';

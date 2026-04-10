@@ -1,7 +1,7 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import React, { useCallback, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
-import { useTheme } from '@/hooks';
+import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
 import type { BottomSheetSelectProps } from './BottomSheetSelect.types';
@@ -15,13 +15,15 @@ export const BottomSheetSelect = <T extends string = string>({
 }: BottomSheetSelectProps<T>): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const haptics = useHaptics();
   const sheetRef = useRef<TrueSheet>(null);
   const [hasOpened, setHasOpened] = useState(false);
 
   const handleOpen = useCallback(() => {
+    haptics.light();
     sheetRef.current?.present();
     setHasOpened(true);
-  }, []);
+  }, [haptics]);
 
   const handleDidDismiss = useCallback(() => {
     setHasOpened(false);
@@ -29,10 +31,11 @@ export const BottomSheetSelect = <T extends string = string>({
 
   const handleSelect = useCallback(
     (option: T) => {
+      haptics.selection();
       onChange(option);
       sheetRef.current?.dismiss();
     },
-    [onChange],
+    [haptics, onChange],
   );
 
   return (
@@ -56,7 +59,7 @@ export const BottomSheetSelect = <T extends string = string>({
                 return (
                   <Pressable
                     key={option.value}
-                    style={[styles.option, isSelected && styles.optionSelected]}
+                    style={({ pressed }) => [styles.option, isSelected && styles.optionSelected, pressed && styles.optionPressed]}
                     onPress={() => handleSelect(option.value)}
                     accessibilityRole="button"
                     accessibilityLabel={option.label}
@@ -120,6 +123,9 @@ const useStyles = createUseStyles(theme => ({
   },
   optionSelected: {
     backgroundColor: theme.primaryContainer,
+  },
+  optionPressed: {
+    opacity: 0.7,
   },
   optionLabel: {
     flex: 1,

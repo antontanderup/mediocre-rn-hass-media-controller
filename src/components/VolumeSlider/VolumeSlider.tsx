@@ -1,7 +1,7 @@
 import Slider from '@react-native-community/slider';
 import { useCallback, useRef } from 'react';
 import { View } from 'react-native';
-import { useTheme } from '@/hooks';
+import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
 import type { VolumeSliderProps } from './VolumeSlider.types';
@@ -23,6 +23,7 @@ const useStyles = createUseStyles(() => ({
 export const VolumeSlider = ({ volume, onVolumeChange }: VolumeSliderProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const haptics = useHaptics();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleValueChange = useCallback(
@@ -38,6 +39,14 @@ export const VolumeSlider = ({ volume, onVolumeChange }: VolumeSliderProps): Rea
     [onVolumeChange],
   );
 
+  const handleSlidingComplete = useCallback(
+    (v: number) => {
+      haptics.selection();
+      onVolumeChange(v);
+    },
+    [haptics, onVolumeChange],
+  );
+
   return (
     <View style={styles.container}>
       <Icon name="volume-low" size={20} color={theme.onSurfaceVariant} />
@@ -48,6 +57,7 @@ export const VolumeSlider = ({ volume, onVolumeChange }: VolumeSliderProps): Rea
         step={0.02}
         value={volume}
         onValueChange={handleValueChange}
+        onSlidingComplete={handleSlidingComplete}
         minimumTrackTintColor={theme.primary}
         maximumTrackTintColor={theme.surfaceVariant}
         accessibilityLabel="Volume"
