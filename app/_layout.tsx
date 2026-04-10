@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -10,13 +11,16 @@ function ThemedStack(): React.JSX.Element {
   const headerTintColor = theme.onSurface;
 
   return (
-    <Stack screenOptions={{ headerStyle, headerTintColor }}>
+    <>
+      <StatusBar style={theme.colorScheme === 'dark' ? 'light' : 'dark'} />
+      <Stack screenOptions={{ headerStyle, headerTintColor }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="media-player" options={{ headerShown: false }} />
       <Stack.Screen name="settings" options={{ title: 'Settings', presentation: 'modal' }} />
       <Stack.Screen name="media-players" options={{ title: 'Media Players' }} />
       <Stack.Screen name="media-players/[index]" options={{ title: 'Player Settings' }} />
     </Stack>
+    </>
   );
 }
 
