@@ -60,6 +60,7 @@ export const VolumeSlider = ({ volume, onVolumeChange }: VolumeSliderProps): Rea
         onSlidingComplete={handleSlidingComplete}
         minimumTrackTintColor={theme.primary}
         maximumTrackTintColor={theme.surfaceVariant}
+        thumbTintColor={theme.primary}
         accessibilityLabel="Volume"
       />
       <Icon name="volume-high" size={20} color={theme.onSurfaceVariant} />
