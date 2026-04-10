@@ -1,6 +1,6 @@
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Icon, PlaybackControls, ProgressBar, SourceSelect, VolumeSlider } from '@/components';
+import { Icon, PlaybackControls, ProgressBar, SourceSelect, SpeakersSheet, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
 import { useMediaPlayerControls, useSelectedPlayer, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
@@ -116,6 +116,7 @@ export default function PlayerTab() {
               sourceList={attributes.source_list}
             />
           ) : null}
+          <SpeakersSheet entityId={entityId ?? ''} />
         </View>
         {attributes.media_title ? (
           <Text style={[styles.trackTitle, { color: theme.onSurface }]} numberOfLines={2}>

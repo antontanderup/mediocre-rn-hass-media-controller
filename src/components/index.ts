@@ -39,3 +39,6 @@ export type { HaSearchProps } from './HaSearch';
 
 export { SourceSelect } from './SourceSelect';
 export type { SourceSelectProps } from './SourceSelect';
+
+export { SpeakersSheet } from './SpeakersSheet';
+export type { SpeakersSheetProps } from './SpeakersSheet';
