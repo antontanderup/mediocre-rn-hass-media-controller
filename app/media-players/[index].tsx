@@ -168,6 +168,7 @@ export default function PlayerConfigScreen() {
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
                 domain="media_player."
+                label={t('playerConfig.field.speakerGroupEntityId.label')}
                 placeholder={t('playerConfig.field.speakerGroupEntityId.placeholder')}
               />
             </View>
@@ -188,6 +189,7 @@ export default function PlayerConfigScreen() {
                   setSearchEntries(updated);
                 }}
                 domain="media_player."
+                label={t('playerConfig.field.searchEntity.label')}
                 placeholder={t('playerConfig.field.searchEntity.placeholder')}
               />
               <TextInput
@@ -239,6 +241,7 @@ export default function PlayerConfigScreen() {
                   setBrowserEntries(updated);
                 }}
                 domain="media_player."
+                label={t('playerConfig.field.browseEntity.label')}
                 placeholder={t('playerConfig.field.browseEntity.placeholder')}
               />
               <TextInput
@@ -288,6 +291,7 @@ export default function PlayerConfigScreen() {
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
                 domain="media_player."
+                label={t('playerConfig.field.maEntityId.label')}
                 placeholder={t('playerConfig.field.maEntityId.placeholder')}
               />
             </View>
@@ -302,6 +306,7 @@ export default function PlayerConfigScreen() {
                 value={field.state.value}
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
+                label={t('playerConfig.field.maFavoriteButtonEntityId.label')}
                 placeholder={t('playerConfig.field.maFavoriteButtonEntityId.placeholder')}
               />
             </View>
@@ -320,6 +325,7 @@ export default function PlayerConfigScreen() {
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
                 domain="media_player."
+                label={t('playerConfig.field.lmsEntityId.label')}
                 placeholder={t('playerConfig.field.lmsEntityId.placeholder')}
               />
             </View>

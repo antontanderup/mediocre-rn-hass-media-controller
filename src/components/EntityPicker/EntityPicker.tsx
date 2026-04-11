@@ -87,7 +87,7 @@ export const EntityPicker = ({
           onDidDismiss={handleDidDismiss}
           backgroundColor={theme.surfaceContainerLow}
           header={
-            <BottomSheetHeader title={label ?? 'Select entity'}>
+            <BottomSheetHeader title={label}>
               <TextInput
                 style={styles.searchInput}
                 value={searchText}

@@ -6,5 +6,5 @@ export interface EntityPickerProps {
   domain?: string;
   placeholder?: string;
   /** Label shown as the sheet header title when the picker is open */
-  label?: string;
+  label: string;
 }
