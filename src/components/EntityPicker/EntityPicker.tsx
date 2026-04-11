@@ -43,10 +43,10 @@ export const EntityPicker = ({
 
   const handleOpen = useCallback(() => {
     haptics.light();
-    setSearchText('');
+    setSearchText(value);
     sheetRef.current?.present();
     setHasOpened(true);
-  }, [haptics]);
+  }, [haptics, value]);
 
   const handleSelect = useCallback(
     (entityId: string) => {
