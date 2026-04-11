@@ -1,5 +1,8 @@
 export { MediaArtwork } from './MediaArtwork';
 
+export { Button } from './Button';
+export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
+
 export { BottomSheetSelect } from './BottomSheetSelect';
 export type { BottomSheetSelectProps, BottomSheetSelectOption } from './BottomSheetSelect';
 
