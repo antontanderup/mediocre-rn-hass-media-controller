@@ -79,27 +79,28 @@ export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Eleme
             <BottomSheetHeader
               title={t('speakers.joinSpeakers')}
               subtitle={t('speakers.manageSpeakers')}
+              renderRight={() => (
+                <Pressable
+                  style={styles.syncToggle}
+                  onPress={() => setSyncMainSpeakerVolume(v => !v)}
+                  accessibilityLabel={t('speakers.linkVolume')}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: syncMainSpeakerVolume }}
+                >
+                  <Text style={[styles.syncText, { color: theme.onSurfaceVariant }]}>
+                    {t('speakers.linkVolume')}
+                  </Text>
+                  <Icon
+                    name={syncMainSpeakerVolume ? 'check-circle' : 'radiobox-blank'}
+                    size={18}
+                    color={syncMainSpeakerVolume ? theme.primary : theme.onSurfaceVariant}
+                  />
+                </Pressable>
+              )}
             />
           }
         >
           <View style={styles.content}>
-            <Pressable
-              style={styles.syncToggle}
-              onPress={() => setSyncMainSpeakerVolume(v => !v)}
-              accessibilityLabel={t('speakers.linkVolume')}
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: syncMainSpeakerVolume }}
-            >
-              <Text style={[styles.syncText, { color: theme.onSurfaceVariant }]}>
-                {t('speakers.linkVolume')}
-              </Text>
-              <Icon
-                name={syncMainSpeakerVolume ? 'check-circle' : 'radiobox-blank'}
-                size={18}
-                color={syncMainSpeakerVolume ? theme.primary : theme.onSurfaceVariant}
-              />
-            </Pressable>
-
             <View style={[styles.card, { backgroundColor: theme.surfaceContainer }]}>
               {groupedSpeakers.map((speaker, i) => (
                 <View key={speaker.entityId}>
@@ -213,11 +214,9 @@ const useStyles = createUseStyles(theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingHorizontal: 4,
   },
   syncText: {
     fontSize: 12,
-    flex: 1,
   },
   card: {
     borderRadius: 16,

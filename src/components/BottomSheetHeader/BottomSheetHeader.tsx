@@ -7,12 +7,18 @@ export const BottomSheetHeader = ({
   title,
   subtitle,
   children,
+  renderRight,
 }: BottomSheetHeaderProps): React.JSX.Element => {
   const styles = useStyles();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      {subtitle !== undefined && <Text style={styles.subtitle}>{subtitle}</Text>}
+      <View style={styles.titleRow}>
+        <View style={styles.titleGroup}>
+          <Text style={styles.title}>{title}</Text>
+          {subtitle !== undefined && <Text style={styles.subtitle}>{subtitle}</Text>}
+        </View>
+        {renderRight !== undefined && renderRight()}
+      </View>
       {children}
     </View>
   );
@@ -24,6 +30,15 @@ const useStyles = createUseStyles(theme => ({
     paddingTop: 16,
     paddingBottom: 8,
     gap: 4,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  titleGroup: {
+    flex: 1,
+    gap: 2,
   },
   title: {
     fontSize: 13,

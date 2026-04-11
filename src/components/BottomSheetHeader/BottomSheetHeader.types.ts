@@ -4,4 +4,5 @@ export interface BottomSheetHeaderProps {
   title: string;
   subtitle?: string;
   children?: ReactNode;
+  renderRight?: () => ReactNode;
 }
