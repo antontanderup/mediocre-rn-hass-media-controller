@@ -90,6 +90,7 @@ export default function BrowserTab() {
               size="sm"
               onPress={onOpen}
               accessibilityLabel={t('browser.selectMediaSource')}
+              style={{ marginRight: 8 }}
             >
               <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
                 {activeLabel}

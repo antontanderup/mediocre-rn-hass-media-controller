@@ -30,6 +30,7 @@ export const Button = ({
   disabled = false,
   loading = false,
   accessibilityLabel,
+  style,
 }: ButtonProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
@@ -88,6 +89,7 @@ export const Button = ({
           containerSizeStyle,
           pressed && !isInteractionDisabled && styles.pressed,
           isInteractionDisabled && styles.disabled,
+          style,
         ]}
         onPress={handlePress}
         disabled={isInteractionDisabled}

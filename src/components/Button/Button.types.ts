@@ -9,6 +9,7 @@ export interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   accessibilityLabel?: string;
+  style?: import('react-native').StyleProp<import('react-native').ViewStyle>;
 }
 
 export interface ButtonContextValue {

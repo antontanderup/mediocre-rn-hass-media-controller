@@ -80,6 +80,7 @@ export default function SearchTab(): React.JSX.Element {
               size="sm"
               onPress={onOpen}
               accessibilityLabel={t('search.selectSearchProvider')}
+              style={{ marginRight: 8 }}
             >
               <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
                 {activeLabel}
