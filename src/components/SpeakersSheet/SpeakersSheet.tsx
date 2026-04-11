@@ -1,6 +1,7 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { Button, ButtonIcon } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { VolumeSlider } from '@/components/VolumeSlider';
 import { useGrouping, useHaptics, useMediaPlayerControls, useTheme } from '@/hooks';
@@ -48,21 +49,21 @@ export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Eleme
 
   return (
     <>
-      <Pressable
-        style={styles.trigger}
+      <Button
+        variant="surface"
+        size="sm"
         onPress={handleOpen}
-        accessibilityRole="button"
         accessibilityLabel={
           connectedCount > 0
             ? t('speakersSheet.speakersConnected', { count: connectedCount })
             : t('speakersSheet.speakers')
         }
       >
-        <Icon name="speaker-multiple" size={18} color={theme.onSurfaceVariant} />
+        <ButtonIcon name="speaker-multiple" />
         {connectedCount > 0 && (
           <Text style={styles.badgeText}>{connectedCount}</Text>
         )}
-      </Pressable>
+      </Button>
 
       {hasOpened && (
         <TrueSheet
@@ -200,16 +201,6 @@ export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Eleme
 };
 
 const useStyles = createUseStyles(theme => ({
-  trigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: theme.surfaceContainerHigh,
-  },
   badgeText: {
     fontSize: 12,
     fontWeight: '600',

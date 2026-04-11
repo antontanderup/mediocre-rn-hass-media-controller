@@ -1,9 +1,9 @@
 import { useNavigation } from 'expo-router';
 import { useLayoutEffect, useMemo, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { BottomSheetSelect, HaMediaBrowser, Icon } from '@/components';
+import { Text, View } from 'react-native';
+import { BottomSheetSelect, Button, ButtonIcon, ButtonText, HaMediaBrowser } from '@/components';
 import { useHassContext } from '@/context';
-import { useSelectedPlayer, useTheme } from '@/hooks';
+import { useSelectedPlayer } from '@/hooks';
 import type { MediaBrowserEntry } from '@/types';
 import { buildHassUrl, createUseStyles } from '@/utils';
 import { t } from '@/localization';
@@ -36,22 +36,10 @@ const useStyles = createUseStyles(theme => ({
     lineHeight: 22,
     color: theme.onSurfaceVariant,
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    gap: 4,
-  },
-  headerRightLabel: {
-    fontSize: 14,
-    color: theme.onSurfaceVariant,
-    maxWidth: 120,
-  },
 }));
 
 export default function BrowserTab() {
   const { entityId, config: playerConfig } = useSelectedPlayer();
-  const theme = useTheme();
   const styles = useStyles();
   const { hassConfig } = useHassContext();
   const navigation = useNavigation();
@@ -97,17 +85,17 @@ export default function BrowserTab() {
           onChange={setSelectedEntityId}
           title={t('browser.mediaSource')}
           renderTrigger={onOpen => (
-            <Pressable
-              style={styles.headerRight}
+            <Button
+              variant="subtle"
+              size="sm"
               onPress={onOpen}
-              accessibilityRole="button"
               accessibilityLabel={t('browser.selectMediaSource')}
             >
-              <Text style={styles.headerRightLabel} numberOfLines={1}>
+              <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
                 {activeLabel}
-              </Text>
-              <Icon name="chevron-down" size={18} color={theme.onSurfaceVariant} />
-            </Pressable>
+              </ButtonText>
+              <ButtonIcon name="chevron-down" />
+            </Button>
           )}
         />
       ),
@@ -118,8 +106,6 @@ export default function BrowserTab() {
     options,
     activeEntityId,
     activeLabel,
-    styles,
-    theme,
   ]);
 
   if (!entityId) {

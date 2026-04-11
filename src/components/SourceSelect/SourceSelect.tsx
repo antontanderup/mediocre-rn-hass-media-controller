@@ -1,9 +1,8 @@
 import React from 'react';
-import { Pressable, Text } from 'react-native';
 import { BottomSheetSelect } from '@/components/BottomSheetSelect';
-import { Icon } from '@/components/Icon';
-import { useMediaPlayerControls, useTheme } from '@/hooks';
-import { createUseStyles, getSourceIcon } from '@/utils';
+import { Button, ButtonIcon, ButtonText } from '@/components/Button';
+import { useMediaPlayerControls } from '@/hooks';
+import { getSourceIcon } from '@/utils';
 import { t } from '@/localization';
 
 export interface SourceSelectProps {
@@ -13,8 +12,6 @@ export interface SourceSelectProps {
 }
 
 export const SourceSelect = ({ entityId, source, sourceList }: SourceSelectProps) => {
-  const theme = useTheme();
-  const styles = useStyles();
   const { setSource } = useMediaPlayerControls(entityId);
 
   const options = sourceList.map(s => ({
@@ -30,38 +27,19 @@ export const SourceSelect = ({ entityId, source, sourceList }: SourceSelectProps
       onChange={setSource}
       title={t('sourceSelect.title')}
       renderTrigger={onOpen => (
-        <Pressable
-          style={styles.trigger}
+        <Button
+          variant="surface"
+          size="sm"
           onPress={onOpen}
-          accessibilityRole="button"
           accessibilityLabel={t('sourceSelect.selectSource')}
         >
-          <Icon name={getSourceIcon(source)} size={18} color={theme.onSurfaceVariant} />
-          <Text style={styles.label} numberOfLines={1}>
+          <ButtonIcon name={getSourceIcon(source)} />
+          <ButtonText numberOfLines={1} style={{ flexShrink: 1, maxWidth: 160 }}>
             {source}
-          </Text>
-          <Icon name="chevron-down" size={16} color={theme.onSurfaceVariant} />
-        </Pressable>
+          </ButtonText>
+          <ButtonIcon name="chevron-down" />
+        </Button>
       )}
     />
   );
 };
-
-const useStyles = createUseStyles(theme => ({
-  trigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: theme.surfaceContainerHigh,
-  },
-  label: {
-    fontSize: 13,
-    color: theme.onSurfaceVariant,
-    flexShrink: 1,
-    maxWidth: 160,
-  },
-}));
