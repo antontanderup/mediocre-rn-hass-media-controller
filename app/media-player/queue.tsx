@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/core';
 import { useNavigation } from 'expo-router';
-import { useLayoutEffect } from 'react';
+import { useCallback, useLayoutEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { QueueItem as QueueItemComponent } from '@/components';
 import { usePlayerQueue, useSelectedPlayer, useTheme } from '@/hooks';
@@ -49,7 +50,13 @@ export default function QueueTab() {
   const styles = useStyles();
   const navigation = useNavigation();
 
-  const { queue, loading, isAvailable, clearQueue } = usePlayerQueue(entityId ?? '');
+  const { queue, loading, isAvailable, clearQueue, refetch } = usePlayerQueue(entityId ?? '');
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
