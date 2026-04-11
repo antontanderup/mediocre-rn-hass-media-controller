@@ -306,6 +306,7 @@ export default function PlayerConfigScreen() {
                 value={field.state.value}
                 onChangeValue={field.handleChange}
                 onBlur={field.handleBlur}
+                domain="button."
                 label={t('playerConfig.field.maFavoriteButtonEntityId.label')}
                 placeholder={t('playerConfig.field.maFavoriteButtonEntityId.placeholder')}
               />

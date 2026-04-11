@@ -105,7 +105,7 @@ export const en = {
       },
       maFavoriteButtonEntityId: {
         label: 'MA favorite button entity ID',
-        placeholder: 'script.ma_favorite',
+        placeholder: 'button.ma_favorite',
       },
       lmsEntityId: {
         label: 'LMS entity ID',
