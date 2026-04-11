@@ -1,6 +1,6 @@
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Icon, PlaybackControls, ProgressBar, SourceSelect, SpeakersSheet, VolumeSlider } from '@/components';
+import { Button, ButtonIcon, Icon, PlaybackControls, ProgressBar, SourceSelect, SpeakersSheet, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
 import { useMediaPlayerControls, useSelectedPlayer, useTheme } from '@/hooks';
 import type { PlaybackCommand } from '@/types';
@@ -69,6 +69,7 @@ export default function PlayerTab() {
   const duration = attributes.media_duration ?? 0;
   const volume = attributes.volume_level ?? 0;
   const isPlaying = state === 'playing';
+  const isOff = state === 'off';
 
   const artworkUri =
     attributes.entity_picture && hassConfig
@@ -100,7 +101,7 @@ export default function PlayerTab() {
           />
         ) : (
           <View style={[styles.artworkPlaceholder, { backgroundColor: theme.surfaceContainerHigh }]}>
-            <Icon name="music-note" size={80} color={theme.onSurfaceVariant} />
+            <Icon name={isOff ? 'speaker' : 'music-note'} size={80} color={theme.onSurfaceVariant} />
           </View>
         )}
       </View>
@@ -111,7 +112,16 @@ export default function PlayerTab() {
             {name}
           </Text>
           <View style={styles.triggerGroup}>
-            {attributes.source && attributes.source_list && attributes.source_list.length > 1 ? (
+            {isOff ? (
+              <Button
+                variant="surface"
+                size="sm"
+                onPress={controls.turnOn}
+                accessibilityLabel={t('nowPlaying.turnOn')}
+              >
+                <ButtonIcon name="power" />
+              </Button>
+            ) : attributes.source && attributes.source_list && attributes.source_list.length > 1 ? (
               <SourceSelect
                 entityId={entityId ?? ''}
                 source={attributes.source}

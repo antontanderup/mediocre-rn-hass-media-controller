@@ -137,6 +137,7 @@ export const en = {
 
   nowPlaying: {
     playerNotAvailable: 'Player not available.',
+    turnOn: 'Turn on',
   },
 
   queue: {
