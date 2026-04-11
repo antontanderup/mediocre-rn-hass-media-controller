@@ -11,22 +11,15 @@ import {
 import { useHaSearch, useHaptics, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { t } from '@/localization';
-import { BottomSheetSelect } from '@/components/BottomSheetSelect';
-import type { BottomSheetSelectOption } from '@/components/BottomSheetSelect';
 import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
+import { MediaItemSheet } from '@/components/MediaItemSheet';
+import type { MediaItemSheetAction } from '@/components/MediaItemSheet';
 import { Icon } from '@/components/Icon';
-import type { HaEnqueueMode, HaMediaItem } from '@/types';
+import type { HaMediaItem } from '@/types';
 import type { HaSearchProps } from './HaSearch.types';
 
 const DEBOUNCE_MS = 600;
-
-const ENQUEUE_OPTIONS: BottomSheetSelectOption<HaEnqueueMode>[] = [
-  { value: 'play', label: t('haSearch.enqueue.play'), icon: 'play-circle-outline' },
-  { value: 'replace', label: t('haSearch.enqueue.replaceQueue'), icon: 'playlist-remove' },
-  { value: 'next', label: t('haSearch.enqueue.addNext'), icon: 'playlist-play' },
-  { value: 'add', label: t('haSearch.enqueue.addToQueue'), icon: 'playlist-plus' },
-];
 
 export const HaSearch = ({
   entityId,
@@ -61,28 +54,48 @@ export const HaSearch = ({
     };
   }, []);
 
-  // Filter & enqueue state
+  // Filter state
   const [activeFilter, setActiveFilter] = useState<string>('all');
-  const [enqueueMode, setEnqueueMode] = useState<HaEnqueueMode>('replace');
 
   const haSearch = useHaSearch(debouncedQuery, activeFilter, entityId, showFavorites, filterConfig);
   const hasQuery = debouncedQuery.trim().length >= 2;
+
+  const buildActions = useCallback(
+    (item: HaMediaItem): MediaItemSheetAction[] => [
+      { label: t('haSearch.enqueue.play'), icon: 'play', onPress: () => haSearch.playItem(item, entityId, 'play') },
+      { label: t('haSearch.enqueue.replaceQueue'), icon: 'playlist-play', onPress: () => haSearch.playItem(item, entityId, 'replace') },
+      { label: t('haSearch.enqueue.addNext'), icon: 'playlist-music', onPress: () => haSearch.playItem(item, entityId, 'next') },
+      { label: t('haSearch.enqueue.addToQueue'), icon: 'playlist-plus', onPress: () => haSearch.playItem(item, entityId, 'add') },
+    ],
+    [haSearch, entityId],
+  );
 
   const renderGridHeader = (items: HaMediaItem[]): React.JSX.Element | null => {
     const grid = items.filter(i => i.media_class !== 'track');
     if (grid.length === 0) return null;
     return (
       <View style={styles.grid}>
-        {grid.map(item => (
-          <View key={item.media_content_id} style={styles.gridCell}>
-            <MediaGridItem
-              title={item.title}
-              artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
-              fallbackIcon={iconForMediaClass(item.media_class)}
-              onPress={() => haSearch.playItem(item, entityId, enqueueMode)}
-            />
-          </View>
-        ))}
+        {grid.map(item => {
+          const artworkUrl = resolveArtworkUrl(item.thumbnail, hassBaseUrl);
+          const fallbackIcon = iconForMediaClass(item.media_class);
+          return (
+            <View key={item.media_content_id} style={styles.gridCell}>
+              <MediaItemSheet
+                artworkUrl={artworkUrl}
+                title={item.title}
+                actions={buildActions(item)}
+                renderTrigger={onOpen => (
+                  <MediaGridItem
+                    title={item.title}
+                    artworkUrl={artworkUrl}
+                    fallbackIcon={fallbackIcon}
+                    onPress={onOpen}
+                  />
+                )}
+              />
+            </View>
+          );
+        })}
       </View>
     );
   };
@@ -104,14 +117,25 @@ export const HaSearch = ({
             </View>
           ) : undefined
         }
-        renderItem={({ item }) => (
-          <MediaTrackItem
-            title={item.title}
-            artworkUrl={resolveArtworkUrl(item.thumbnail, hassBaseUrl)}
-            fallbackIcon={iconForMediaClass(item.media_class)}
-            onPlay={() => haSearch.playItem(item, entityId, enqueueMode)}
-          />
-        )}
+        renderItem={({ item }) => {
+          const artworkUrl = resolveArtworkUrl(item.thumbnail, hassBaseUrl);
+          const fallbackIcon = iconForMediaClass(item.media_class);
+          return (
+            <MediaItemSheet
+              artworkUrl={artworkUrl}
+              title={item.title}
+              actions={buildActions(item)}
+              renderTrigger={onOpen => (
+                <MediaTrackItem
+                  title={item.title}
+                  artworkUrl={artworkUrl}
+                  fallbackIcon={fallbackIcon}
+                  onPress={onOpen}
+                />
+              )}
+            />
+          );
+        }}
         contentInsetAdjustmentBehavior="automatic"
       />
     );
@@ -143,26 +167,6 @@ export const HaSearch = ({
             <Icon name="close" size={16} color={theme.onSurfaceVariant} />
           </Pressable>
         )}
-        <BottomSheetSelect
-          options={ENQUEUE_OPTIONS}
-          value={enqueueMode}
-          onChange={setEnqueueMode}
-          title={t('haSearch.playbackMode')}
-          renderTrigger={onOpen => (
-            <Pressable
-              style={({ pressed }) => [styles.enqueueBtn, pressed && styles.btnPressed]}
-              onPress={onOpen}
-              accessibilityRole="button"
-              accessibilityLabel={t('haSearch.changeEnqueueMode')}
-            >
-              <Icon
-                name={ENQUEUE_OPTIONS.find(o => o.value === enqueueMode)?.icon ?? 'play-circle-outline'}
-                size={20}
-                color={theme.primary}
-              />
-            </Pressable>
-          )}
-        />
       </View>
 
       {/* Filter chips */}
@@ -293,9 +297,6 @@ const useStyles = createUseStyles(theme => ({
   },
   btnPressed: {
     opacity: 0.5,
-  },
-  enqueueBtn: {
-    padding: 4,
   },
   filterRow: {
     paddingHorizontal: 16,
