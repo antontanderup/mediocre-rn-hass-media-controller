@@ -33,6 +33,9 @@ export type { SqueezeboxQueueResult } from './useSqueezeboxQueue';
 export { usePlayerQueue } from './usePlayerQueue';
 export type { UsePlayerQueueResult } from './usePlayerQueue';
 
+export { useTransferQueue } from './useTransferQueue';
+export type { UseTransferQueueResult, TransferTarget } from './useTransferQueue';
+
 export { useHaSearch } from './useHaSearch';
 export type { UseHaSearchResult } from './useHaSearch';
 export { useMaSearch } from './useMaSearch';

@@ -141,6 +141,7 @@ export const en = {
     clearQueue: 'Clear queue',
     clear: 'Clear',
     refresh: 'Refresh queue',
+    transferQueue: 'Transfer queue',
     notAvailable:
       'Queue not available \u2014 configure Music Assistant or Lyrion Media Server for this player in Settings.',
     empty: 'Queue is empty',
