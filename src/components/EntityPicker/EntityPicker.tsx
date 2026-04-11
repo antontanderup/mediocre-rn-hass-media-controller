@@ -81,6 +81,7 @@ export const EntityPicker = ({
           cornerRadius={16}
           initialDetentIndex={0}
           grabber
+          scrollable
           onDidDismiss={handleDidDismiss}
           backgroundColor={theme.surfaceContainerLow}
         >
@@ -98,6 +99,7 @@ export const EntityPicker = ({
               returnKeyType="search"
             />
             <FlatList
+              style={styles.entityList}
               data={filteredEntities}
               keyExtractor={item => item.entity_id}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -169,6 +171,9 @@ const useStyles = createUseStyles(theme => ({
     borderWidth: 1,
     borderColor: theme.outline,
     marginBottom: 12,
+  },
+  entityList: {
+    flex: 1,
   },
   entityRow: {
     paddingHorizontal: 14,
