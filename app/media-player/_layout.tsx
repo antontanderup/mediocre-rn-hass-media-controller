@@ -1,7 +1,6 @@
 import { Tabs, useRouter } from 'expo-router';
 import React from 'react';
-import { Pressable } from 'react-native';
-import { Icon } from '@/components';
+import { Button, ButtonIcon, Icon } from '@/components';
 import { useThemeContext } from '@/context';
 import { useAppConfig, useSelectedPlayer, useTheme } from '@/hooks';
 import { t } from '@/localization';
@@ -72,14 +71,15 @@ export default function MediaPlayerLayout(): React.JSX.Element {
             <Icon name="speaker-multiple" size={size} color={color} />
           ),
           headerRight: () => (
-            <Pressable
-              style={{ padding: 8, marginRight: 4 }}
+            <Button
+              variant="subtle"
+              size="sm"
               onPress={() => router.push('/settings')}
               accessibilityLabel={t('tabs.openSettings')}
-              accessibilityRole="button"
+              style={{ marginRight: 8 }}
             >
-              <Icon name="cog" size={22} color={colors.onSurfaceVariant} />
-            </Pressable>
+              <ButtonIcon name="cog" />
+            </Button>
           ),
         }}
       />
