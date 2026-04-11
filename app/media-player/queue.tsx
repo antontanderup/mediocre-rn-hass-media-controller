@@ -74,7 +74,7 @@ export default function QueueTab() {
               renderTrigger={onOpen => (
                 <Button
                   variant="subtle"
-                  size="sm"
+                  size="md"
                   onPress={onOpen}
                   accessibilityLabel={t('queue.transferQueue')}
                 >
@@ -85,8 +85,8 @@ export default function QueueTab() {
           )}
           {queue.length > 0 && (
             <Button
-              variant="ghost"
-              size="sm"
+              variant="subtle"
+              size="md"
               onPress={clearQueue}
               accessibilityLabel={t('queue.clearQueue')}
             >
@@ -95,7 +95,7 @@ export default function QueueTab() {
           )}
           <Button
             variant="subtle"
-            size="sm"
+            size="md"
             onPress={refetch}
             accessibilityLabel={t('queue.refresh')}
           >
