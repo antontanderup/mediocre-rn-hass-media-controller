@@ -1,15 +1,19 @@
-import type { IconName } from '@/components/Icon';
-
-export type ButtonVariant = 'primary' | 'secondary' | 'outlined' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'surface' | 'outlined' | 'ghost' | 'subtle';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps {
-  label: string;
+  children: React.ReactNode;
   onPress: () => void;
   variant?: ButtonVariant;
   size?: ButtonSize;
-  icon?: IconName;
   disabled?: boolean;
   loading?: boolean;
   accessibilityLabel?: string;
+}
+
+export interface ButtonContextValue {
+  iconColor: string;
+  iconSize: number;
+  labelColor: string;
+  labelSize: number;
 }

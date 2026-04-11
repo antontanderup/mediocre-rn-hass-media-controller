@@ -1,8 +1,8 @@
 import { useFocusEffect } from '@react-navigation/core';
 import { useNavigation } from 'expo-router';
 import { useCallback, useLayoutEffect } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
-import { BottomSheetSelect, Icon, QueueItem as QueueItemComponent } from '@/components';
+import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { BottomSheetSelect, Button, ButtonIcon, QueueItem as QueueItemComponent } from '@/components';
 import { usePlayerQueue, useSelectedPlayer, useTheme, useTransferQueue } from '@/hooks';
 import type { QueueItem } from '@/types';
 import { createUseStyles } from '@/utils';
@@ -31,12 +31,6 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     paddingHorizontal: 4,
     gap: 4,
-  },
-  iconBtn: {
-    padding: 8,
-  },
-  iconBtnPressed: {
-    opacity: 0.5,
   },
   list: {
     flex: 1,
@@ -78,39 +72,39 @@ export default function QueueTab() {
               onChange={transferQueue}
               title={t('queue.transferQueue')}
               renderTrigger={onOpen => (
-                <Pressable
-                  style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
+                <Button
+                  variant="subtle"
+                  size="sm"
                   onPress={onOpen}
-                  accessibilityRole="button"
                   accessibilityLabel={t('queue.transferQueue')}
                 >
-                  <Icon name="transfer" size={24} color={theme.onSurfaceVariant} />
-                </Pressable>
+                  <ButtonIcon name="transfer" />
+                </Button>
               )}
             />
           )}
           {queue.length > 0 && (
-            <Pressable
-              style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
+            <Button
+              variant="ghost"
+              size="sm"
               onPress={clearQueue}
-              accessibilityRole="button"
               accessibilityLabel={t('queue.clearQueue')}
             >
-              <Icon name="delete-sweep" size={24} color={theme.primary} />
-            </Pressable>
+              <ButtonIcon name="delete-sweep" />
+            </Button>
           )}
-          <Pressable
-            style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
+          <Button
+            variant="subtle"
+            size="sm"
             onPress={refetch}
-            accessibilityRole="button"
             accessibilityLabel={t('queue.refresh')}
           >
-            <Icon name="refresh" size={24} color={theme.onSurfaceVariant} />
-          </Pressable>
+            <ButtonIcon name="refresh" />
+          </Button>
         </View>
       ),
     });
-  }, [navigation, isAvailable, transferTargets, transferQueue, queue.length, clearQueue, refetch, styles.headerRow, styles.iconBtn, styles.iconBtnPressed, theme.primary, theme.onSurfaceVariant]);
+  }, [navigation, isAvailable, transferTargets, transferQueue, queue.length, clearQueue, refetch, styles.headerRow]);
 
   if (!isAvailable) {
     return (

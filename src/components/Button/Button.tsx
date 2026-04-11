@@ -1,7 +1,7 @@
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, View } from 'react-native';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
-import { Icon } from '@/components/Icon';
+import { ButtonContext } from './ButtonContext';
 import type { ButtonProps, ButtonSize, ButtonVariant } from './Button.types';
 
 const ICON_SIZES: Record<ButtonSize, number> = {
@@ -10,18 +10,23 @@ const ICON_SIZES: Record<ButtonSize, number> = {
   lg: 22,
 };
 
-const ICON_GAP: Record<ButtonSize, number> = {
+const LABEL_SIZES: Record<ButtonSize, number> = {
+  sm: 13,
+  md: 15,
+  lg: 17,
+};
+
+const CONTENT_GAPS: Record<ButtonSize, number> = {
   sm: 4,
   md: 6,
   lg: 8,
 };
 
 export const Button = ({
-  label,
+  children,
   onPress,
   variant = 'primary',
   size = 'md',
-  icon,
   disabled = false,
   loading = false,
   accessibilityLabel,
@@ -30,21 +35,25 @@ export const Button = ({
   const theme = useTheme();
   const haptics = useHaptics();
 
+  const fgColor = (
+    {
+      primary: theme.onPrimary,
+      secondary: theme.onSecondaryContainer,
+      surface: theme.onSurfaceVariant,
+      outlined: theme.primary,
+      ghost: theme.primary,
+      subtle: theme.onSurfaceVariant,
+    } satisfies Record<ButtonVariant, string>
+  )[variant];
+
   const containerVariantStyle = (
     {
       primary: styles.variantPrimary,
       secondary: styles.variantSecondary,
+      surface: styles.variantSurface,
       outlined: styles.variantOutlined,
       ghost: styles.variantGhost,
-    } satisfies Record<ButtonVariant, object>
-  )[variant];
-
-  const labelVariantStyle = (
-    {
-      primary: styles.labelPrimary,
-      secondary: styles.labelSecondary,
-      outlined: styles.labelOutlined,
-      ghost: styles.labelGhost,
+      subtle: styles.variantSubtle,
     } satisfies Record<ButtonVariant, object>
   )[variant];
 
@@ -56,65 +65,43 @@ export const Button = ({
     } satisfies Record<ButtonSize, object>
   )[size];
 
-  const labelSizeStyle = (
-    {
-      sm: styles.labelSm,
-      md: styles.labelMd,
-      lg: styles.labelLg,
-    } satisfies Record<ButtonSize, object>
-  )[size];
-
-  const iconColor = (
-    {
-      primary: theme.onPrimary,
-      secondary: theme.onSecondaryContainer,
-      outlined: theme.primary,
-      ghost: theme.primary,
-    } satisfies Record<ButtonVariant, string>
-  )[variant];
+  const isInteractionDisabled = disabled || loading;
 
   const handlePress = (): void => {
     haptics.light();
     onPress();
   };
 
-  const isInteractionDisabled = disabled || loading;
-
   return (
-    <Pressable
-      style={({ pressed }) => [
-        styles.base,
-        containerVariantStyle,
-        containerSizeStyle,
-        pressed && !isInteractionDisabled && styles.pressed,
-        isInteractionDisabled && styles.disabled,
-      ]}
-      onPress={handlePress}
-      disabled={isInteractionDisabled}
-      accessibilityLabel={accessibilityLabel ?? label}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: isInteractionDisabled }}
+    <ButtonContext.Provider
+      value={{
+        iconColor: fgColor,
+        iconSize: ICON_SIZES[size],
+        labelColor: fgColor,
+        labelSize: LABEL_SIZES[size],
+      }}
     >
-      {loading ? (
-        <ActivityIndicator size="small" color={iconColor} />
-      ) : (
-        <View style={styles.content}>
-          {icon ? (
-            <Icon name={icon} size={ICON_SIZES[size]} color={iconColor} />
-          ) : null}
-          <Text
-            style={[
-              styles.label,
-              labelVariantStyle,
-              labelSizeStyle,
-              icon ? { marginLeft: ICON_GAP[size] } : undefined,
-            ]}
-          >
-            {label}
-          </Text>
-        </View>
-      )}
-    </Pressable>
+      <Pressable
+        style={({ pressed }) => [
+          styles.base,
+          containerVariantStyle,
+          containerSizeStyle,
+          pressed && !isInteractionDisabled && styles.pressed,
+          isInteractionDisabled && styles.disabled,
+        ]}
+        onPress={handlePress}
+        disabled={isInteractionDisabled}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: isInteractionDisabled }}
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color={fgColor} />
+        ) : (
+          <View style={[styles.content, { gap: CONTENT_GAPS[size] }]}>{children}</View>
+        )}
+      </Pressable>
+    </ButtonContext.Provider>
   );
 };
 
@@ -136,13 +123,14 @@ const useStyles = createUseStyles(theme => ({
   disabled: {
     opacity: 0.4,
   },
-
-  // --- variant container styles ---
   variantPrimary: {
     backgroundColor: theme.primary,
   },
   variantSecondary: {
     backgroundColor: theme.secondaryContainer,
+  },
+  variantSurface: {
+    backgroundColor: theme.surfaceContainerHigh,
   },
   variantOutlined: {
     backgroundColor: 'transparent',
@@ -152,49 +140,19 @@ const useStyles = createUseStyles(theme => ({
   variantGhost: {
     backgroundColor: 'transparent',
   },
-
-  // --- variant label colors ---
-  labelPrimary: {
-    color: theme.onPrimary,
+  variantSubtle: {
+    backgroundColor: 'transparent',
   },
-  labelSecondary: {
-    color: theme.onSecondaryContainer,
-  },
-  labelOutlined: {
-    color: theme.primary,
-  },
-  labelGhost: {
-    color: theme.primary,
-  },
-
-  // --- size container padding ---
   sizeSm: {
     paddingHorizontal: 12,
     paddingVertical: 8,
-    minWidth: 64,
   },
   sizeMd: {
     paddingHorizontal: 20,
     paddingVertical: 12,
-    minWidth: 88,
   },
   sizeLg: {
     paddingHorizontal: 24,
     paddingVertical: 16,
-    minWidth: 112,
-  },
-
-  // --- size label font ---
-  label: {
-    fontWeight: '600',
-  },
-  labelSm: {
-    fontSize: 13,
-  },
-  labelMd: {
-    fontSize: 15,
-  },
-  labelLg: {
-    fontSize: 17,
   },
 }));

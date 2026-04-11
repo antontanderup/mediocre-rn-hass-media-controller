@@ -1,9 +1,9 @@
 import { useNavigation } from 'expo-router';
 import { useLayoutEffect, useMemo } from 'react';
-import { Pressable, Text, View } from 'react-native';
-import { BottomSheetSelect, HaSearch, Icon } from '@/components';
+import { Text, View } from 'react-native';
+import { BottomSheetSelect, Button, ButtonIcon, ButtonText, HaSearch } from '@/components';
 import { useHassContext } from '@/context';
-import { useSearchProvider, useSelectedPlayer, useTheme } from '@/hooks';
+import { useSearchProvider, useSelectedPlayer } from '@/hooks';
 import { buildHassUrl, createUseStyles } from '@/utils';
 import { t } from '@/localization';
 
@@ -25,22 +25,10 @@ const useStyles = createUseStyles(theme => ({
     lineHeight: 22,
     color: theme.onSurfaceVariant,
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    gap: 4,
-  },
-  headerRightLabel: {
-    fontSize: 14,
-    color: theme.onSurfaceVariant,
-    maxWidth: 120,
-  },
 }));
 
 export default function SearchTab(): React.JSX.Element {
   const { entityId } = useSelectedPlayer();
-  const theme = useTheme();
   const styles = useStyles();
   const { hassConfig } = useHassContext();
   const navigation = useNavigation();
@@ -87,17 +75,17 @@ export default function SearchTab(): React.JSX.Element {
           }}
           title={t('search.searchProvider')}
           renderTrigger={onOpen => (
-            <Pressable
-              style={styles.headerRight}
+            <Button
+              variant="subtle"
+              size="sm"
               onPress={onOpen}
-              accessibilityRole="button"
               accessibilityLabel={t('search.selectSearchProvider')}
             >
-              <Text style={styles.headerRightLabel} numberOfLines={1}>
+              <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
                 {activeLabel}
-              </Text>
-              <Icon name="chevron-down" size={18} color={theme.onSurfaceVariant} />
-            </Pressable>
+              </ButtonText>
+              <ButtonIcon name="chevron-down" />
+            </Button>
           )}
         />
       ),
@@ -110,8 +98,6 @@ export default function SearchTab(): React.JSX.Element {
     activeLabel,
     haProviders,
     selectProvider,
-    styles,
-    theme,
   ]);
 
   if (!entityId) {
