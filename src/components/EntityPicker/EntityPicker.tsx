@@ -77,7 +77,7 @@ export const EntityPicker = ({
       {hasOpened && (
         <TrueSheet
           ref={sheetRef}
-          detents={['large']}
+          detents={[0.9]}
           cornerRadius={16}
           initialDetentIndex={0}
           grabber
