@@ -1,20 +1,13 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import type { ImageStyle } from 'react-native';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
+import { MediaArtwork } from '@/components/MediaArtwork';
 import type { QueueItemProps } from './QueueItem.types';
 
 const THUMB_SIZE = 40;
-
-// Image style must be typed separately to satisfy ImageStyle constraints
-const imageStyles = StyleSheet.create({
-  thumb: {
-    width: THUMB_SIZE,
-    height: THUMB_SIZE,
-    borderRadius: 4,
-  },
-});
 
 const useStyles = createUseStyles(theme => ({
   row: {
@@ -38,6 +31,11 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+  },
+  thumbImage: {
+    width: THUMB_SIZE,
+    height: THUMB_SIZE,
+    borderRadius: 4,
   },
   info: {
     flex: 1,
@@ -94,11 +92,7 @@ export const QueueItem = ({
     >
       <View style={styles.thumb}>
         {item.artworkUrl ? (
-          <Image
-            source={{ uri: item.artworkUrl }}
-            style={imageStyles.thumb}
-            accessibilityIgnoresInvertColors
-          />
+          <MediaArtwork uri={item.artworkUrl} style={styles.thumbImage as ImageStyle} />
         ) : (
           <Icon name="music-note" size={20} color={theme.onSurfaceVariant} />
         )}

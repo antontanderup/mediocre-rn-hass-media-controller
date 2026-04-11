@@ -1,8 +1,10 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import type { ImageStyle } from 'react-native';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
+import { MediaArtwork } from '@/components/MediaArtwork';
 import type { MediaTrackItemProps } from './MediaTrackItem.types';
 
 const THUMB_SIZE = 44;
@@ -42,11 +44,7 @@ export const MediaTrackItem = ({
     >
       <View style={styles.thumb}>
         {artworkUrl ? (
-          <Image
-            source={{ uri: artworkUrl }}
-            style={imageStyles.thumb}
-            accessibilityIgnoresInvertColors
-          />
+          <MediaArtwork uri={artworkUrl} style={styles.thumbImage as ImageStyle} />
         ) : (
           <Icon name={fallbackIcon} size={20} color={theme.onSurfaceVariant} />
         )}
@@ -78,14 +76,6 @@ export const MediaTrackItem = ({
   );
 };
 
-const imageStyles = StyleSheet.create({
-  thumb: {
-    width: THUMB_SIZE,
-    height: THUMB_SIZE,
-    borderRadius: 6,
-  },
-});
-
 const useStyles = createUseStyles(theme => ({
   row: {
     flexDirection: 'row',
@@ -105,6 +95,11 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+  },
+  thumbImage: {
+    width: THUMB_SIZE,
+    height: THUMB_SIZE,
+    borderRadius: 6,
   },
   info: {
     flex: 1,

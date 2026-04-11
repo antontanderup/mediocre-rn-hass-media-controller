@@ -1,0 +1,1 @@
+export { MediaArtwork } from './MediaArtwork';

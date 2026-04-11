@@ -1,9 +1,11 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import React, { useCallback, useRef, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import type { ImageStyle } from 'react-native';
 import { useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
+import { MediaArtwork } from '@/components/MediaArtwork';
 import type { MediaItemSheetProps } from './MediaItemSheet.types';
 
 const ART_SIZE = 56;
@@ -54,11 +56,7 @@ export const MediaItemSheet = ({
           <View style={styles.header}>
             <View style={styles.artwork}>
               {artworkUrl ? (
-                <Image
-                  source={{ uri: artworkUrl }}
-                  style={imageStyles.artwork}
-                  accessibilityIgnoresInvertColors
-                />
+                <MediaArtwork uri={artworkUrl} style={styles.artworkImage as ImageStyle} />
               ) : (
                 <Icon name="music-note" size={28} color={theme.onSurfaceVariant} />
               )}
@@ -96,14 +94,6 @@ export const MediaItemSheet = ({
   );
 };
 
-const imageStyles = StyleSheet.create({
-  artwork: {
-    width: ART_SIZE,
-    height: ART_SIZE,
-    borderRadius: 8,
-  },
-});
-
 const useStyles = createUseStyles(theme => ({
   content: {
     paddingHorizontal: 16,
@@ -124,6 +114,11 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+  },
+  artworkImage: {
+    width: ART_SIZE,
+    height: ART_SIZE,
+    borderRadius: 8,
   },
   info: {
     flex: 1,

@@ -1,8 +1,10 @@
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+import type { ImageStyle } from 'react-native';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { Icon } from '@/components/Icon';
+import { MediaArtwork } from '@/components/MediaArtwork';
 import type { MediaGridItemProps } from './MediaGridItem.types';
 
 export const MediaGridItem = ({
@@ -25,11 +27,7 @@ export const MediaGridItem = ({
     >
       <View style={styles.imageContainer}>
         {artworkUrl ? (
-          <Image
-            source={{ uri: artworkUrl }}
-            style={imageStyles.image}
-            accessibilityIgnoresInvertColors
-          />
+          <MediaArtwork uri={artworkUrl} style={styles.fill as ImageStyle} />
         ) : (
           <View style={styles.iconFallback}>
             <Icon name={fallbackIcon} size={32} color={theme.onSurfaceVariant} />
@@ -42,13 +40,6 @@ export const MediaGridItem = ({
     </Pressable>
   );
 };
-
-const imageStyles = StyleSheet.create({
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-});
 
 const useStyles = createUseStyles(theme => ({
   container: {
@@ -65,6 +56,10 @@ const useStyles = createUseStyles(theme => ({
     borderRadius: 8,
     overflow: 'hidden',
     backgroundColor: theme.surfaceVariant,
+  },
+  fill: {
+    width: '100%' as unknown as number,
+    height: '100%' as unknown as number,
   },
   iconFallback: {
     flex: 1,
