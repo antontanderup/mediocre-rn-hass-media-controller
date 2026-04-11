@@ -83,6 +83,14 @@ export default function QueueTab() {
               )}
             />
           )}
+          <Button
+            variant="subtle"
+            size="md"
+            onPress={refetch}
+            accessibilityLabel={t('queue.refresh')}
+          >
+            <ButtonIcon name="refresh" />
+          </Button>
           {queue.length > 0 && (
             <Button
               variant="subtle"
@@ -93,14 +101,6 @@ export default function QueueTab() {
               <ButtonIcon name="delete-sweep" />
             </Button>
           )}
-          <Button
-            variant="subtle"
-            size="md"
-            onPress={refetch}
-            accessibilityLabel={t('queue.refresh')}
-          >
-            <ButtonIcon name="refresh" />
-          </Button>
         </View>
       ),
     });
