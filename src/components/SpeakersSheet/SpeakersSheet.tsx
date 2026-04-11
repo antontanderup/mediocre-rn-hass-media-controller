@@ -165,30 +165,35 @@ export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Eleme
             </View>
 
             {ungroupedSpeakers.length > 0 && (
-              <View style={[styles.card, { backgroundColor: theme.surfaceContainer }]}>
-                {ungroupedSpeakers.map((speaker, i) => (
-                  <View key={speaker.entityId}>
-                    {i > 0 && <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />}
-                    <Pressable
-                      style={styles.speakerRow}
-                      onPress={() => toggleGroup(speaker.entityId, false)}
-                      disabled={speaker.isLoading}
-                      accessibilityLabel={t('speakers.addSpeaker', { name: speaker.name })}
-                    >
-                      <Text style={[styles.speakerName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
-                        {speaker.name}
-                      </Text>
-                      <View style={styles.iconBtn}>
-                        {speaker.isLoading ? (
-                          <ActivityIndicator size="small" color={theme.primary} />
-                        ) : (
-                          <Icon name="plus" size={18} color={theme.primary} />
-                        )}
-                      </View>
-                    </Pressable>
-                  </View>
-                ))}
-              </View>
+              <>
+                <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>
+                  {t('speakers.addSpeakers')}
+                </Text>
+                <View style={[styles.card, { backgroundColor: theme.surfaceContainer }]}>
+                  {ungroupedSpeakers.map((speaker, i) => (
+                    <View key={speaker.entityId}>
+                      {i > 0 && <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />}
+                      <Pressable
+                        style={styles.speakerRow}
+                        onPress={() => toggleGroup(speaker.entityId, false)}
+                        disabled={speaker.isLoading}
+                        accessibilityLabel={t('speakers.addSpeaker', { name: speaker.name })}
+                      >
+                        <Text style={[styles.speakerName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
+                          {speaker.name}
+                        </Text>
+                        <View style={styles.iconBtn}>
+                          {speaker.isLoading ? (
+                            <ActivityIndicator size="small" color={theme.primary} />
+                          ) : (
+                            <Icon name="plus" size={18} color={theme.primary} />
+                          )}
+                        </View>
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              </>
             )}
           </View>
         </TrueSheet>
@@ -216,6 +221,13 @@ const useStyles = createUseStyles(theme => ({
   },
   syncText: {
     fontSize: 12,
+  },
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    paddingHorizontal: 4,
   },
   card: {
     borderRadius: 16,

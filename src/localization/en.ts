@@ -172,6 +172,7 @@ export const en = {
     unmute: 'Unmute',
     mute: 'Mute',
     removeFromGroup: 'Remove from group',
+    addSpeakers: 'Add speakers',
     addSpeaker: 'Add %{name}',
     switchPlayer: 'Switch player',
     focusDifferentPlayer: 'Focus a different player',
