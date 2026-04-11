@@ -2,8 +2,8 @@ import { useFocusEffect } from '@react-navigation/core';
 import { useNavigation } from 'expo-router';
 import { useCallback, useLayoutEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
-import { Icon, QueueItem as QueueItemComponent } from '@/components';
-import { usePlayerQueue, useSelectedPlayer, useTheme } from '@/hooks';
+import { BottomSheetSelect, Icon, QueueItem as QueueItemComponent } from '@/components';
+import { usePlayerQueue, useSelectedPlayer, useTheme, useTransferQueue } from '@/hooks';
 import type { QueueItem } from '@/types';
 import { createUseStyles } from '@/utils';
 import { t } from '@/localization';
@@ -55,6 +55,7 @@ export default function QueueTab() {
   const navigation = useNavigation();
 
   const { queue, loading, isAvailable, clearQueue, refetch } = usePlayerQueue(entityId ?? '');
+  const { targets: transferTargets, transferQueue } = useTransferQueue(entityId ?? '');
 
   useFocusEffect(
     useCallback(() => {
@@ -70,6 +71,24 @@ export default function QueueTab() {
     navigation.setOptions({
       headerRight: () => (
         <View style={styles.headerRow}>
+          {transferTargets.length > 0 && (
+            <BottomSheetSelect
+              options={transferTargets.map(t => ({ value: t.entityId, label: t.label }))}
+              value=""
+              onChange={transferQueue}
+              title={t('queue.transferQueue')}
+              renderTrigger={onOpen => (
+                <Pressable
+                  style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
+                  onPress={onOpen}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('queue.transferQueue')}
+                >
+                  <Icon name="transfer" size={24} color={theme.onSurfaceVariant} />
+                </Pressable>
+              )}
+            />
+          )}
           {queue.length > 0 && (
             <Pressable
               style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
@@ -91,7 +110,7 @@ export default function QueueTab() {
         </View>
       ),
     });
-  }, [navigation, isAvailable, queue.length, clearQueue, refetch, styles.headerRow, styles.iconBtn, styles.iconBtnPressed, theme.primary, theme.onSurfaceVariant]);
+  }, [navigation, isAvailable, transferTargets, transferQueue, queue.length, clearQueue, refetch, styles.headerRow, styles.iconBtn, styles.iconBtnPressed, theme.primary, theme.onSurfaceVariant]);
 
   if (!isAvailable) {
     return (
