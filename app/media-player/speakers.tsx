@@ -1,15 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
-import { Icon, VolumeSlider } from '@/components';
+import { useMemo } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 import { useHassContext } from '@/context';
-import {
-  useAppConfig,
-  useGrouping,
-  useMediaPlayerControls,
-  useSelectedPlayer,
-  useTheme,
-} from '@/hooks';
-import type { GroupableSpeaker } from '@/hooks';
+import { useAppConfig, useSelectedPlayer, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { t } from '@/localization';
 import { PlayerCardItem } from '../_components/PlayerCardItem';
@@ -22,22 +14,6 @@ export default function SpeakersTab() {
   const styles = useStyles();
   const { players } = useHassContext();
   const { config: appConfig } = useAppConfig();
-  const { groupedSpeakers, ungroupedSpeakers, hasGroupableEntities, toggleGroup, setVolume, setMuted } =
-    useGrouping(entityId ?? '');
-  const controls = useMediaPlayerControls(entityId ?? '');
-
-  const [syncMainSpeakerVolume, setSyncMainSpeakerVolume] = useState(true);
-
-  const handleVolumeChange = useCallback(
-    (speaker: GroupableSpeaker, volume: number) => {
-      if (speaker.isMainSpeaker && syncMainSpeakerVolume) {
-        controls.setVolume(volume, true);
-      } else {
-        setVolume(speaker.entityId, volume);
-      }
-    },
-    [controls, setVolume, syncMainSpeakerVolume],
-  );
 
   const disablePlayerFocusSwitching = appConfig?.options.disablePlayerFocusSwitching ?? false;
 
@@ -71,132 +47,10 @@ export default function SpeakersTab() {
       .filter((e): e is NonNullable<typeof e> => e !== null);
   }, [players, appConfig]);
 
-  const showEmpty = !hasGroupableEntities && disablePlayerFocusSwitching;
+  const showEmpty = disablePlayerFocusSwitching;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* ── Join speakers ───────────────────────────────────────────────────── */}
-      {hasGroupableEntities && (
-        <>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionTitles}>
-              <Text style={[styles.sectionTitle, { color: theme.onSurface }]}>{t('speakers.joinSpeakers')}</Text>
-              <Text style={[styles.sectionSubtitle, { color: theme.onSurfaceVariant }]}>
-                {t('speakers.manageSpeakers')}
-              </Text>
-            </View>
-            <Pressable
-              style={styles.syncToggle}
-              onPress={() => setSyncMainSpeakerVolume((v: boolean) => !v)}
-              accessibilityLabel={t('speakers.linkVolume')}
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: syncMainSpeakerVolume }}
-            >
-              <Text style={[styles.syncText, { color: theme.onSurfaceVariant }]}>{t('speakers.linkVolume')}</Text>
-              <Icon
-                name={syncMainSpeakerVolume ? 'check-circle' : 'radiobox-blank'}
-                size={18}
-                color={syncMainSpeakerVolume ? theme.primary : theme.onSurfaceVariant}
-              />
-            </Pressable>
-          </View>
-
-          {/* Grouped speakers — volume + leave */}
-          <View style={[styles.card, { backgroundColor: theme.surfaceContainer }]}>
-            {groupedSpeakers.map((speaker, i) => (
-              <View key={speaker.entityId}>
-                {i > 0 && <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />}
-                <View style={styles.speakerRow}>
-                  <Text
-                    style={[
-                      styles.speakerName,
-                      { color: theme.onSurface },
-                      speaker.isMainSpeaker && styles.speakerNameBold,
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {speaker.name}
-                  </Text>
-                  {speaker.isOff ? (
-                    <Pressable
-                      onPress={() => toggleGroup(speaker.entityId, false)}
-                      style={styles.iconBtn}
-                      accessibilityLabel={t('speakers.turnOn')}
-                    >
-                      <Icon name="power" size={18} color={theme.onSurfaceVariant} />
-                    </Pressable>
-                  ) : (
-                    <Pressable
-                      onPress={() => setMuted(speaker.entityId, speaker.isMuted)}
-                      style={styles.iconBtn}
-                      accessibilityLabel={speaker.isMuted ? t('speakers.unmute') : t('speakers.mute')}
-                    >
-                      <Icon
-                        name={speaker.isMuted ? 'volume-mute' : 'volume-high'}
-                        size={18}
-                        color={theme.onSurfaceVariant}
-                      />
-                    </Pressable>
-                  )}
-                  <View style={styles.sliderWrap}>
-                    <VolumeSlider
-                      volume={speaker.volume}
-                      onVolumeChange={(v: number) => handleVolumeChange(speaker, v)}
-                    />
-                  </View>
-                  <Pressable
-                    onPress={() => toggleGroup(speaker.entityId, speaker.isGrouped)}
-                    style={styles.iconBtn}
-                    disabled={speaker.isMainSpeaker || speaker.isLoading}
-                    accessibilityLabel={t('speakers.removeFromGroup')}
-                  >
-                    {speaker.isLoading ? (
-                      <ActivityIndicator size="small" color={theme.primary} />
-                    ) : (
-                      <Icon
-                        name="close"
-                        size={18}
-                        color={speaker.isMainSpeaker ? theme.outlineVariant : theme.onSurfaceVariant}
-                      />
-                    )}
-                  </Pressable>
-                </View>
-              </View>
-            ))}
-          </View>
-
-          {/* Ungrouped speaker chips — tap to join */}
-          {ungroupedSpeakers.length > 0 && (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.chipsRow}
-              contentContainerStyle={styles.chipsContent}
-            >
-              {ungroupedSpeakers.map(speaker => (
-                <Pressable
-                  key={speaker.entityId}
-                  style={[
-                    styles.chip,
-                    { backgroundColor: theme.surfaceContainer, borderColor: theme.outline },
-                  ]}
-                  onPress={() => toggleGroup(speaker.entityId, false)}
-                  disabled={speaker.isLoading}
-                  accessibilityLabel={t('speakers.addSpeaker', { name: speaker.name })}
-                >
-                  {speaker.isLoading ? (
-                    <ActivityIndicator size="small" color={theme.primary} />
-                  ) : (
-                    <Icon name="plus" size={14} color={theme.primary} />
-                  )}
-                  <Text style={[styles.chipText, { color: theme.onSurface }]}>{speaker.name}</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          )}
-        </>
-      )}
-
       {/* ── Switch player ───────────────────────────────────────────────────── */}
       {!disablePlayerFocusSwitching && (
         <>
@@ -262,15 +116,11 @@ const useStyles = createUseStyles(theme => ({
     gap: 8,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 4,
     paddingTop: 8,
     paddingBottom: 4,
   },
   sectionTitles: {
-    flex: 1,
     gap: 2,
   },
   sectionTitle: {
@@ -279,68 +129,6 @@ const useStyles = createUseStyles(theme => ({
   },
   sectionSubtitle: {
     fontSize: 12,
-  },
-  syncToggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingLeft: 12,
-  },
-  syncText: {
-    fontSize: 12,
-  },
-  card: {
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  divider: {
-    height: 1,
-    marginHorizontal: 16,
-  },
-  speakerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    gap: 4,
-  },
-  speakerName: {
-    flex: 1,
-    fontSize: 14,
-  },
-  speakerNameBold: {
-    fontWeight: '600',
-  },
-  iconBtn: {
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sliderWrap: {
-    flex: 2,
-  },
-  chipsRow: {
-    flexShrink: 0,
-  },
-  chipsContent: {
-    flexDirection: 'row',
-    gap: 6,
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  chipText: {
-    fontSize: 13,
-    fontWeight: '500',
   },
   emptyContainer: {
     flex: 1,
