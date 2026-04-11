@@ -76,7 +76,7 @@ export default function SearchTab(): React.JSX.Element {
           title={t('search.searchProvider')}
           renderTrigger={onOpen => (
             <Button
-              variant="subtle"
+              variant="surface"
               size="sm"
               onPress={onOpen}
               accessibilityLabel={t('search.selectSearchProvider')}

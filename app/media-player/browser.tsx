@@ -86,7 +86,7 @@ export default function BrowserTab() {
           title={t('browser.mediaSource')}
           renderTrigger={onOpen => (
             <Button
-              variant="subtle"
+              variant="surface"
               size="sm"
               onPress={onOpen}
               accessibilityLabel={t('browser.selectMediaSource')}
