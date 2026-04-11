@@ -12,6 +12,7 @@ export interface MediaPlayerControls {
   setShuffle: (shuffle: boolean) => void;
   setRepeat: (repeat: 'off' | 'one' | 'all') => void;
   setSource: (source: string) => void;
+  turnOn: () => void;
 }
 
 export const useMediaPlayerControls = (entityId: string): MediaPlayerControls => {
@@ -70,6 +71,7 @@ export const useMediaPlayerControls = (entityId: string): MediaPlayerControls =>
     (source: string) => call('select_source', { source }),
     [call],
   );
+  const turnOn = useCallback(() => call('turn_on'), [call]);
 
-  return { play, pause, nextTrack, previousTrack, setVolume, setShuffle, setRepeat, setSource };
+  return { play, pause, nextTrack, previousTrack, setVolume, setShuffle, setRepeat, setSource, turnOn };
 };
