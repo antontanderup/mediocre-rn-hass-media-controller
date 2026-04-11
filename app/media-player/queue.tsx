@@ -1,7 +1,8 @@
+import { useFocusEffect } from '@react-navigation/core';
 import { useNavigation } from 'expo-router';
-import { useLayoutEffect } from 'react';
+import { useCallback, useLayoutEffect } from 'react';
 import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
-import { QueueItem as QueueItemComponent } from '@/components';
+import { Icon, QueueItem as QueueItemComponent } from '@/components';
 import { usePlayerQueue, useSelectedPlayer, useTheme } from '@/hooks';
 import type { QueueItem } from '@/types';
 import { createUseStyles } from '@/utils';
@@ -25,13 +26,17 @@ const useStyles = createUseStyles(theme => ({
     lineHeight: 22,
     color: theme.onSurfaceVariant,
   },
-  clearBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    gap: 4,
   },
-  clearBtnText: {
-    fontSize: 14,
-    color: theme.primary,
+  iconBtn: {
+    padding: 8,
+  },
+  iconBtnPressed: {
+    opacity: 0.5,
   },
   list: {
     flex: 1,
@@ -49,23 +54,44 @@ export default function QueueTab() {
   const styles = useStyles();
   const navigation = useNavigation();
 
-  const { queue, loading, isAvailable, clearQueue } = usePlayerQueue(entityId ?? '');
+  const { queue, loading, isAvailable, clearQueue, refetch } = usePlayerQueue(entityId ?? '');
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   useLayoutEffect(() => {
+    if (!isAvailable) {
+      navigation.setOptions({ headerRight: undefined });
+      return;
+    }
     navigation.setOptions({
-      headerRight: () =>
-        queue.length > 0 ? (
+      headerRight: () => (
+        <View style={styles.headerRow}>
+          {queue.length > 0 && (
+            <Pressable
+              style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
+              onPress={clearQueue}
+              accessibilityRole="button"
+              accessibilityLabel={t('queue.clearQueue')}
+            >
+              <Icon name="delete-sweep" size={24} color={theme.primary} />
+            </Pressable>
+          )}
           <Pressable
-            style={styles.clearBtn}
-            onPress={clearQueue}
+            style={({ pressed }) => [styles.iconBtn, pressed && styles.iconBtnPressed]}
+            onPress={refetch}
             accessibilityRole="button"
-            accessibilityLabel={t('queue.clearQueue')}
+            accessibilityLabel={t('queue.refresh')}
           >
-            <Text style={styles.clearBtnText}>{t('queue.clear')}</Text>
+            <Icon name="refresh" size={24} color={theme.onSurfaceVariant} />
           </Pressable>
-        ) : null,
+        </View>
+      ),
     });
-  }, [navigation, queue.length, clearQueue, styles.clearBtn, styles.clearBtnText]);
+  }, [navigation, isAvailable, queue.length, clearQueue, refetch, styles.headerRow, styles.iconBtn, styles.iconBtnPressed, theme.primary, theme.onSurfaceVariant]);
 
   if (!isAvailable) {
     return (
