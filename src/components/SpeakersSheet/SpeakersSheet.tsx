@@ -1,6 +1,7 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { BottomSheetHeader } from '@/components/BottomSheetHeader';
 import { Button, ButtonIcon } from '@/components/Button';
 import { Icon } from '@/components/Icon';
 import { VolumeSlider } from '@/components/VolumeSlider';
@@ -74,35 +75,32 @@ export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Eleme
           initialDetentIndex={0}
           onDidDismiss={handleDidDismiss}
           backgroundColor={theme.surfaceContainerLow}
+          header={
+            <BottomSheetHeader
+              title={t('speakers.joinSpeakers')}
+              subtitle={t('speakers.manageSpeakers')}
+              renderRight={() => (
+                <Pressable
+                  style={styles.syncToggle}
+                  onPress={() => setSyncMainSpeakerVolume(v => !v)}
+                  accessibilityLabel={t('speakers.linkVolume')}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: syncMainSpeakerVolume }}
+                >
+                  <Text style={[styles.syncText, { color: theme.onSurfaceVariant }]}>
+                    {t('speakers.linkVolume')}
+                  </Text>
+                  <Icon
+                    name={syncMainSpeakerVolume ? 'check-circle' : 'radiobox-blank'}
+                    size={18}
+                    color={syncMainSpeakerVolume ? theme.primary : theme.onSurfaceVariant}
+                  />
+                </Pressable>
+              )}
+            />
+          }
         >
           <View style={styles.content}>
-            <View style={styles.header}>
-              <View style={styles.headerTitles}>
-                <Text style={[styles.headerTitle, { color: theme.onSurface }]}>
-                  {t('speakers.joinSpeakers')}
-                </Text>
-                <Text style={[styles.headerSubtitle, { color: theme.onSurfaceVariant }]}>
-                  {t('speakers.manageSpeakers')}
-                </Text>
-              </View>
-              <Pressable
-                style={styles.syncToggle}
-                onPress={() => setSyncMainSpeakerVolume(v => !v)}
-                accessibilityLabel={t('speakers.linkVolume')}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: syncMainSpeakerVolume }}
-              >
-                <Text style={[styles.syncText, { color: theme.onSurfaceVariant }]}>
-                  {t('speakers.linkVolume')}
-                </Text>
-                <Icon
-                  name={syncMainSpeakerVolume ? 'check-circle' : 'radiobox-blank'}
-                  size={18}
-                  color={syncMainSpeakerVolume ? theme.primary : theme.onSurfaceVariant}
-                />
-              </Pressable>
-            </View>
-
             <View style={[styles.card, { backgroundColor: theme.surfaceContainer }]}>
               {groupedSpeakers.map((speaker, i) => (
                 <View key={speaker.entityId}>
@@ -208,33 +206,14 @@ const useStyles = createUseStyles(theme => ({
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 8,
     paddingBottom: 16,
     gap: 8,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 4,
-    paddingBottom: 4,
-  },
-  headerTitles: {
-    flex: 1,
-    gap: 2,
-  },
-  headerTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  headerSubtitle: {
-    fontSize: 12,
   },
   syncToggle: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingLeft: 12,
   },
   syncText: {
     fontSize: 12,

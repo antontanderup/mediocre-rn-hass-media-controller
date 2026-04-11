@@ -89,12 +89,14 @@ export const en = {
         placeholder: 'media_player.group_entity',
       },
       searchEntity: {
+        label: 'Search entity',
         placeholder: 'media_player.search_entity',
       },
       displayName: {
         placeholder: 'Display name (optional)',
       },
       browseEntity: {
+        label: 'Browse entity',
         placeholder: 'media_player.browse_entity',
       },
       maEntityId: {
@@ -103,7 +105,7 @@ export const en = {
       },
       maFavoriteButtonEntityId: {
         label: 'MA favorite button entity ID',
-        placeholder: 'script.ma_favorite',
+        placeholder: 'button.ma_favorite',
       },
       lmsEntityId: {
         label: 'LMS entity ID',

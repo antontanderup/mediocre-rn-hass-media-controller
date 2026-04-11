@@ -3,6 +3,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
+import { BottomSheetHeader } from '@/components/BottomSheetHeader';
 import { Icon } from '@/components/Icon';
 import type { BottomSheetSelectProps } from './BottomSheetSelect.types';
 
@@ -50,9 +51,9 @@ export const BottomSheetSelect = <T extends string = string>({
           grabber
           onDidDismiss={handleDidDismiss}
           backgroundColor={theme.surfaceContainerLow}
+          header={title ? <BottomSheetHeader title={title} /> : undefined}
         >
           <View style={styles.content}>
-            {title && <Text style={styles.title}>{title}</Text>}
             <ScrollView style={styles.optionList} contentContainerStyle={styles.optionListContent} bounces={false}>
               {options.map(option => {
                 const isSelected = option.value === value;
@@ -94,18 +95,9 @@ export const BottomSheetSelect = <T extends string = string>({
 const useStyles = createUseStyles(theme => ({
   content: {
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 8,
     paddingBottom: 16,
     gap: 4,
-  },
-  title: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: theme.onSurfaceVariant,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    paddingHorizontal: 4,
-    paddingBottom: 8,
   },
   optionList: {
     maxHeight: 400,
