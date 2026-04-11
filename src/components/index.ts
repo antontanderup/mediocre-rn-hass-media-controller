@@ -1,3 +1,5 @@
+export { MediaArtwork } from './MediaArtwork';
+
 export { BottomSheetSelect } from './BottomSheetSelect';
 export type { BottomSheetSelectProps, BottomSheetSelectOption } from './BottomSheetSelect';
 
