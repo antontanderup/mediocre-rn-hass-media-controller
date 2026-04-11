@@ -1,6 +1,6 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import React, { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { BottomSheetHeader } from '@/components/BottomSheetHeader';
 import { Button, ButtonIcon } from '@/components/Button';
 import { Icon } from '@/components/Icon';
@@ -165,31 +165,35 @@ export const SpeakersSheet = ({ entityId }: SpeakersSheetProps): React.JSX.Eleme
             </View>
 
             {ungroupedSpeakers.length > 0 && (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.chipsContent}
-              >
-                {ungroupedSpeakers.map(speaker => (
-                  <Pressable
-                    key={speaker.entityId}
-                    style={[
-                      styles.chip,
-                      { backgroundColor: theme.surfaceContainer, borderColor: theme.outline },
-                    ]}
-                    onPress={() => toggleGroup(speaker.entityId, false)}
-                    disabled={speaker.isLoading}
-                    accessibilityLabel={t('speakers.addSpeaker', { name: speaker.name })}
-                  >
-                    {speaker.isLoading ? (
-                      <ActivityIndicator size="small" color={theme.primary} />
-                    ) : (
-                      <Icon name="plus" size={14} color={theme.primary} />
-                    )}
-                    <Text style={[styles.chipText, { color: theme.onSurface }]}>{speaker.name}</Text>
-                  </Pressable>
-                ))}
-              </ScrollView>
+              <>
+                <Text style={[styles.sectionLabel, { color: theme.onSurfaceVariant }]}>
+                  {t('speakers.addSpeakers')}
+                </Text>
+                <View style={[styles.card, { backgroundColor: theme.surfaceContainer }]}>
+                  {ungroupedSpeakers.map((speaker, i) => (
+                    <View key={speaker.entityId}>
+                      {i > 0 && <View style={[styles.divider, { backgroundColor: theme.outlineVariant }]} />}
+                      <Pressable
+                        style={styles.speakerRow}
+                        onPress={() => toggleGroup(speaker.entityId, false)}
+                        disabled={speaker.isLoading}
+                        accessibilityLabel={t('speakers.addSpeaker', { name: speaker.name })}
+                      >
+                        <Text style={[styles.speakerName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
+                          {speaker.name}
+                        </Text>
+                        <View style={styles.iconBtn}>
+                          {speaker.isLoading ? (
+                            <ActivityIndicator size="small" color={theme.primary} />
+                          ) : (
+                            <Icon name="plus" size={18} color={theme.primary} />
+                          )}
+                        </View>
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              </>
             )}
           </View>
         </TrueSheet>
@@ -217,6 +221,13 @@ const useStyles = createUseStyles(theme => ({
   },
   syncText: {
     fontSize: 12,
+  },
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    paddingHorizontal: 4,
   },
   card: {
     borderRadius: 16,
@@ -248,24 +259,5 @@ const useStyles = createUseStyles(theme => ({
   },
   sliderWrap: {
     flex: 2,
-  },
-  chipsContent: {
-    flexDirection: 'row',
-    gap: 6,
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  chipText: {
-    fontSize: 13,
-    fontWeight: '500',
   },
 }));
