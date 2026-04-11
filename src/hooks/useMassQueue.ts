@@ -114,12 +114,15 @@ export const useMassQueue = (entityId: string, enabled: boolean): MassQueueResul
     return items.slice(isPlayingIndex >= 0 ? isPlayingIndex : 0);
   }, [data, entityId, currentTitle, skipToItem, deleteItem, moveItemUp, moveItemDown]);
 
-  // Refetch whenever the playing track changes
+  // Refetch whenever the playing track changes.
+  // `data` is intentionally excluded: it's a one-time null guard so we don't
+  // kick off a redundant refetch on the initial load. Adding it would cause an
+  // infinite loop (refetch → data changes → effect fires → refetch → ...).
   useEffect(() => {
-    if (!data) return;
+    if (!enabled || !data) return;
     refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTitle]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTitle, enabled, refetch]);
 
   return useMemo(
     () => ({ queue, loading, error, refetch, clearQueue }),
