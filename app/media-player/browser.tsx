@@ -79,27 +79,26 @@ export default function BrowserTab() {
     }
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ marginRight: 8 }}>
-          <BottomSheetSelect
-            options={options}
-            value={activeEntityId}
-            onChange={setSelectedEntityId}
-            title={t('browser.mediaSource')}
-            renderTrigger={onOpen => (
-              <Button
-                variant="surface"
-                size="sm"
-                onPress={onOpen}
-                accessibilityLabel={t('browser.selectMediaSource')}
-              >
-                <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
-                  {activeLabel}
-                </ButtonText>
-                <ButtonIcon name="chevron-down" />
-              </Button>
-            )}
-          />
-        </View>
+        <BottomSheetSelect
+          options={options}
+          value={activeEntityId}
+          onChange={setSelectedEntityId}
+          title={t('browser.mediaSource')}
+          renderTrigger={onOpen => (
+            <Button
+              variant="surface"
+              size="sm"
+              onPress={onOpen}
+              accessibilityLabel={t('browser.selectMediaSource')}
+              style={{ marginRight: 8 }}
+            >
+              <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
+                {activeLabel}
+              </ButtonText>
+              <ButtonIcon name="chevron-down" />
+            </Button>
+          )}
+        />
       ),
     });
   }, [

@@ -64,32 +64,31 @@ export default function SearchTab(): React.JSX.Element {
     }
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ marginRight: 8 }}>
-          <BottomSheetSelect
-            options={options}
-            value={activeEntityId}
-            onChange={value => {
-              const provider = haProviders.find(
-                p => p.type === 'ha' && p.entityId === value,
-              );
-              if (provider) selectProvider(provider);
-            }}
-            title={t('search.searchProvider')}
-            renderTrigger={onOpen => (
-              <Button
-                variant="surface"
-                size="sm"
-                onPress={onOpen}
-                accessibilityLabel={t('search.selectSearchProvider')}
-              >
-                <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
-                  {activeLabel}
-                </ButtonText>
-                <ButtonIcon name="chevron-down" />
-              </Button>
-            )}
-          />
-        </View>
+        <BottomSheetSelect
+          options={options}
+          value={activeEntityId}
+          onChange={value => {
+            const provider = haProviders.find(
+              p => p.type === 'ha' && p.entityId === value,
+            );
+            if (provider) selectProvider(provider);
+          }}
+          title={t('search.searchProvider')}
+          renderTrigger={onOpen => (
+            <Button
+              variant="surface"
+              size="sm"
+              onPress={onOpen}
+              accessibilityLabel={t('search.selectSearchProvider')}
+              style={{ marginRight: 8 }}
+            >
+              <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
+                {activeLabel}
+              </ButtonText>
+              <ButtonIcon name="chevron-down" />
+            </Button>
+          )}
+        />
       ),
     });
   }, [
