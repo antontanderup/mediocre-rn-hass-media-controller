@@ -1,5 +1,8 @@
 export { MediaArtwork } from './MediaArtwork';
 
+export { BottomSheetHeader } from './BottomSheetHeader';
+export type { BottomSheetHeaderProps } from './BottomSheetHeader';
+
 export { Button, ButtonIcon, ButtonText } from './Button';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
 

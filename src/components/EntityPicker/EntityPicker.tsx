@@ -4,6 +4,7 @@ import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { useHassContext } from '@/context';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
+import { BottomSheetHeader } from '@/components/BottomSheetHeader';
 import type { EntityPickerProps } from './EntityPicker.types';
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -14,6 +15,7 @@ export const EntityPicker = ({
   onBlur,
   domain,
   placeholder,
+  label,
 }: EntityPickerProps): React.JSX.Element => {
   const { entities } = useHassContext();
   const styles = useStyles();
@@ -84,20 +86,24 @@ export const EntityPicker = ({
           scrollable
           onDidDismiss={handleDidDismiss}
           backgroundColor={theme.surfaceContainerLow}
+          header={
+            <BottomSheetHeader title={label ?? 'Select entity'}>
+              <TextInput
+                style={styles.searchInput}
+                value={searchText}
+                onChangeText={setSearchText}
+                placeholder="Search entities…"
+                placeholderTextColor={theme.onSurfaceVariant}
+                autoFocus
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="off"
+                returnKeyType="search"
+              />
+            </BottomSheetHeader>
+          }
         >
           <View style={styles.sheetContent}>
-            <TextInput
-              style={styles.searchInput}
-              value={searchText}
-              onChangeText={setSearchText}
-              placeholder="Search entities…"
-              placeholderTextColor={theme.onSurfaceVariant}
-              autoFocus
-              autoCapitalize="none"
-              autoCorrect={false}
-              autoComplete="off"
-              returnKeyType="search"
-            />
             <FlatList
               style={styles.entityList}
               data={filteredEntities}
@@ -158,7 +164,7 @@ const useStyles = createUseStyles(theme => ({
   sheetContent: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 4,
     paddingBottom: 16,
   },
   searchInput: {
@@ -170,7 +176,6 @@ const useStyles = createUseStyles(theme => ({
     fontSize: 15,
     borderWidth: 1,
     borderColor: theme.outline,
-    marginBottom: 12,
   },
   entityList: {
     flex: 1,

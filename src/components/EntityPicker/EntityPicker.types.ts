@@ -5,4 +5,6 @@ export interface EntityPickerProps {
   /** Filter suggestions to entities whose entity_id starts with this domain prefix, e.g. 'media_player.' */
   domain?: string;
   placeholder?: string;
+  /** Label shown as the sheet header title when the picker is open */
+  label?: string;
 }
