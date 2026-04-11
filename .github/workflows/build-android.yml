@@ -45,15 +45,36 @@ jobs:
         if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: sdkmanager "ndk;${{ env.NDK_VERSION }}"
 
-      - name: Cache Gradle wrapper and caches
+      - name: Cache Gradle wrapper
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.gradle/wrapper/dists
-            ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('yarn.lock', 'app.json') }}
+          path: ~/.gradle/wrapper/dists
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('yarn.lock') }}
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('yarn.lock', 'app.json') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-caches-
+
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-
+
+      - name: Install ccache
+        run: sudo apt-get install -y ccache
+
+      - name: Configure ccache
+        run: |
+          ccache --max-size=2G
+          ccache --set-config=compression=true
+          ccache --zero-stats
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -74,7 +95,12 @@ jobs:
           ./gradlew assembleRelease \
             --no-daemon \
             --build-cache \
-            -PreactNativeArchitectures=arm64-v8a,x86_64
+            -PreactNativeArchitectures=arm64-v8a,x86_64 \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Print ccache stats
+        run: ccache --show-stats
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
