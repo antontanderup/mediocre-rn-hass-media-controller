@@ -1,4 +1,5 @@
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageBackground, Text, View } from 'react-native';
+import type { ImageStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, ButtonIcon, Icon, PlaybackControls, ProgressBar, SourceSelect, SpeakersSheet, VolumeSlider } from '@/components';
 import { useHassContext } from '@/context';
@@ -7,28 +8,12 @@ import type { PlaybackCommand } from '@/types';
 import { createUseStyles, resolveHassUrl } from '@/utils';
 import { t } from '@/localization';
 
-const useEmptyStyles = createUseStyles(theme => ({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-    backgroundColor: theme.background,
-  },
-  text: {
-    fontSize: 15,
-    textAlign: 'center',
-    lineHeight: 22,
-    color: theme.onSurfaceVariant,
-  },
-}));
-
 export default function PlayerTab() {
   const { entityId, player } = useSelectedPlayer();
   const theme = useTheme();
   const { hassConfig } = useHassContext();
   const controls = useMediaPlayerControls(entityId ?? '');
-  const emptyStyles = useEmptyStyles();
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
 
   const handleCommand = (cmd: PlaybackCommand) => {
@@ -56,8 +41,8 @@ export default function PlayerTab() {
 
   if (!player) {
     return (
-      <View style={emptyStyles.container}>
-        <Text style={emptyStyles.text}>{t('nowPlaying.playerNotAvailable')}</Text>
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>{t('nowPlaying.playerNotAvailable')}</Text>
       </View>
     );
   }
@@ -95,20 +80,20 @@ export default function PlayerTab() {
         {artworkUri ? (
           <Image
             source={{ uri: artworkUri }}
-            style={styles.artworkImage}
+            style={styles.artworkImage as ImageStyle}
             resizeMode="contain"
             accessibilityIgnoresInvertColors
           />
         ) : (
-          <View style={[styles.artworkPlaceholder, { backgroundColor: theme.surfaceContainerHigh }]}>
+          <View style={styles.artworkPlaceholder}>
             <Icon name={isOff ? 'speaker' : 'music-note'} size={80} color={theme.onSurfaceVariant} />
           </View>
         )}
       </View>
 
-      <View style={[styles.infoCard, { backgroundColor: theme.surfaceContainer }]}>
+      <View style={styles.infoCard}>
         <View style={styles.playerNameRow}>
-          <Text style={[styles.playerName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
+          <Text style={styles.playerName} numberOfLines={1}>
             {name}
           </Text>
           <View style={styles.triggerGroup}>
@@ -132,17 +117,17 @@ export default function PlayerTab() {
           </View>
         </View>
         {attributes.media_title ? (
-          <Text style={[styles.trackTitle, { color: theme.onSurface }]} numberOfLines={2}>
+          <Text style={styles.trackTitle} numberOfLines={2}>
             {attributes.media_title}
           </Text>
         ) : null}
         {attributes.media_artist ? (
-          <Text style={[styles.trackArtist, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
+          <Text style={styles.trackArtist} numberOfLines={1}>
             {attributes.media_artist}
           </Text>
         ) : null}
         {attributes.media_album_name ? (
-          <Text style={[styles.albumName, { color: theme.onSurfaceVariant }]} numberOfLines={1}>
+          <Text style={styles.albumName} numberOfLines={1}>
             {attributes.media_album_name}
           </Text>
         ) : null}
@@ -150,11 +135,11 @@ export default function PlayerTab() {
         {duration > 0 && (
           <View style={styles.progressContainer}>
             <ProgressBar
-                position={position}
-                positionUpdatedAt={positionUpdatedAt}
-                isPlaying={isPlaying}
-                duration={duration}
-              />
+              position={position}
+              positionUpdatedAt={positionUpdatedAt}
+              isPlaying={isPlaying}
+              duration={duration}
+            />
           </View>
         )}
 
@@ -177,14 +162,26 @@ export default function PlayerTab() {
     );
   }
 
-  return (
-    <View style={[styles.background, { backgroundColor: theme.background }]}>{content}</View>
-  );
+  return <View style={styles.background}>{content}</View>;
 }
 
-const styles = StyleSheet.create({
+const useStyles = createUseStyles(theme => ({
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+    backgroundColor: theme.background,
+  },
+  emptyText: {
+    fontSize: 15,
+    textAlign: 'center',
+    lineHeight: 22,
+    color: theme.onSurfaceVariant,
+  },
   background: {
     flex: 1,
+    backgroundColor: theme.background,
   },
   overlay: {
     flex: 1,
@@ -208,11 +205,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: theme.surfaceContainerHigh,
   },
   infoCard: {
     marginHorizontal: 16,
     borderRadius: 20,
     padding: 20,
+    backgroundColor: theme.surfaceContainer,
   },
   playerNameRow: {
     flexDirection: 'row',
@@ -231,21 +230,25 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
     flex: 1,
+    color: theme.onSurfaceVariant,
   },
   trackTitle: {
     fontSize: 22,
     fontWeight: '700',
     marginBottom: 4,
     lineHeight: 28,
+    color: theme.onSurface,
   },
   trackArtist: {
     fontSize: 15,
     marginBottom: 2,
+    color: theme.onSurfaceVariant,
   },
   albumName: {
     fontSize: 13,
     marginBottom: 16,
     opacity: 0.8,
+    color: theme.onSurfaceVariant,
   },
   progressContainer: {
     marginBottom: 20,
@@ -254,4 +257,4 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   volumeContainer: {},
-});
+}));
