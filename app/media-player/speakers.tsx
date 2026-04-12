@@ -54,15 +54,6 @@ export default function SpeakersTab() {
       {/* ── Switch player ───────────────────────────────────────────────────── */}
       {!disablePlayerFocusSwitching && (
         <>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionTitles}>
-              <Text style={[styles.sectionTitle, { color: theme.onSurface }]}>{t('speakers.switchPlayer')}</Text>
-              <Text style={[styles.sectionSubtitle, { color: theme.onSurfaceVariant }]}>
-                {t('speakers.focusDifferentPlayer')}
-              </Text>
-            </View>
-          </View>
-
           {configuredPlayers.map(item => {
             if (item.isChildInGroup) return null;
             const isActive = item.player.entity_id === entityId;
@@ -114,21 +105,6 @@ const useStyles = createUseStyles(theme => ({
   content: {
     padding: 16,
     gap: 8,
-  },
-  sectionHeader: {
-    paddingHorizontal: 4,
-    paddingTop: 8,
-    paddingBottom: 4,
-  },
-  sectionTitles: {
-    gap: 2,
-  },
-  sectionTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  sectionSubtitle: {
-    fontSize: 12,
   },
   emptyContainer: {
     flex: 1,
