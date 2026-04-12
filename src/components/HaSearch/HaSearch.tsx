@@ -24,7 +24,6 @@ const DEBOUNCE_MS = 600;
 export const HaSearch = ({
   entityId,
   hassBaseUrl,
-  showFavorites = true,
   filterConfig,
 }: HaSearchProps): React.JSX.Element => {
   const styles = useStyles();
@@ -57,7 +56,7 @@ export const HaSearch = ({
   // Filter state
   const [activeFilter, setActiveFilter] = useState<string>('all');
 
-  const haSearch = useHaSearch(debouncedQuery, activeFilter, entityId, showFavorites, filterConfig);
+  const haSearch = useHaSearch(debouncedQuery, activeFilter, entityId, filterConfig);
   const hasQuery = debouncedQuery.trim().length >= 2;
 
   const buildActions = useCallback(
@@ -221,23 +220,12 @@ export const HaSearch = ({
       );
     }
 
-    // Show favorites when query is empty
     if (!hasQuery) {
-      if (haSearch.isFetchingFavorites) {
-        return (
-          <View style={styles.centered}>
-            <ActivityIndicator color={theme.primary} />
-          </View>
-        );
-      }
-      if (haSearch.favorites.length === 0) {
-        return (
-          <View style={styles.centered}>
-            <Text style={styles.emptyText}>{t('haSearch.typeToSearch')}</Text>
-          </View>
-        );
-      }
-      return renderItemList(haSearch.favorites);
+      return (
+        <View style={styles.centered}>
+          <Text style={styles.emptyText}>{t('haSearch.typeToSearch')}</Text>
+        </View>
+      );
     }
 
     if (haSearch.results.length === 0) {

@@ -5,13 +5,10 @@ import { HA_FILTER_DEFAULTS } from '@/utils';
 import { useHassMessagePromise } from './useHassMessagePromise';
 
 type HaSearchApiResponse = { [entityId: string]: { result: HaMediaItem[] } };
-type HaBrowseApiResponse = { [entityId: string]: { children: HaMediaItem[] } };
 
 export type UseHaSearchResult = {
   results: HaMediaItem[];
-  favorites: HaMediaItem[];
   isSearching: boolean;
-  isFetchingFavorites: boolean;
   error: string | null;
   isAvailable: boolean;
   filterConfig: HaFilterConfig[];
@@ -22,7 +19,6 @@ export const useHaSearch = (
   query: string,
   filter: HaFilterType,
   entityId: string,
-  showFavorites = true,
   filterConfig?: HaFilterConfig[],
 ): UseHaSearchResult => {
   const { callService } = useHassContext();
@@ -54,24 +50,6 @@ export const useHaSearch = (
     error: searchError,
   } = useHassMessagePromise<HaSearchApiResponse>(searchMessage);
 
-  // Favorites: only fetch when query is empty and showFavorites is on
-  const favoritesMessage = useMemo(() => {
-    if (!entityId || !showFavorites || query.trim().length > 0) return null;
-    return {
-      type: 'call_service',
-      domain: 'media_player',
-      service: 'browse_media',
-      service_data: {
-        entity_id: entityId,
-        media_content_type: 'favorites',
-      },
-      return_response: true,
-    };
-  }, [entityId, showFavorites, query]);
-
-  const { data: favoritesData, loading: isFetchingFavorites } =
-    useHassMessagePromise<HaBrowseApiResponse>(favoritesMessage, { staleTime: 60000 });
-
   // Track availability based on errors
   useEffect(() => {
     if (searchData) {
@@ -85,14 +63,6 @@ export const useHaSearch = (
   const results = useMemo<HaMediaItem[]>(
     () => (searchData as HaSearchApiResponse | null)?.[entityId]?.result ?? [],
     [searchData, entityId],
-  );
-
-  const favorites = useMemo<HaMediaItem[]>(
-    () =>
-      ((favoritesData as HaBrowseApiResponse | null)?.[entityId]?.children ?? []).filter(
-        item => item.can_play,
-      ),
-    [favoritesData, entityId],
   );
 
   const playItem = useCallback(
@@ -114,23 +84,12 @@ export const useHaSearch = (
   return useMemo(
     () => ({
       results,
-      favorites,
       isSearching,
-      isFetchingFavorites,
       error: searchError,
       isAvailable,
       filterConfig: resolvedFilterConfig,
       playItem,
     }),
-    [
-      results,
-      favorites,
-      isSearching,
-      isFetchingFavorites,
-      searchError,
-      isAvailable,
-      resolvedFilterConfig,
-      playItem,
-    ],
+    [results, isSearching, searchError, isAvailable, resolvedFilterConfig, playItem],
   );
 };
