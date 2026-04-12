@@ -13,6 +13,8 @@ export type UsePlayerQueueResult = {
   refetch: () => void;
   clearQueue: () => void;
   isAvailable: boolean;
+  /** True when neither MA nor LMS entity IDs have been configured for this player. */
+  notConfigured: boolean;
   isMA: boolean;
   isLMS: boolean;
 };
@@ -46,8 +48,10 @@ export const usePlayerQueue = (entityId: string): UsePlayerQueueResult => {
 
   const active = isMA ? maResult : lmsResult;
 
+  const notConfigured = !playerConfig?.maEntityId && !playerConfig?.lmsEntityId;
+
   return useMemo(
-    () => ({ ...active, isAvailable: isMA || isLMS, isMA, isLMS }),
-    [active, isMA, isLMS],
+    () => ({ ...active, isAvailable: isMA || isLMS, notConfigured, isMA, isLMS }),
+    [active, isMA, isLMS, notConfigured],
   );
 };

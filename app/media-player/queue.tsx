@@ -48,7 +48,7 @@ export default function QueueTab() {
   const styles = useStyles();
   const navigation = useNavigation();
 
-  const { queue, loading, isAvailable, clearQueue, refetch } = usePlayerQueue(entityId ?? '');
+  const { queue, loading, isAvailable, notConfigured, clearQueue, refetch } = usePlayerQueue(entityId ?? '');
   const { targets: transferTargets, transferQueue } = useTransferQueue(entityId ?? '');
 
   useFocusEffect(
@@ -109,7 +109,9 @@ export default function QueueTab() {
   if (!isAvailable) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.emptyText}>{t('queue.notAvailable')}</Text>
+        <Text style={styles.emptyText}>
+          {notConfigured ? t('queue.notConfigured') : t('queue.notAvailable')}
+        </Text>
       </View>
     );
   }
