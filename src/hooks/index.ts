@@ -26,6 +26,7 @@ export { useGrouping } from './useGrouping';
 export type { GroupableSpeaker, GroupingState } from './useGrouping';
 
 export { useHassMessagePromise } from './useHassMessagePromise';
+export { useConfigEntries } from './useConfigEntries';
 export { useMassQueue } from './useMassQueue';
 export type { MassQueueResult } from './useMassQueue';
 export { useSqueezeboxQueue } from './useSqueezeboxQueue';

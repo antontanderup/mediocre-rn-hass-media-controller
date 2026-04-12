@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { useHassContext } from '@/context';
 import type { QueueItem } from '@/types';
-import { getHasMassFeatures, getIsLmsPlayer } from '@/utils';
+import { getHasQueueSupport } from '@/utils';
 import { useAppConfig } from './useAppConfig';
+import { useConfigEntries } from './useConfigEntries';
 import { useMassQueue } from './useMassQueue';
 import { useSqueezeboxQueue } from './useSqueezeboxQueue';
 
@@ -13,6 +14,10 @@ export type UsePlayerQueueResult = {
   refetch: () => void;
   clearQueue: () => void;
   isAvailable: boolean;
+  /** True when neither MA nor LMS entity IDs have been configured for this player. */
+  notConfigured: boolean;
+  /** True while integration availability is still being determined. */
+  loadingSupport: boolean;
   isMA: boolean;
   isLMS: boolean;
 };
@@ -20,22 +25,18 @@ export type UsePlayerQueueResult = {
 export const usePlayerQueue = (entityId: string): UsePlayerQueueResult => {
   const { players } = useHassContext();
   const { config: appConfig } = useAppConfig();
+  const loadedDomains = useConfigEntries();
 
-  const player = players.find(p => p.entity_id === entityId);
   const playerConfig = appConfig?.mediaPlayers.find(p => p.entityId === entityId);
 
-  const isMA = useMemo(
-    () => getHasMassFeatures(entityId, playerConfig?.maEntityId ?? null, players),
-    [entityId, playerConfig?.maEntityId, players],
-  );
+  const queueSupport = useMemo(() => {
+    if (loadedDomains === null) return null; // still loading
+    return getHasQueueSupport(entityId, playerConfig, players, loadedDomains);
+  }, [entityId, playerConfig, players, loadedDomains]);
 
-  const isLMS = useMemo(
-    () =>
-      playerConfig?.lmsEntityId
-        ? getIsLmsPlayer(player ?? {}, playerConfig.lmsEntityId)
-        : false,
-    [player, playerConfig?.lmsEntityId],
-  );
+  const isMA = queueSupport?.isMA ?? false;
+  const isLMS = queueSupport?.isLMS ?? false;
+  const loadingSupport = loadedDomains === null;
 
   const maEntityId = playerConfig?.maEntityId ?? entityId;
   const lmsEntityId = playerConfig?.lmsEntityId ?? entityId;
@@ -46,8 +47,17 @@ export const usePlayerQueue = (entityId: string): UsePlayerQueueResult => {
 
   const active = isMA ? maResult : lmsResult;
 
+  const notConfigured = !playerConfig?.maEntityId && !playerConfig?.lmsEntityId;
+
   return useMemo(
-    () => ({ ...active, isAvailable: isMA || isLMS, isMA, isLMS }),
-    [active, isMA, isLMS],
+    () => ({
+      ...active,
+      isAvailable: isMA || isLMS,
+      notConfigured,
+      loadingSupport,
+      isMA,
+      isLMS,
+    }),
+    [active, isMA, isLMS, notConfigured, loadingSupport],
   );
 };

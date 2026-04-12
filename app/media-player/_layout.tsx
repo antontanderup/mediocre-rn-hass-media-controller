@@ -1,9 +1,10 @@
 import { Tabs, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Button, ButtonIcon, Icon } from '@/components';
-import { useThemeContext } from '@/context';
-import { useAppConfig, useSelectedPlayer, useTheme } from '@/hooks';
+import { useHassContext, useThemeContext } from '@/context';
+import { useAppConfig, useConfigEntries, useSelectedPlayer, useTheme } from '@/hooks';
 import { t } from '@/localization';
+import { getHasQueueSupport } from '@/utils';
 
 export default function MediaPlayerLayout(): React.JSX.Element {
   const { theme } = useThemeContext();
@@ -11,9 +12,18 @@ export default function MediaPlayerLayout(): React.JSX.Element {
   const router = useRouter();
   const { entityId } = useSelectedPlayer();
   const { config: appConfig } = useAppConfig();
+  const { players } = useHassContext();
+  const loadedDomains = useConfigEntries();
 
   const playerConfig = appConfig?.mediaPlayers.find(p => p.entityId === entityId);
   const hasSearch = !!(playerConfig?.searchEntries?.length || playerConfig?.maEntityId);
+
+  const hasQueue = useMemo(() => {
+    if (!entityId) return false;
+    // Show the tab optimistically while integration list is still loading
+    if (loadedDomains === null) return true;
+    return getHasQueueSupport(entityId, playerConfig, players, loadedDomains) !== null;
+  }, [entityId, playerConfig, players, loadedDomains]);
 
   return (
     <Tabs
@@ -39,6 +49,7 @@ export default function MediaPlayerLayout(): React.JSX.Element {
         name="queue"
         options={{
           title: t('tabs.queue'),
+          href: hasQueue ? undefined : null,
           tabBarIcon: ({ color, size }: { color: string; size: number; focused: boolean }) => (
             <Icon name="playlist-play" size={size} color={color} />
           ),

@@ -8,6 +8,8 @@ export { getHassMessageWithCache, clearHassMessageCache } from './getHassMessage
 export { getIsMassPlayer } from './getIsMassPlayer';
 export { getIsLmsPlayer } from './getIsLmsPlayer';
 export { getHasMassFeatures } from './getHasMassFeatures';
+export { getHasQueueSupport } from './getHasQueueSupport';
+export type { QueueSupportResult } from './getHasQueueSupport';
 export { resolveHassUrl } from './resolveHassUrl';
 export { selectActiveMediaPlayer } from './selectActiveMediaPlayer';
 export { HA_FILTER_DEFAULTS, MA_FILTER_DEFAULTS } from './searchFilters';

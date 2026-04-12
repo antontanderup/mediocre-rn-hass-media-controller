@@ -48,7 +48,8 @@ export default function QueueTab() {
   const styles = useStyles();
   const navigation = useNavigation();
 
-  const { queue, loading, isAvailable, clearQueue, refetch } = usePlayerQueue(entityId ?? '');
+  const { queue, loading, loadingSupport, isAvailable, notConfigured, clearQueue, refetch } =
+    usePlayerQueue(entityId ?? '');
   const { targets: transferTargets, transferQueue } = useTransferQueue(entityId ?? '');
 
   useFocusEffect(
@@ -58,7 +59,7 @@ export default function QueueTab() {
   );
 
   useLayoutEffect(() => {
-    if (!isAvailable) {
+    if (!isAvailable || loadingSupport) {
       navigation.setOptions({ headerRight: undefined });
       return;
     }
@@ -104,20 +105,22 @@ export default function QueueTab() {
         </View>
       ),
     });
-  }, [navigation, isAvailable, transferTargets, transferQueue, queue.length, clearQueue, refetch, styles.headerRow]);
+  }, [navigation, isAvailable, loadingSupport, transferTargets, transferQueue, queue.length, clearQueue, refetch, styles.headerRow]);
 
-  if (!isAvailable) {
+  if (loadingSupport || (loading && queue.length === 0)) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.emptyText}>{t('queue.notAvailable')}</Text>
+        <ActivityIndicator color={theme.primary} />
       </View>
     );
   }
 
-  if (loading && queue.length === 0) {
+  if (!isAvailable) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={theme.primary} />
+        <Text style={styles.emptyText}>
+          {notConfigured ? t('queue.notConfigured') : t('queue.notAvailable')}
+        </Text>
       </View>
     );
   }
