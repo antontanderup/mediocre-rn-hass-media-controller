@@ -72,7 +72,7 @@ export default function PlayerTab() {
         {
           backgroundColor: overlayBackground,
           paddingTop: insets.top,
-          paddingBottom: insets.bottom + 8,
+          paddingBottom: 8,
         },
       ]}
     >
