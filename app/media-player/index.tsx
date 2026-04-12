@@ -72,7 +72,7 @@ export default function PlayerTab() {
         {
           backgroundColor: overlayBackground,
           paddingTop: insets.top,
-          paddingBottom: insets.bottom + 16,
+          paddingBottom: insets.bottom + 8,
         },
       ]}
     >
@@ -192,7 +192,7 @@ const useStyles = createUseStyles(theme => ({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingBottom: 28,
   },
   artworkImage: {
     width: '100%',
