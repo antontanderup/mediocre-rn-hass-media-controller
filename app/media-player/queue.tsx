@@ -48,7 +48,8 @@ export default function QueueTab() {
   const styles = useStyles();
   const navigation = useNavigation();
 
-  const { queue, loading, isAvailable, notConfigured, clearQueue, refetch } = usePlayerQueue(entityId ?? '');
+  const { queue, loading, loadingSupport, isAvailable, notConfigured, clearQueue, refetch } =
+    usePlayerQueue(entityId ?? '');
   const { targets: transferTargets, transferQueue } = useTransferQueue(entityId ?? '');
 
   useFocusEffect(
@@ -58,7 +59,7 @@ export default function QueueTab() {
   );
 
   useLayoutEffect(() => {
-    if (!isAvailable) {
+    if (!isAvailable || loadingSupport) {
       navigation.setOptions({ headerRight: undefined });
       return;
     }
@@ -104,7 +105,15 @@ export default function QueueTab() {
         </View>
       ),
     });
-  }, [navigation, isAvailable, transferTargets, transferQueue, queue.length, clearQueue, refetch, styles.headerRow]);
+  }, [navigation, isAvailable, loadingSupport, transferTargets, transferQueue, queue.length, clearQueue, refetch, styles.headerRow]);
+
+  if (loadingSupport || (loading && queue.length === 0)) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator color={theme.primary} />
+      </View>
+    );
+  }
 
   if (!isAvailable) {
     return (
@@ -112,14 +121,6 @@ export default function QueueTab() {
         <Text style={styles.emptyText}>
           {notConfigured ? t('queue.notConfigured') : t('queue.notAvailable')}
         </Text>
-      </View>
-    );
-  }
-
-  if (loading && queue.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={theme.primary} />
       </View>
     );
   }
