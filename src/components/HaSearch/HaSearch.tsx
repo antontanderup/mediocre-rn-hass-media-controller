@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   Pressable,
+  SectionList,
   ScrollView,
   Text,
   TextInput,
@@ -21,6 +21,25 @@ import type { HaMediaItem } from '@/types';
 import type { HaSearchProps } from './HaSearch.types';
 
 const DEBOUNCE_MS = 600;
+const GRID_COLUMNS = 3;
+
+type SectionItem =
+  | { kind: 'track'; item: HaMediaItem }
+  | { kind: 'gridRow'; items: HaMediaItem[] };
+
+type ResultSection = {
+  title: string;
+  filterType: string | null;
+  data: SectionItem[];
+};
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
 
 export const HaSearch = ({
   entityId,
@@ -81,76 +100,118 @@ export const HaSearch = ({
     [haSearch, entityId],
   );
 
-  const renderGridHeader = (items: HaMediaItem[]): React.JSX.Element | null => {
-    const grid = items.filter(i => i.media_class !== 'track');
-    if (grid.length === 0) return null;
-    return (
-      <View style={styles.grid}>
-        {grid.map(item => {
-          const artworkUrl = resolveArtworkUrl(item.thumbnail, hassBaseUrl);
-          const fallbackIcon = iconForMediaClass(item.media_class);
-          return (
-            <View key={item.media_content_id} style={styles.gridCell}>
-              <MediaItemSheet
+  // Group results by media_content_type into SectionList sections.
+  // Section headers are only shown when there are multiple content types.
+  const sections = useMemo((): ResultSection[] => {
+    const grouped: Record<string, HaMediaItem[]> = {};
+    for (const item of haSearch.results) {
+      if (!grouped[item.media_content_type]) grouped[item.media_content_type] = [];
+      grouped[item.media_content_type].push(item);
+    }
+    const groupEntries = Object.entries(grouped);
+    const isMultiSection = groupEntries.length > 1;
+    return groupEntries.map(([mediaContentType, items]) => {
+      // Match against filter config: exact type match or singular form (e.g. 'tracks' → 'track')
+      const filterCfg = haSearch.filterConfig.find(
+        f => f.type === mediaContentType || f.type.slice(0, -1) === mediaContentType,
+      );
+      const title =
+        filterCfg?.name ??
+        mediaContentType.charAt(0).toUpperCase() + mediaContentType.slice(1);
+      const isTrackSection = items[0]?.media_class === 'track';
+      const data: SectionItem[] = isTrackSection
+        ? items.map(item => ({ kind: 'track' as const, item }))
+        : chunkArray(items, GRID_COLUMNS).map(rowItems => ({
+            kind: 'gridRow' as const,
+            items: rowItems,
+          }));
+      return {
+        title: isMultiSection ? title : '',
+        filterType: isMultiSection && filterCfg ? filterCfg.type : null,
+        data,
+      };
+    });
+  }, [haSearch.results, haSearch.filterConfig]);
+
+  const renderSectionItem = useCallback(
+    ({ item }: { item: SectionItem }) => {
+      if (item.kind === 'track') {
+        const artworkUrl = resolveArtworkUrl(item.item.thumbnail, hassBaseUrl);
+        const fallbackIcon = iconForMediaClass(item.item.media_class);
+        return (
+          <MediaItemSheet
+            artworkUrl={artworkUrl}
+            title={item.item.title}
+            actions={buildActions(item.item)}
+            renderTrigger={onOpen => (
+              <MediaTrackItem
+                title={item.item.title}
                 artworkUrl={artworkUrl}
-                title={item.title}
-                actions={buildActions(item)}
-                renderTrigger={onOpen => (
-                  <MediaGridItem
-                    title={item.title}
-                    artworkUrl={artworkUrl}
-                    fallbackIcon={fallbackIcon}
-                    onPress={onOpen}
-                  />
-                )}
+                fallbackIcon={fallbackIcon}
+                onPress={onOpen}
               />
-            </View>
-          );
-        })}
-      </View>
-    );
-  };
-
-  const renderItemList = (items: HaMediaItem[]): React.JSX.Element => {
-    const tracks = items.filter(i => i.media_class === 'track');
-    const hasGrid = items.some(i => i.media_class !== 'track');
-
-    return (
-      <FlatList
-        style={styles.list}
-        data={tracks}
-        keyExtractor={item => item.media_content_id}
-        ListHeaderComponent={hasGrid ? renderGridHeader(items) : undefined}
-        ListEmptyComponent={
-          !hasGrid ? (
-            <View style={styles.centered}>
-              <Text style={styles.emptyText}>{t('haSearch.noResults')}</Text>
-            </View>
-          ) : undefined
-        }
-        renderItem={({ item }) => {
-          const artworkUrl = resolveArtworkUrl(item.thumbnail, hassBaseUrl);
-          const fallbackIcon = iconForMediaClass(item.media_class);
-          return (
-            <MediaItemSheet
-              artworkUrl={artworkUrl}
-              title={item.title}
-              actions={buildActions(item)}
-              renderTrigger={onOpen => (
-                <MediaTrackItem
-                  title={item.title}
+            )}
+          />
+        );
+      }
+      // gridRow: render items side-by-side in a flex row
+      return (
+        <View style={styles.grid}>
+          {item.items.map(mediaItem => {
+            const artworkUrl = resolveArtworkUrl(mediaItem.thumbnail, hassBaseUrl);
+            const fallbackIcon = iconForMediaClass(mediaItem.media_class);
+            return (
+              <View key={mediaItem.media_content_id} style={styles.gridCell}>
+                <MediaItemSheet
                   artworkUrl={artworkUrl}
-                  fallbackIcon={fallbackIcon}
-                  onPress={onOpen}
+                  title={mediaItem.title}
+                  actions={buildActions(mediaItem)}
+                  renderTrigger={onOpen => (
+                    <MediaGridItem
+                      title={mediaItem.title}
+                      artworkUrl={artworkUrl}
+                      fallbackIcon={fallbackIcon}
+                      onPress={onOpen}
+                    />
+                  )}
                 />
-              )}
-            />
-          );
-        }}
-        contentInsetAdjustmentBehavior="automatic"
-      />
-    );
-  };
+              </View>
+            );
+          })}
+        </View>
+      );
+    },
+    [hassBaseUrl, buildActions, styles],
+  );
+
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: ResultSection }) => {
+      const { title, filterType } = section;
+      if (!title) return null;
+      if (!filterType) {
+        return (
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionHeaderText}>{title}</Text>
+          </View>
+        );
+      }
+      return (
+        <Pressable
+          style={({ pressed }) => [styles.sectionHeader, pressed && styles.btnPressed]}
+          onPress={() => {
+            haptics.light();
+            setActiveFilter(filterType);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={t('haSearch.filterBy', { name: title })}
+        >
+          <Text style={[styles.sectionHeaderText, styles.sectionHeaderLink]}>{title}</Text>
+          <Icon name="chevron-right" size={16} color={theme.primary} />
+        </Pressable>
+      );
+    },
+    [styles, theme, haptics],
+  );
 
   // Render helpers
   const renderHeader = (): React.JSX.Element => (
@@ -241,17 +302,28 @@ export const HaSearch = ({
       );
     }
 
-    if (haSearch.results.length === 0) {
-      return (
-        <View style={styles.centered}>
-          <Text style={styles.emptyText}>
-            {t('haSearch.noResultsForQuery', { query: debouncedQuery })}
-          </Text>
-        </View>
-      );
-    }
-
-    return renderItemList(haSearch.results);
+    return (
+      <SectionList<SectionItem, ResultSection>
+        style={styles.list}
+        sections={sections}
+        keyExtractor={(item, index) =>
+          item.kind === 'track'
+            ? item.item.media_content_id
+            : `row-${item.items[0]?.media_content_id ?? index}`
+        }
+        renderItem={renderSectionItem}
+        renderSectionHeader={renderSectionHeader}
+        ListEmptyComponent={
+          <View style={styles.centered}>
+            <Text style={styles.emptyText}>
+              {t('haSearch.noResultsForQuery', { query: debouncedQuery })}
+            </Text>
+          </View>
+        }
+        stickySectionHeadersEnabled={false}
+        contentInsetAdjustmentBehavior="automatic"
+      />
+    );
   };
 
   return (
@@ -326,6 +398,25 @@ const useStyles = createUseStyles(theme => ({
     color: theme.onSecondaryContainer,
     fontWeight: '600',
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 6,
+    gap: 2,
+  },
+  sectionHeaderText: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
+    color: theme.onSurfaceVariant,
+  },
+  sectionHeaderLink: {
+    color: theme.primary,
+  },
   centered: {
     flex: 1,
     alignItems: 'center',
@@ -346,7 +437,7 @@ const useStyles = createUseStyles(theme => ({
     paddingTop: 8,
   },
   gridCell: {
-    width: `${100 / 3}%` as unknown as number,
+    width: `${100 / GRID_COLUMNS}%` as unknown as number,
     padding: 4,
   },
   list: {
