@@ -24,98 +24,52 @@ const LMS_ENTITY_ID = 'media_player.lms';
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('getHasQueueSupport', () => {
-  describe('Step 1 – entity ID check', () => {
+  describe('entity ID check — returns null when no queue entity is configured', () => {
     it('returns null when no maEntityId or lmsEntityId is configured', () => {
       const players = [makePlayer(ENTITY_ID)];
       const config = makeConfig();
-      expect(
-        getHasQueueSupport(ENTITY_ID, config, players, ['mass_queue', 'lyrion_cli']),
-      ).toBeNull();
+      expect(getHasQueueSupport(ENTITY_ID, config, players)).toBeNull();
     });
 
-    it('returns null even when integrations are loaded but no entity IDs are set', () => {
+    it('returns null when both maEntityId and lmsEntityId are explicitly null', () => {
       const players = [makePlayer(ENTITY_ID)];
       const config = makeConfig({ maEntityId: null, lmsEntityId: null });
-      expect(
-        getHasQueueSupport(ENTITY_ID, config, players, ['mass_queue', 'lyrion_cli']),
-      ).toBeNull();
+      expect(getHasQueueSupport(ENTITY_ID, config, players)).toBeNull();
     });
 
     it('returns null when no config is provided', () => {
       const players = [makePlayer(ENTITY_ID)];
-      expect(
-        getHasQueueSupport(ENTITY_ID, null, players, ['mass_queue', 'lyrion_cli']),
-      ).toBeNull();
+      expect(getHasQueueSupport(ENTITY_ID, null, players)).toBeNull();
     });
 
     it('returns null when lmsEntityId is set but entity id does not match', () => {
       const players = [makePlayer(ENTITY_ID)];
       const config = makeConfig({ lmsEntityId: 'media_player.different' });
-      expect(
-        getHasQueueSupport(ENTITY_ID, config, players, ['lyrion_cli']),
-      ).toBeNull();
+      expect(getHasQueueSupport(ENTITY_ID, config, players)).toBeNull();
     });
   });
 
-  describe('Step 1 – MA auto-detection via mass_player_type attribute', () => {
+  describe('MA auto-detection via mass_player_type attribute', () => {
     it('detects a native MA player even without an explicit maEntityId in config', () => {
       const players = [makePlayer(ENTITY_ID, { mass_player_type: 'player' })];
-      const config = makeConfig(); // no maEntityId
-      expect(
-        getHasQueueSupport(ENTITY_ID, config, players, ['mass_queue']),
-      ).toEqual({ isMA: true, isLMS: false });
-    });
-
-    it('returns null when a native MA player is detected but mass_queue is not loaded', () => {
-      const players = [makePlayer(ENTITY_ID, { mass_player_type: 'player' })];
       const config = makeConfig();
-      expect(
-        getHasQueueSupport(ENTITY_ID, config, players, []),
-      ).toBeNull();
+      expect(getHasQueueSupport(ENTITY_ID, config, players)).toEqual({ isMA: true, isLMS: false });
     });
   });
 
-  describe('Step 2 – integration check for MA', () => {
-    it('returns isMA=true when maEntityId matches and mass_queue is loaded', () => {
+  describe('MA entity ID match', () => {
+    it('returns isMA=true when maEntityId matches', () => {
       const players = [makePlayer(MA_ENTITY_ID)];
       const config = makeConfig({ maEntityId: MA_ENTITY_ID });
-      expect(
-        getHasQueueSupport(MA_ENTITY_ID, config, players, ['mass_queue']),
-      ).toEqual({ isMA: true, isLMS: false });
-    });
-
-    it('returns null when maEntityId is set but mass_queue integration is not loaded', () => {
-      const players = [makePlayer(MA_ENTITY_ID)];
-      const config = makeConfig({ maEntityId: MA_ENTITY_ID });
-      expect(
-        getHasQueueSupport(MA_ENTITY_ID, config, players, ['lyrion_cli']),
-      ).toBeNull();
-    });
-
-    it('returns null when loadedDomains is empty and only maEntityId is configured', () => {
-      const players = [makePlayer(MA_ENTITY_ID)];
-      const config = makeConfig({ maEntityId: MA_ENTITY_ID });
-      expect(
-        getHasQueueSupport(MA_ENTITY_ID, config, players, []),
-      ).toBeNull();
+      expect(getHasQueueSupport(MA_ENTITY_ID, config, players)).toEqual({ isMA: true, isLMS: false });
     });
   });
 
-  describe('Step 2 – integration check for LMS', () => {
-    it('returns isLMS=true when lmsEntityId matches and lyrion_cli is loaded', () => {
+  describe('LMS entity ID match', () => {
+    it('returns isLMS=true when lmsEntityId matches', () => {
       const players = [makePlayer(LMS_ENTITY_ID)];
       const config = makeConfig({ lmsEntityId: LMS_ENTITY_ID });
-      expect(
-        getHasQueueSupport(LMS_ENTITY_ID, config, players, ['lyrion_cli']),
-      ).toEqual({ isMA: false, isLMS: true });
-    });
-
-    it('returns null when lmsEntityId is set but lyrion_cli integration is not loaded', () => {
-      const players = [makePlayer(LMS_ENTITY_ID)];
-      const config = makeConfig({ lmsEntityId: LMS_ENTITY_ID });
-      expect(
-        getHasQueueSupport(LMS_ENTITY_ID, config, players, ['mass_queue']),
-      ).toBeNull();
+      expect(getHasQueueSupport(LMS_ENTITY_ID, config, players)).toEqual({ isMA: false, isLMS: true });
     });
   });
 
@@ -125,17 +79,13 @@ describe('getHasQueueSupport', () => {
       const lms = makePlayer(LMS_ENTITY_ID);
       const players = [ump, lms];
       const config = makeConfig({ lmsEntityId: LMS_ENTITY_ID });
-      expect(
-        getHasQueueSupport(ENTITY_ID, config, players, ['lyrion_cli']),
-      ).toEqual({ isMA: false, isLMS: true });
+      expect(getHasQueueSupport(ENTITY_ID, config, players)).toEqual({ isMA: false, isLMS: true });
     });
 
-    it('returns null for LMS when UMP active_child does not match lmsEntityId', () => {
+    it('returns null when UMP active_child does not match lmsEntityId', () => {
       const ump = makePlayer(ENTITY_ID, { active_child: 'media_player.other' });
       const config = makeConfig({ lmsEntityId: LMS_ENTITY_ID });
-      expect(
-        getHasQueueSupport(ENTITY_ID, config, [ump], ['lyrion_cli']),
-      ).toBeNull();
+      expect(getHasQueueSupport(ENTITY_ID, config, [ump])).toBeNull();
     });
 
     it('auto-detects MA via active_child that has mass_player_type', () => {
@@ -143,31 +93,15 @@ describe('getHasQueueSupport', () => {
       const ump = makePlayer(ENTITY_ID, { active_child: MA_ENTITY_ID });
       const players = [ump, maChild];
       const config = makeConfig(); // no explicit maEntityId
-      expect(
-        getHasQueueSupport(ENTITY_ID, config, players, ['mass_queue']),
-      ).toEqual({ isMA: true, isLMS: false });
+      expect(getHasQueueSupport(ENTITY_ID, config, players)).toEqual({ isMA: true, isLMS: false });
     });
   });
 
   describe('both MA and LMS configured', () => {
-    it('returns both isMA and isLMS true when both entity IDs and integrations are present', () => {
+    it('returns both isMA and isLMS true when both entity IDs match', () => {
       const maPlayer = makePlayer(MA_ENTITY_ID, { mass_player_type: 'player' });
       const config = makeConfig({ maEntityId: MA_ENTITY_ID, lmsEntityId: MA_ENTITY_ID });
-      const result = getHasQueueSupport(MA_ENTITY_ID, config, [maPlayer], [
-        'mass_queue',
-        'lyrion_cli',
-      ]);
-      expect(result).toEqual({ isMA: true, isLMS: true });
-    });
-
-    it('returns only isMA=true when only mass_queue is loaded', () => {
-      const players = [makePlayer(MA_ENTITY_ID)];
-      const config = makeConfig({ maEntityId: MA_ENTITY_ID, lmsEntityId: LMS_ENTITY_ID });
-      const result = getHasQueueSupport(MA_ENTITY_ID, config, players, ['mass_queue']);
-      // isLMS: false because lmsEntityId doesn't match MA_ENTITY_ID
-      // isMA: true
-      expect(result?.isMA).toBe(true);
-      expect(result?.isLMS).toBe(false);
+      expect(getHasQueueSupport(MA_ENTITY_ID, config, [maPlayer])).toEqual({ isMA: true, isLMS: true });
     });
   });
 });
