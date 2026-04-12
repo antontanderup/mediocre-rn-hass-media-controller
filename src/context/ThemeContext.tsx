@@ -17,6 +17,7 @@ const STORAGE_KEY = 'source_color';
 interface ThemeContextValue {
   theme: AppTheme;
   setSourceColor: (hex: string) => void;
+  setArtworkColor: (hex: string | null) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -28,6 +29,7 @@ interface ThemeProviderProps {
 export const ThemeProvider = ({ children }: ThemeProviderProps): React.JSX.Element => {
   const systemScheme = useColorScheme() ?? 'light';
   const [sourceColor, setSourceColorState] = useState(DEFAULT_SOURCE_COLOR);
+  const [artworkColor, setArtworkColorState] = useState<string | null>(null);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -46,14 +48,18 @@ export const ThemeProvider = ({ children }: ThemeProviderProps): React.JSX.Eleme
     AsyncStorage.setItem(STORAGE_KEY, hex).catch(() => {});
   }, []);
 
+  const setArtworkColor = useCallback((hex: string | null) => {
+    setArtworkColorState(hex);
+  }, []);
+
   const theme = useMemo(
-    () => buildTheme(sourceColor, systemScheme),
-    [sourceColor, systemScheme],
+    () => buildTheme(artworkColor ?? sourceColor, systemScheme),
+    [artworkColor, sourceColor, systemScheme],
   );
 
   const value = useMemo(
-    () => ({ theme, setSourceColor }),
-    [theme, setSourceColor],
+    () => ({ theme, setSourceColor, setArtworkColor }),
+    [theme, setSourceColor, setArtworkColor],
   );
 
   return (

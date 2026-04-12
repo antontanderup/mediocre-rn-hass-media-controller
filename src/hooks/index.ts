@@ -48,3 +48,5 @@ export { useMediaBrowser } from './useMediaBrowser';
 export type { UseMediaBrowserResult } from './useMediaBrowser';
 
 export { useHaptics } from './useHaptics';
+
+export { useArtworkColor } from './useArtworkColor';
