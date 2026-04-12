@@ -52,7 +52,6 @@ export default function SettingsScreen() {
       useArtColors: appConfig?.options.useArtColors ?? false,
       disablePlayerFocusSwitching: appConfig?.options.disablePlayerFocusSwitching ?? false,
       playerIsActiveWhen: appConfig?.options.playerIsActiveWhen ?? ('playing' as AppOptions['playerIsActiveWhen']),
-      showVolumeStepButtons: appConfig?.options.showVolumeStepButtons ?? false,
     },
     onSubmit: async ({ value }) => {
       const result = settingsSchema(value);
@@ -75,7 +74,6 @@ export default function SettingsScreen() {
           useArtColors: value.useArtColors,
           disablePlayerFocusSwitching: value.disablePlayerFocusSwitching,
           playerIsActiveWhen: value.playerIsActiveWhen,
-          showVolumeStepButtons: value.showVolumeStepButtons,
         },
       };
 
@@ -264,20 +262,6 @@ export default function SettingsScreen() {
           )}
         </form.Field>
 
-        {/* Show volume step buttons */}
-        <form.Field name="showVolumeStepButtons">
-          {field => (
-            <View style={styles.row}>
-              <Text style={styles.label}>{t('settings.option.showVolumeStepButtons')}</Text>
-              <Switch
-                value={field.state.value}
-                onValueChange={field.handleChange}
-                trackColor={{ true: theme.primary, false: theme.surfaceVariant }}
-                thumbColor={field.state.value ? theme.onPrimary : theme.onSurfaceVariant}
-              />
-            </View>
-          )}
-        </form.Field>
 
         {/* Disable player focus switching */}
         <form.Field name="disablePlayerFocusSwitching">

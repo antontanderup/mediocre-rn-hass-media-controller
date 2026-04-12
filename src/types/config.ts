@@ -28,7 +28,6 @@ export type AppOptions = {
   useArtColors?: boolean;
   disablePlayerFocusSwitching?: boolean;
   playerIsActiveWhen?: 'playing' | 'playing_or_paused';
-  showVolumeStepButtons?: boolean;
 };
 
 export type AppConfig = {

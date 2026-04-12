@@ -38,7 +38,6 @@ export const en = {
     },
     option: {
       useArtColors: 'Use art colors',
-      showVolumeStepButtons: 'Show volume step buttons',
       disablePlayerFocusSwitching: 'Disable player focus switching',
     },
     mediaPlayers: {
