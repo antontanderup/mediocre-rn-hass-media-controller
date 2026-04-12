@@ -1,5 +1,6 @@
+import { useFocusEffect } from '@react-navigation/core';
 import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, BackHandler, FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { useTheme, useMediaBrowser } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { t } from '@/localization';
@@ -32,6 +33,18 @@ export const HaMediaBrowser = ({
     setPrevHistoryKey(historyKey);
     setFilter('');
   }
+
+  // Override hardware back button when inside a subfolder
+  useFocusEffect(
+    useCallback(() => {
+      if (history.length === 0) return;
+      const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+        goBack();
+        return true;
+      });
+      return () => subscription.remove();
+    }, [history.length, goBack]),
+  );
 
   // Categorise items: tracks render as list rows, others as grid tiles
   const { trackItems, gridItems } = useMemo(() => {

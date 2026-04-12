@@ -30,7 +30,7 @@ const useStyles = createUseStyles(theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 4,
-    gap: 4,
+    gap: 0,
   },
   list: {
     flex: 1,
