@@ -23,12 +23,6 @@ export const selectActiveMediaPlayer = ({
 
   const findPlayer = (entityId: string) => players.find(p => p.entity_id === entityId);
 
-  // If focus switching is disabled, keep the current selection or fall back to first configured
-  if (config?.options?.disablePlayerFocusSwitching) {
-    if (selectedEntityId && findPlayer(selectedEntityId)) return selectedEntityId;
-    return configured[0]?.entityId;
-  }
-
   const activeWhen = config?.options?.playerIsActiveWhen ?? 'playing';
 
   const isActive = (state: string) => {

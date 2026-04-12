@@ -38,7 +38,6 @@ export const en = {
     },
     option: {
       useArtColors: 'Use art colors',
-      disablePlayerFocusSwitching: 'Disable player focus switching',
     },
     mediaPlayers: {
       configure: 'Configure media players',
@@ -174,10 +173,6 @@ export const en = {
     removeFromGroup: 'Remove from group',
     addSpeakers: 'Add speakers',
     addSpeaker: 'Add %{name}',
-    switchPlayer: 'Switch player',
-    focusDifferentPlayer: 'Focus a different player',
-    empty:
-      'No speakers configured for grouping. Mark players as groupable in Settings \u2192 Media Players.',
   },
 
   customButtons: {

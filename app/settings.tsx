@@ -50,7 +50,6 @@ export default function SettingsScreen() {
       token: config?.token ?? '',
       sourceColor: theme.sourceColor,
       useArtColors: appConfig?.options.useArtColors ?? false,
-      disablePlayerFocusSwitching: appConfig?.options.disablePlayerFocusSwitching ?? false,
       playerIsActiveWhen: appConfig?.options.playerIsActiveWhen ?? ('playing' as AppOptions['playerIsActiveWhen']),
     },
     onSubmit: async ({ value }) => {
@@ -72,7 +71,6 @@ export default function SettingsScreen() {
         mediaPlayers: appConfig?.mediaPlayers ?? [],
         options: {
           useArtColors: value.useArtColors,
-          disablePlayerFocusSwitching: value.disablePlayerFocusSwitching,
           playerIsActiveWhen: value.playerIsActiveWhen,
         },
       };
@@ -263,20 +261,6 @@ export default function SettingsScreen() {
         </form.Field>
 
 
-        {/* Disable player focus switching */}
-        <form.Field name="disablePlayerFocusSwitching">
-          {field => (
-            <View style={styles.row}>
-              <Text style={styles.label}>{t('settings.option.disablePlayerFocusSwitching')}</Text>
-              <Switch
-                value={field.state.value}
-                onValueChange={field.handleChange}
-                trackColor={{ true: theme.primary, false: theme.surfaceVariant }}
-                thumbColor={field.state.value ? theme.onPrimary : theme.onSurfaceVariant}
-              />
-            </View>
-          )}
-        </form.Field>
 
         {/* Player is active when */}
         <form.Field name="playerIsActiveWhen">

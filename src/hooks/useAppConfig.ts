@@ -26,7 +26,6 @@ const mediaPlayerConfigSchema = type({
 
 const appOptionsSchema = type({
   'useArtColors?': 'boolean',
-  'disablePlayerFocusSwitching?': 'boolean',
   'playerIsActiveWhen?': '"playing" | "playing_or_paused"',
 });
 
