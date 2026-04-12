@@ -14,6 +14,14 @@ import type { HaMediaBrowserProps } from './HaMediaBrowser.types';
 
 const NUM_COLUMNS = 3;
 
+// ─── List row union ───────────────────────────────────────────────────────────
+
+type GridRow = { kind: 'grid-row'; id: string; cols: MediaBrowserNode[] };
+type TrackRow = { kind: 'track'; node: MediaBrowserNode };
+type ListRow = GridRow | TrackRow;
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 export const HaMediaBrowser = ({
   entityId,
   hassBaseUrl,
@@ -70,9 +78,26 @@ export const HaMediaBrowser = ({
     return { trackItems: tracks, gridItems: grid };
   }, [items, filter, history.length]);
 
-  const handleBrowse = (node: MediaBrowserNode) => {
-    browse(node);
-  };
+  // Group grid items into rows of NUM_COLUMNS so FlatList can virtualize them.
+  // Track items follow grid rows in the same data array.
+  const listData = useMemo((): ListRow[] => {
+    const rows: ListRow[] = [];
+    for (let i = 0; i < gridItems.length; i += NUM_COLUMNS) {
+      const cols = gridItems.slice(i, i + NUM_COLUMNS);
+      rows.push({ kind: 'grid-row', id: cols[0].mediaContentId, cols });
+    }
+    for (const node of trackItems) {
+      rows.push({ kind: 'track', node });
+    }
+    return rows;
+  }, [gridItems, trackItems]);
+
+  const handleBrowse = useCallback(
+    (node: MediaBrowserNode) => {
+      browse(node);
+    },
+    [browse],
+  );
 
   const buildActions = useCallback(
     (node: MediaBrowserNode): MediaItemSheetAction[] => {
@@ -103,98 +128,143 @@ export const HaMediaBrowser = ({
     [playItem, browse],
   );
 
-  const needsSheet = (node: MediaBrowserNode): boolean => node.canPlay;
+  // ─── Header: only nav bar + filter (no grid items) ───────────────────────
 
-  const renderHeader = (): React.JSX.Element => (
-    <View>
-      {/* Navigation bar */}
-      {history.length > 0 && (
-        <View style={styles.navBar}>
-          <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel={t('haMediaBrowser.goBack')}>
-            <Icon name="arrow-left" size={20} color={theme.onSurface} />
-          </Pressable>
-          <Pressable onPress={goToRoot} style={styles.breadcrumbItem}>
-            <Icon name="home" size={16} color={theme.onSurfaceVariant} />
-          </Pressable>
-          {history.map((entry, idx) => (
-            <React.Fragment key={`bc-${entry.mediaContentId}`}>
-              <Text style={styles.breadcrumbSeparator}>/</Text>
-              <Pressable onPress={() => goToIndex(idx)} style={styles.breadcrumbItem}>
-                <Text
-                  style={[
-                    styles.breadcrumbText,
-                    idx === history.length - 1 && styles.breadcrumbTextActive,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {entry.title}
-                </Text>
-              </Pressable>
-            </React.Fragment>
-          ))}
-        </View>
-      )}
-
-      {/* Filter input (only when browsing inside a folder with many items) */}
-      {history.length > 0 && items.length > 6 && (
-        <View style={styles.filterContainer}>
-          <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
-          <TextInput
-            style={styles.filterInput}
-            placeholder={t('haMediaBrowser.filterItems')}
-            placeholderTextColor={theme.onSurfaceVariant}
-            value={filter}
-            onChangeText={setFilter}
-            autoCorrect={false}
-            autoCapitalize="none"
-          />
-          {filter.length > 0 && (
-            <Pressable onPress={() => setFilter('')}>
-              <Icon name="close" size={16} color={theme.onSurfaceVariant} />
+  const listHeader = useMemo(
+    () => (
+      <View>
+        {history.length > 0 && (
+          <View style={styles.navBar}>
+            <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel={t('haMediaBrowser.goBack')}>
+              <Icon name="arrow-left" size={20} color={theme.onSurface} />
             </Pressable>
-          )}
-        </View>
-      )}
+            <Pressable onPress={goToRoot} style={styles.breadcrumbItem}>
+              <Icon name="home" size={16} color={theme.onSurfaceVariant} />
+            </Pressable>
+            {history.map((entry, idx) => (
+              <React.Fragment key={`bc-${entry.mediaContentId}`}>
+                <Text style={styles.breadcrumbSeparator}>/</Text>
+                <Pressable onPress={() => goToIndex(idx)} style={styles.breadcrumbItem}>
+                  <Text
+                    style={[
+                      styles.breadcrumbText,
+                      idx === history.length - 1 && styles.breadcrumbTextActive,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {entry.title}
+                  </Text>
+                </Pressable>
+              </React.Fragment>
+            ))}
+          </View>
+        )}
 
-      {/* Grid items rendered as header so tracks list below is flat */}
-      {gridItems.length > 0 && (
-        <View style={styles.grid}>
-          {gridItems.map(node => {
-            const artworkUrl = resolveArtworkUrl(node.thumbnail, hassBaseUrl);
-            const fallbackIcon = iconForMediaClass(node.childrenMediaClass ?? node.mediaClass);
-            if (!needsSheet(node)) {
-              return (
-                <View key={node.mediaContentId} style={styles.gridCell}>
-                  <MediaGridItem
-                    title={node.title}
-                    artworkUrl={artworkUrl}
-                    fallbackIcon={fallbackIcon}
-                    onPress={() => handleBrowse(node)}
-                  />
-                </View>
-              );
-            }
-            return (
-              <View key={node.mediaContentId} style={styles.gridCell}>
-                <MediaItemSheet
-                  artworkUrl={artworkUrl}
-                  title={node.title}
-                  actions={buildActions(node)}
-                  renderTrigger={onOpen => (
+        {history.length > 0 && items.length > 6 && (
+          <View style={styles.filterContainer}>
+            <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
+            <TextInput
+              style={styles.filterInput}
+              placeholder={t('haMediaBrowser.filterItems')}
+              placeholderTextColor={theme.onSurfaceVariant}
+              value={filter}
+              onChangeText={setFilter}
+              autoCorrect={false}
+              autoCapitalize="none"
+            />
+            {filter.length > 0 && (
+              <Pressable onPress={() => setFilter('')}>
+                <Icon name="close" size={16} color={theme.onSurfaceVariant} />
+              </Pressable>
+            )}
+          </View>
+        )}
+      </View>
+    ),
+    [styles, theme, history, items.length, filter, goBack, goToRoot, goToIndex],
+  );
+
+  // ─── Row renderers ────────────────────────────────────────────────────────
+
+  const keyExtractor = useCallback(
+    (item: ListRow) =>
+      item.kind === 'grid-row' ? `grid-row-${item.id}` : item.node.mediaContentId,
+    [],
+  );
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: ListRow; index: number }): React.JSX.Element => {
+      if (item.kind === 'grid-row') {
+        return (
+          <View style={[styles.gridRow, index === 0 && styles.gridRowFirst]}>
+            {item.cols.map(node => {
+              const artworkUrl = resolveArtworkUrl(node.thumbnail, hassBaseUrl);
+              const fallbackIcon = iconForMediaClass(node.childrenMediaClass ?? node.mediaClass);
+              if (!node.canPlay) {
+                return (
+                  <View key={node.mediaContentId} style={styles.gridCell}>
                     <MediaGridItem
                       title={node.title}
                       artworkUrl={artworkUrl}
                       fallbackIcon={fallbackIcon}
-                      onPress={onOpen}
+                      onPress={() => handleBrowse(node)}
                     />
-                  )}
-                />
-              </View>
-            );
-          })}
-        </View>
-      )}
-    </View>
+                  </View>
+                );
+              }
+              return (
+                <View key={node.mediaContentId} style={styles.gridCell}>
+                  <MediaItemSheet
+                    artworkUrl={artworkUrl}
+                    title={node.title}
+                    actions={buildActions(node)}
+                    renderTrigger={onOpen => (
+                      <MediaGridItem
+                        title={node.title}
+                        artworkUrl={artworkUrl}
+                        fallbackIcon={fallbackIcon}
+                        onPress={onOpen}
+                      />
+                    )}
+                  />
+                </View>
+              );
+            })}
+          </View>
+        );
+      }
+
+      const { node } = item;
+      const artworkUrl = resolveArtworkUrl(node.thumbnail, hassBaseUrl);
+      const fallbackIcon = iconForMediaClass(node.mediaClass);
+      if (!node.canPlay) {
+        return (
+          <MediaTrackItem
+            title={node.title}
+            artworkUrl={artworkUrl}
+            fallbackIcon={fallbackIcon}
+            onPress={() => handleBrowse(node)}
+            showChevron={node.canExpand}
+          />
+        );
+      }
+      return (
+        <MediaItemSheet
+          artworkUrl={artworkUrl}
+          title={node.title}
+          actions={buildActions(node)}
+          renderTrigger={onOpen => (
+            <MediaTrackItem
+              title={node.title}
+              artworkUrl={artworkUrl}
+              fallbackIcon={fallbackIcon}
+              onPress={onOpen}
+            />
+          )}
+        />
+      );
+    },
+    [styles, hassBaseUrl, handleBrowse, buildActions],
   );
 
   // ─── Empty / loading states ──────────────────────────────────────────────
@@ -218,40 +288,11 @@ export const HaMediaBrowser = ({
 
   return (
     <FlatList
-      data={trackItems}
-      keyExtractor={item => item.mediaContentId}
-      ListHeaderComponent={renderHeader()}
-      ListEmptyComponent={gridItems.length === 0 ? renderEmpty() : undefined}
-      renderItem={({ item }) => {
-        const artworkUrl = resolveArtworkUrl(item.thumbnail, hassBaseUrl);
-        const fallbackIcon = iconForMediaClass(item.mediaClass);
-        if (!needsSheet(item)) {
-          return (
-            <MediaTrackItem
-              title={item.title}
-              artworkUrl={artworkUrl}
-              fallbackIcon={fallbackIcon}
-              onPress={() => handleBrowse(item)}
-              showChevron={item.canExpand}
-            />
-          );
-        }
-        return (
-          <MediaItemSheet
-            artworkUrl={artworkUrl}
-            title={item.title}
-            actions={buildActions(item)}
-            renderTrigger={onOpen => (
-              <MediaTrackItem
-                title={item.title}
-                artworkUrl={artworkUrl}
-                fallbackIcon={fallbackIcon}
-                onPress={onOpen}
-              />
-            )}
-          />
-        );
-      }}
+      data={listData}
+      keyExtractor={keyExtractor}
+      ListHeaderComponent={listHeader}
+      ListEmptyComponent={listData.length === 0 ? renderEmpty() : undefined}
+      renderItem={renderItem}
       contentContainerStyle={styles.listContent}
     />
   );
@@ -307,10 +348,11 @@ const useStyles = createUseStyles(theme => ({
     color: theme.onSurface,
     padding: 0,
   },
-  grid: {
+  gridRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     paddingHorizontal: 12,
+  },
+  gridRowFirst: {
     paddingTop: 8,
   },
   gridCell: {
