@@ -53,10 +53,9 @@ beforeEach(() => {
 });
 
 describe('useHaSearch', () => {
-  it('returns empty results and favorites when there is no data', () => {
+  it('returns empty results when there is no data', () => {
     const { result } = renderHook(() => useHaSearch('', 'all', ENTITY_ID));
     expect(result.current.results).toEqual([]);
-    expect(result.current.favorites).toEqual([]);
   });
 
   it('passes null message to useHassMessagePromise when query is too short', () => {
@@ -96,24 +95,6 @@ describe('useHaSearch', () => {
     const { result } = renderHook(() => useHaSearch('joy', 'all', ENTITY_ID));
     expect(result.current.results).toHaveLength(1);
     expect(result.current.results[0].title).toBe('Test Track');
-  });
-
-  it('extracts only can_play favorites from browse_media response', () => {
-    const playable = makeHaItem({ media_content_id: 'id1', can_play: true });
-    const notPlayable = makeHaItem({ media_content_id: 'id2', can_play: false });
-    // First call = search (null message), second = favorites
-    mockUseHassMessagePromise
-      .mockReturnValueOnce({ data: null, loading: false, error: null, refetch: jest.fn() })
-      .mockReturnValueOnce({
-        data: { [ENTITY_ID]: { children: [playable, notPlayable] } },
-        loading: false,
-        error: null,
-        refetch: jest.fn(),
-      });
-
-    const { result } = renderHook(() => useHaSearch('', 'all', ENTITY_ID, true));
-    expect(result.current.favorites).toHaveLength(1);
-    expect(result.current.favorites[0].media_content_id).toBe('id1');
   });
 
   it('sets isAvailable to false after a search error (with no prior success)', () => {
@@ -173,7 +154,7 @@ describe('useHaSearch', () => {
 
   it('uses custom filterConfig when provided', () => {
     const custom = [{ type: 'tracks' as const, name: 'Songs' }];
-    const { result } = renderHook(() => useHaSearch('', 'all', ENTITY_ID, true, custom));
+    const { result } = renderHook(() => useHaSearch('', 'all', ENTITY_ID, custom));
     expect(result.current.filterConfig).toBe(custom);
   });
 });
