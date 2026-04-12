@@ -7,13 +7,13 @@ import { Icon } from '@/components/Icon';
 import { MediaArtwork } from '@/components/MediaArtwork';
 import type { MediaGridItemProps } from './MediaGridItem.types';
 
-export const MediaGridItem = ({
+export const MediaGridItem = React.memo(function MediaGridItem({
   title,
   artworkUrl,
   fallbackIcon = 'folder',
   onPress,
   onLongPress,
-}: MediaGridItemProps): React.JSX.Element => {
+}: MediaGridItemProps): React.JSX.Element {
   const styles = useStyles();
   const theme = useTheme();
   const haptics = useHaptics();
@@ -39,7 +39,7 @@ export const MediaGridItem = ({
       </Text>
     </Pressable>
   );
-};
+});
 
 const useStyles = createUseStyles(theme => ({
   container: {

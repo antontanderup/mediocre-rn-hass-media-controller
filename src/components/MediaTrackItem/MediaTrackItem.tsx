@@ -9,7 +9,7 @@ import type { MediaTrackItemProps } from './MediaTrackItem.types';
 
 const THUMB_SIZE = 44;
 
-export const MediaTrackItem = ({
+export const MediaTrackItem = React.memo(function MediaTrackItem({
   title,
   subtitle,
   artworkUrl,
@@ -17,7 +17,7 @@ export const MediaTrackItem = ({
   onPress,
   onPlay,
   showChevron,
-}: MediaTrackItemProps): React.JSX.Element => {
+}: MediaTrackItemProps): React.JSX.Element {
   const styles = useStyles();
   const theme = useTheme();
   const haptics = useHaptics();
@@ -74,7 +74,7 @@ export const MediaTrackItem = ({
       )}
     </Pressable>
   );
-};
+});
 
 const useStyles = createUseStyles(theme => ({
   row: {
