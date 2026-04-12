@@ -1,4 +1,4 @@
-import { Image, ImageBackground, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import type { ImageStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, ButtonIcon, Icon, PlaybackControls, ProgressBar, SourceSelect, SpeakersSheet, VolumeSlider } from '@/components';
@@ -61,16 +61,11 @@ export default function PlayerTab() {
       ? resolveHassUrl(attributes.entity_picture, hassConfig)
       : null;
 
-  const overlayBackground = artworkUri
-    ? `${theme.scrim}${theme.colorScheme === 'dark' ? 'CC' : '80'}`
-    : 'transparent';
-
   const content = (
     <View
       style={[
         styles.overlay,
         {
-          backgroundColor: overlayBackground,
           paddingTop: insets.top,
           paddingBottom: 24,
         },
@@ -153,14 +148,6 @@ export default function PlayerTab() {
       </View>
     </View>
   );
-
-  if (artworkUri) {
-    return (
-      <ImageBackground source={{ uri: artworkUri }} style={styles.background} blurRadius={20}>
-        {content}
-      </ImageBackground>
-    );
-  }
 
   return <View style={styles.background}>{content}</View>;
 }
