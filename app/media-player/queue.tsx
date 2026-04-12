@@ -30,7 +30,7 @@ const useStyles = createUseStyles(theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 4,
-    gap: 4,
+    gap: 0,
   },
   list: {
     flex: 1,
@@ -75,7 +75,7 @@ export default function QueueTab() {
               renderTrigger={onOpen => (
                 <Button
                   variant="subtle"
-                  size="sm"
+                  size="md"
                   onPress={onOpen}
                   accessibilityLabel={t('queue.transferQueue')}
                 >
@@ -86,7 +86,7 @@ export default function QueueTab() {
           )}
           <Button
             variant="subtle"
-            size="sm"
+            size="md"
             onPress={refetch}
             accessibilityLabel={t('queue.refresh')}
           >
@@ -95,7 +95,7 @@ export default function QueueTab() {
           {queue.length > 0 && (
             <Button
               variant="subtle"
-              size="sm"
+              size="md"
               onPress={clearQueue}
               accessibilityLabel={t('queue.clearQueue')}
             >
