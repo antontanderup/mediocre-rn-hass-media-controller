@@ -37,10 +37,11 @@ export function getHasQueueSupport(
   if (!hasMaEntity && !hasLmsEntity) return null;
 
   // Step 2 – integrations
+  // Even if the integration is not loaded yet, return a non-null result so the
+  // queue tab stays visible and shows a "not available" message rather than
+  // disappearing entirely. isAvailable in usePlayerQueue drives that UI state.
   const isMA = hasMaEntity && loadedDomains.includes('mass_queue');
   const isLMS = hasLmsEntity && loadedDomains.includes('lyrion_cli');
-
-  if (!isMA && !isLMS) return null;
 
   return { isMA, isLMS };
 }

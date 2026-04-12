@@ -66,12 +66,12 @@ describe('getHasQueueSupport', () => {
       ).toEqual({ isMA: true, isLMS: false });
     });
 
-    it('returns null when a native MA player is detected but mass_queue is not loaded', () => {
+    it('returns { isMA: false } when a native MA player is detected but mass_queue is not loaded', () => {
       const players = [makePlayer(ENTITY_ID, { mass_player_type: 'player' })];
       const config = makeConfig();
       expect(
         getHasQueueSupport(ENTITY_ID, config, players, []),
-      ).toBeNull();
+      ).toEqual({ isMA: false, isLMS: false });
     });
   });
 
@@ -84,20 +84,20 @@ describe('getHasQueueSupport', () => {
       ).toEqual({ isMA: true, isLMS: false });
     });
 
-    it('returns null when maEntityId is set but mass_queue integration is not loaded', () => {
+    it('returns { isMA: false } when maEntityId is set but mass_queue integration is not loaded', () => {
       const players = [makePlayer(MA_ENTITY_ID)];
       const config = makeConfig({ maEntityId: MA_ENTITY_ID });
       expect(
         getHasQueueSupport(MA_ENTITY_ID, config, players, ['lyrion_cli']),
-      ).toBeNull();
+      ).toEqual({ isMA: false, isLMS: false });
     });
 
-    it('returns null when loadedDomains is empty and only maEntityId is configured', () => {
+    it('returns { isMA: false } when loadedDomains is empty and only maEntityId is configured', () => {
       const players = [makePlayer(MA_ENTITY_ID)];
       const config = makeConfig({ maEntityId: MA_ENTITY_ID });
       expect(
         getHasQueueSupport(MA_ENTITY_ID, config, players, []),
-      ).toBeNull();
+      ).toEqual({ isMA: false, isLMS: false });
     });
   });
 
@@ -110,12 +110,12 @@ describe('getHasQueueSupport', () => {
       ).toEqual({ isMA: false, isLMS: true });
     });
 
-    it('returns null when lmsEntityId is set but lyrion_cli integration is not loaded', () => {
+    it('returns { isLMS: false } when lmsEntityId is set but lyrion_cli integration is not loaded', () => {
       const players = [makePlayer(LMS_ENTITY_ID)];
       const config = makeConfig({ lmsEntityId: LMS_ENTITY_ID });
       expect(
         getHasQueueSupport(LMS_ENTITY_ID, config, players, ['mass_queue']),
-      ).toBeNull();
+      ).toEqual({ isMA: false, isLMS: false });
     });
   });
 
@@ -128,6 +128,18 @@ describe('getHasQueueSupport', () => {
       expect(
         getHasQueueSupport(ENTITY_ID, config, players, ['lyrion_cli']),
       ).toEqual({ isMA: false, isLMS: true });
+    });
+
+    it('returns { isLMS: false } for UMP+LMS when lyrion_cli integration is not loaded', () => {
+      const ump = makePlayer(ENTITY_ID, { active_child: LMS_ENTITY_ID });
+      const lms = makePlayer(LMS_ENTITY_ID);
+      const players = [ump, lms];
+      const config = makeConfig({ lmsEntityId: LMS_ENTITY_ID });
+      // lyrion_cli absent from loaded domains — tab should still appear (non-null)
+      // so the user sees "not available" rather than the tab disappearing
+      expect(
+        getHasQueueSupport(ENTITY_ID, config, players, []),
+      ).toEqual({ isMA: false, isLMS: false });
     });
 
     it('returns null for LMS when UMP active_child does not match lmsEntityId', () => {
