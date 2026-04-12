@@ -1,9 +1,30 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { HassProvider, SelectedPlayerProvider, ThemeProvider, useThemeContext } from '@/context';
+import { HassProvider, SelectedPlayerProvider, ThemeProvider, useHassContext, useThemeContext } from '@/context';
+import { useArtworkColor, useSelectedPlayer } from '@/hooks';
+import { resolveHassUrl } from '@/utils';
+
+function ArtworkThemeSync(): null {
+  const { player } = useSelectedPlayer();
+  const { hassConfig } = useHassContext();
+  const { setArtworkColor } = useThemeContext();
+
+  const artworkUri =
+    player?.attributes.entity_picture && hassConfig
+      ? resolveHassUrl(player.attributes.entity_picture, hassConfig)
+      : null;
+
+  const artworkColor = useArtworkColor(artworkUri);
+
+  useEffect(() => {
+    setArtworkColor(artworkColor);
+  }, [artworkColor, setArtworkColor]);
+
+  return null;
+}
 
 function ThemedStack(): React.JSX.Element {
   const { theme } = useThemeContext();
@@ -30,6 +51,7 @@ export default function RootLayout() {
       <ThemeProvider>
         <HassProvider>
           <SelectedPlayerProvider>
+            <ArtworkThemeSync />
             <ThemedStack />
           </SelectedPlayerProvider>
         </HassProvider>
