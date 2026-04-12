@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/core';
 import { useHaSearch, useHaptics, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { t } from '@/localization';
@@ -30,10 +31,21 @@ export const HaSearch = ({
   const theme = useTheme();
   const haptics = useHaptics();
 
+  const inputRef = useRef<TextInput>(null);
+
   // Query state with debounce
   const [rawQuery, setRawQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Autofocus when screen gains focus and field is empty
+  useFocusEffect(
+    useCallback(() => {
+      if (rawQuery === '') {
+        inputRef.current?.focus();
+      }
+    }, [rawQuery]),
+  );
 
   const handleQueryChange = useCallback((text: string) => {
     setRawQuery(text);
@@ -146,6 +158,7 @@ export const HaSearch = ({
       <View style={styles.searchRow}>
         <Icon name="magnify" size={18} color={theme.onSurfaceVariant} />
         <TextInput
+          ref={inputRef}
           style={styles.searchInput}
           value={rawQuery}
           onChangeText={handleQueryChange}
