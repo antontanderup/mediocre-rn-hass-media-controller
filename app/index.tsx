@@ -10,22 +10,23 @@ import {
   useAppConfig,
   useTheme,
 } from '@/hooks';
+import { t } from '@/localization';
 import type { HassAuthState } from '@/types';
 import { createUseStyles, selectActiveMediaPlayer } from '@/utils';
 
 const STATUS_MESSAGES: Record<HassAuthState, string> = {
-  connecting: 'Connecting to Home Assistant...',
-  authenticating: 'Authenticating...',
-  authenticated: 'Loading media players...',
-  error: 'Connection failed',
-  auth_invalid: 'Authentication failed',
+  connecting: t('connecting.status.connecting'),
+  authenticating: t('connecting.status.authenticating'),
+  authenticated: t('connecting.status.authenticated'),
+  error: t('connecting.status.error'),
+  auth_invalid: t('connecting.status.authInvalid'),
 };
 
 function getErrorDescription(code: number | null): string {
-  if (code === ERR_CANNOT_CONNECT) return 'Could not reach Home Assistant. Check the host and port in settings.';
-  if (code === ERR_CONNECTION_LOST) return 'Connection was lost. Attempting to reconnect...';
-  if (code === ERR_INVALID_HTTPS_TO_HTTP) return 'SSL mismatch — try toggling the SSL setting.';
-  return 'An unexpected error occurred.';
+  if (code === ERR_CANNOT_CONNECT) return t('connecting.error.cannotConnect');
+  if (code === ERR_CONNECTION_LOST) return t('connecting.error.connectionLost');
+  if (code === ERR_INVALID_HTTPS_TO_HTTP) return t('connecting.error.sslMismatch');
+  return t('connecting.error.unknown');
 }
 
 export default function IndexRedirect() {
@@ -82,7 +83,7 @@ export default function IndexRedirect() {
         style={styles.settingsButton}
         accessibilityLabel="Open settings"
       >
-        <ButtonText>Settings</ButtonText>
+        <ButtonText>{t('connecting.openSettings')}</ButtonText>
       </Button>
     </View>
   );
