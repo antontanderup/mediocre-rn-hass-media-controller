@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/core';
-import { useHaSearch, useHaptics, useTheme } from '@/hooks';
+import { useHaSearch, useHaptics, useSearchHistory, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { t } from '@/localization';
 import { MediaGridItem } from '@/components/MediaGridItem';
@@ -56,6 +56,27 @@ export const HaSearch = ({
   const [rawQuery, setRawQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Search history
+  const { queries: searchHistory, addQuery } = useSearchHistory();
+  const historyApplied = useRef(false);
+
+  // Prefill with the latest query once history loads
+  useEffect(() => {
+    if (!historyApplied.current && searchHistory.length > 0) {
+      historyApplied.current = true;
+      const latest = searchHistory[0];
+      setRawQuery(latest);
+      setDebouncedQuery(latest);
+    }
+  }, [searchHistory]);
+
+  // Save to history whenever a valid debounced query fires
+  useEffect(() => {
+    if (debouncedQuery.trim().length >= 2) {
+      addQuery(debouncedQuery);
+    }
+  }, [debouncedQuery, addQuery]);
 
   // Autofocus when screen gains focus and field is empty
   useFocusEffect(

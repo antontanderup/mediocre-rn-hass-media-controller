@@ -251,4 +251,21 @@ export const en = {
     title: 'Source',
     selectSource: 'Select source',
   },
+
+  connecting: {
+    status: {
+      connecting: 'Connecting to Home Assistant\u2026',
+      authenticating: 'Authenticating\u2026',
+      authenticated: 'Loading media players\u2026',
+      error: 'Connection failed',
+      authInvalid: 'Authentication failed',
+    },
+    error: {
+      cannotConnect: 'Could not reach Home Assistant. Check the host and port in settings.',
+      connectionLost: 'Connection was lost. Attempting to reconnect\u2026',
+      sslMismatch: 'SSL mismatch \u2014 try toggling the SSL setting.',
+      unknown: 'An unexpected error occurred.',
+    },
+    openSettings: 'Settings',
+  },
 } as const;
