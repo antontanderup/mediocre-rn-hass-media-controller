@@ -47,6 +47,9 @@ export type { SearchProvider, UseSearchProviderResult } from './useSearchProvide
 export { useMediaBrowser } from './useMediaBrowser';
 export type { UseMediaBrowserResult } from './useMediaBrowser';
 
+export { useSearchHistory } from './useSearchHistory';
+export type { SearchHistoryState } from './useSearchHistory';
+
 export { useHaptics } from './useHaptics';
 
 export { useArtworkColor } from './useArtworkColor';
