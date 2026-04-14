@@ -8,6 +8,7 @@ export type {
   SqueezeboxSongInfoLoopItem,
   SqueezeboxSonginfoResponse,
   SqueezeboxServerStatusResponse,
+  LyrionBrowseResponse,
 } from './lyrionCli';
 
 export type { AppConfig, MediaPlayerConfig, AppOptions, SearchEntry, MediaBrowserEntry } from './config';

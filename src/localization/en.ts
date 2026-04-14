@@ -241,6 +241,29 @@ export const en = {
     goBack: 'Go back',
   },
 
+  lyrionBrowser: {
+    home: 'Home',
+    searchPlaceholder: 'Search...',
+    errorText: 'Failed to load media.',
+    emptyText: 'No media items available.',
+    action: {
+      play: 'Play',
+      playNext: 'Play Next',
+      replaceQueue: 'Replace Queue',
+      addToQueue: 'Add to Queue',
+      browse: 'Browse',
+    },
+    section: {
+      newMusic: 'New Music',
+      favorites: 'Favorites',
+      apps: 'Apps',
+      artists: 'Artists',
+      albums: 'Albums',
+      tracks: 'Tracks',
+      playlists: 'Playlists',
+    },
+  },
+
   speakersSheet: {
     speakers: 'Speakers',
     speakersConnected: 'Speakers, %{count} connected',

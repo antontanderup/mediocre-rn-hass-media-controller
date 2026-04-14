@@ -50,3 +50,6 @@ export type { SourceSelectProps } from './SourceSelect';
 
 export { SpeakersSheet } from './SpeakersSheet';
 export type { SpeakersSheetProps } from './SpeakersSheet';
+
+export { LyrionMediaBrowser } from './LyrionMediaBrowser';
+export type { LyrionMediaBrowserProps } from './LyrionMediaBrowser';
