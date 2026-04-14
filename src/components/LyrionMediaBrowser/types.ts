@@ -1,0 +1,39 @@
+import type { MediaItemSheetAction } from '@/components/MediaItemSheet';
+
+export type LyrionCategoryType =
+  | 'artists'
+  | 'albumartists'
+  | 'albums'
+  | 'randomalbums'
+  | 'newartists'
+  | 'newmusic'
+  | 'genres'
+  | 'playlists'
+  | 'tracks'
+  | 'favorites'
+  | 'apps'
+  | 'radios';
+
+export type LyrionBrowserItem = {
+  id: string;
+  title: string;
+  type: 'artist' | 'album' | 'track' | 'genre' | 'playlist' | 'category' | 'app';
+  can_play: boolean;
+  can_expand: boolean;
+  isFavorite?: boolean;
+  url?: string;
+  thumbnail?: string;
+  subtitle?: string;
+  artworkTrackId?: string;
+  duration?: number;
+  onClick?: () => void;
+  menuItems?: MediaItemSheetAction[];
+};
+
+export type LyrionNavigationItem = {
+  id: string;
+  title: string;
+  command: string;
+  parameters: string[];
+  type: LyrionBrowserItem['type'];
+};
