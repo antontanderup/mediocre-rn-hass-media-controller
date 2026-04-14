@@ -1,9 +1,9 @@
 import { useNavigation } from 'expo-router';
 import { useLayoutEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
-import { BottomSheetSelect, Button, ButtonIcon, ButtonText, HaMediaBrowser } from '@/components';
+import { ActivityIndicator, Text, View } from 'react-native';
+import { BottomSheetSelect, Button, ButtonIcon, ButtonText, HaMediaBrowser, LyrionMediaBrowser } from '@/components';
 import { useHassContext } from '@/context';
-import { useSelectedPlayer } from '@/hooks';
+import { useHassMessagePromise, useSelectedPlayer, useTheme } from '@/hooks';
 import type { MediaBrowserEntry } from '@/types';
 import { buildHassUrl, createUseStyles } from '@/utils';
 import { t } from '@/localization';
@@ -41,6 +41,7 @@ const useStyles = createUseStyles(theme => ({
 export default function BrowserTab() {
   const { entityId, config: playerConfig } = useSelectedPlayer();
   const styles = useStyles();
+  const theme = useTheme();
   const { hassConfig } = useHassContext();
   const navigation = useNavigation();
 
@@ -71,6 +72,23 @@ export default function BrowserTab() {
       })),
     [entries],
   );
+
+  // Detect whether the active browser entry is an LMS entity and lyrion_cli is installed.
+  // Same probe pattern used by usePlayerQueue.
+  const isLmsEntry = !!playerConfig?.lmsEntityId && activeEntityId === playerConfig.lmsEntityId;
+
+  const { data: lmsProbeData, loading: lmsProbeLoading } = useHassMessagePromise<unknown>(
+    {
+      type: 'call_service',
+      domain: 'lyrion_cli',
+      service: 'query',
+      service_data: { command: 'serverstatus', entity_id: activeEntityId, parameters: ['-'] },
+      return_response: true,
+    },
+    { enabled: isLmsEntry, staleTime: 600000 },
+  );
+
+  const isLyrionBrowser = isLmsEntry && !lmsProbeLoading && lmsProbeData !== null;
 
   useLayoutEffect(() => {
     if (!hasMultipleEntries) {
@@ -125,11 +143,24 @@ export default function BrowserTab() {
     );
   }
 
+  // Show a spinner while probing for lyrion_cli to avoid mounting the wrong browser
+  if (isLmsEntry && lmsProbeLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator color={theme.primary} />
+      </View>
+    );
+  }
+
   const hassBaseUrl = buildHassUrl(hassConfig);
 
   return (
     <View style={styles.container}>
-      <HaMediaBrowser entityId={activeEntityId} hassBaseUrl={hassBaseUrl} />
+      {isLyrionBrowser ? (
+        <LyrionMediaBrowser entityId={activeEntityId} />
+      ) : (
+        <HaMediaBrowser entityId={activeEntityId} hassBaseUrl={hassBaseUrl} />
+      )}
     </View>
   );
 }
