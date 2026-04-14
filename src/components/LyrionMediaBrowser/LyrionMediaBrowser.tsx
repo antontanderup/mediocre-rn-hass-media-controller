@@ -429,7 +429,6 @@ const useStyles = createUseStyles(theme => ({
     paddingTop: 4,
   },
   gridCell: {
-    flex: 1,
     padding: 4,
   },
   centered: {
