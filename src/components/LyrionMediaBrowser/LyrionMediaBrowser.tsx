@@ -14,6 +14,7 @@ import { createUseStyles } from '@/utils';
 import { t } from '@/localization';
 import { Icon } from '@/components/Icon';
 import type { IconName } from '@/components/Icon';
+import { Button, ButtonIcon, ButtonText } from '@/components/Button';
 import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
 import { MediaItemSheet } from '@/components/MediaItemSheet';
@@ -103,20 +104,22 @@ export const LyrionMediaBrowser = ({
 
       if (firstItem.type === 'category' && isShowingCategories) {
         return (
-          <>
+          <View style={styles.categoryRow}>
             {item.map(mediaItem => {
-              const fallback = getItemIcon(mediaItem) ?? ('music' as IconName);
+              const icon = getItemIcon(mediaItem) ?? ('music' as IconName);
               return (
-                <MediaTrackItem
+                <Button
                   key={mediaItem.id + navHistory.length}
-                  title={mediaItem.title}
-                  fallbackIcon={fallback}
+                  variant="surface"
                   onPress={mediaItem.onClick ?? (() => {})}
-                  showChevron
-                />
+                  style={styles.categoryButton}
+                >
+                  <ButtonIcon name={icon} />
+                  <ButtonText>{mediaItem.title}</ButtonText>
+                </Button>
               );
             })}
-          </>
+          </View>
         );
       }
 
@@ -423,13 +426,21 @@ const useStyles = createUseStyles(theme => ({
     color: theme.onSurface,
     flex: 1,
   },
+  categoryRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    gap: 8,
+  },
+  categoryButton: {
+    flex: 1,
+  },
   gridRow: {
     flexDirection: 'row',
     paddingHorizontal: 12,
     paddingTop: 4,
   },
   gridCell: {
-    flex: 1,
     padding: 4,
   },
   centered: {
