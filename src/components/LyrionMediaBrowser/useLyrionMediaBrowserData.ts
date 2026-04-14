@@ -335,7 +335,10 @@ export const useLyrionMediaBrowserData = ({ entity_id }: { entity_id: string }) 
       });
       Object.entries(grouped).forEach(([mediaType, groupItems]) => {
         if (mediaType === 'track' && !isShowingCategories) { groupItems.forEach(item => result.push([item])); }
-        else { for (let i = 0; i < groupItems.length; i += chunkSize) result.push(groupItems.slice(i, i + chunkSize)); }
+        else {
+          const size = isShowingCategories ? 2 : chunkSize;
+          for (let i = 0; i < groupItems.length; i += size) result.push(groupItems.slice(i, i + size));
+        }
       });
 
       if (isShowingHomePreview) {
