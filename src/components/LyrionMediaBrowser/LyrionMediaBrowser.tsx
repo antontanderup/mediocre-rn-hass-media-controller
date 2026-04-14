@@ -57,6 +57,7 @@ export const LyrionMediaBrowser = ({
     error,
     hasMore,
     loadMore,
+    chunkSize,
     setChunkSize,
     goBack,
     goToIndex,
@@ -176,7 +177,7 @@ export const LyrionMediaBrowser = ({
         <View style={styles.gridRow}>
           {item.map(mediaItem => {
             const fallback = getItemIcon(mediaItem) ?? ('folder' as IconName);
-            const cellStyle = styles.gridCell;
+            const cellStyle = [styles.gridCell, { width: `${100 / chunkSize}%` as unknown as number }];
             if (!mediaItem.can_play || (mediaItem.can_expand && isShowingCategories)) {
               return (
                 <View key={mediaItem.id + navHistory.length} style={cellStyle}>
@@ -210,7 +211,7 @@ export const LyrionMediaBrowser = ({
         </View>
       );
     },
-    [styles, theme, isShowingCategories, hasNoArtwork, navHistory.length],
+    [styles, theme, isShowingCategories, hasNoArtwork, navHistory.length, chunkSize],
   );
 
   const listHeader = useMemo(
