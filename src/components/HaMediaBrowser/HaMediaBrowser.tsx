@@ -1,5 +1,5 @@
-import { useFocusEffect } from '@react-navigation/core';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/core';
+import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, BackHandler, FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { useTheme, useMediaBrowser } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
@@ -28,6 +28,7 @@ export const HaMediaBrowser = ({
 }: HaMediaBrowserProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const { items, history, loading, browse, goBack, goToRoot, goToIndex, playItem } =
     useMediaBrowser(entityId);
@@ -53,6 +54,62 @@ export const HaMediaBrowser = ({
       return () => subscription.remove();
     }, [history.length, goBack]),
   );
+
+  useLayoutEffect(() => {
+    if (history.length === 0) {
+      navigation.setOptions({
+        headerLeft: undefined,
+        headerTitle: undefined,
+        headerTitleAlign: undefined,
+      });
+      return;
+    }
+
+    navigation.setOptions({
+      headerLeft: () => (
+        <Pressable
+          onPress={goBack}
+          style={{ padding: 8, marginLeft: 4 }}
+          accessibilityRole="button"
+          accessibilityLabel={t('haMediaBrowser.goBack')}
+        >
+          <Icon name="arrow-left" size={20} color={theme.onSurface} />
+        </Pressable>
+      ),
+      headerTitle: () => (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 }}>
+          <Pressable onPress={goToRoot} style={{ paddingHorizontal: 2 }}>
+            <Icon name="home" size={14} color={theme.onSurfaceVariant} />
+          </Pressable>
+          {history.map((entry, idx) => (
+            <React.Fragment key={`bc-${entry.mediaContentId}`}>
+              <Text style={{ color: theme.onSurfaceVariant, fontSize: 13 }}>/</Text>
+              <Pressable onPress={() => goToIndex(idx)} style={{ paddingHorizontal: 2, flexShrink: 1 }}>
+                <Text
+                  style={[
+                    { color: theme.onSurfaceVariant, fontSize: 13 },
+                    idx === history.length - 1 && { color: theme.onSurface, fontWeight: '600' },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {entry.title}
+                </Text>
+              </Pressable>
+            </React.Fragment>
+          ))}
+        </View>
+      ),
+      headerTitleAlign: 'left',
+    });
+
+    return () => {
+      navigation.setOptions({
+        headerLeft: undefined,
+        headerTitle: undefined,
+        headerTitleAlign: undefined,
+      });
+    };
+  }, [navigation, history, goBack, goToRoot, goToIndex, theme]);
 
   // Categorise items: tracks render as list rows, others as grid tiles
   const { trackItems, gridItems } = useMemo(() => {
@@ -128,38 +185,11 @@ export const HaMediaBrowser = ({
     [playItem, browse],
   );
 
-  // ─── Header: only nav bar + filter (no grid items) ───────────────────────
+  // ─── Header: filter only (nav bar lives in the native navigation header) ──
 
   const listHeader = useMemo(
     () => (
       <View>
-        {history.length > 0 && (
-          <View style={styles.navBar}>
-            <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel={t('haMediaBrowser.goBack')}>
-              <Icon name="arrow-left" size={20} color={theme.onSurface} />
-            </Pressable>
-            <Pressable onPress={goToRoot} style={styles.breadcrumbItem}>
-              <Icon name="home" size={16} color={theme.onSurfaceVariant} />
-            </Pressable>
-            {history.map((entry, idx) => (
-              <React.Fragment key={`bc-${entry.mediaContentId}`}>
-                <Text style={styles.breadcrumbSeparator}>/</Text>
-                <Pressable onPress={() => goToIndex(idx)} style={styles.breadcrumbItem}>
-                  <Text
-                    style={[
-                      styles.breadcrumbText,
-                      idx === history.length - 1 && styles.breadcrumbTextActive,
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {entry.title}
-                  </Text>
-                </Pressable>
-              </React.Fragment>
-            ))}
-          </View>
-        )}
-
         {history.length > 0 && items.length > 6 && (
           <View style={styles.filterContainer}>
             <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
@@ -181,7 +211,7 @@ export const HaMediaBrowser = ({
         )}
       </View>
     ),
-    [styles, theme, history, items.length, filter, goBack, goToRoot, goToIndex],
+    [styles, theme, history.length, items.length, filter],
   );
 
   // ─── Row renderers ────────────────────────────────────────────────────────
@@ -303,32 +333,6 @@ export const HaMediaBrowser = ({
 const useStyles = createUseStyles(theme => ({
   listContent: {
     paddingBottom: 24,
-  },
-  navBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 6,
-    borderBottomWidth: 0.5,
-    borderBottomColor: theme.outlineVariant,
-  },
-  breadcrumbItem: {
-    paddingHorizontal: 2,
-    paddingVertical: 2,
-    flexShrink: 1,
-  },
-  breadcrumbSeparator: {
-    color: theme.onSurfaceVariant,
-    fontSize: 13,
-  },
-  breadcrumbText: {
-    color: theme.onSurfaceVariant,
-    fontSize: 13,
-  },
-  breadcrumbTextActive: {
-    color: theme.onSurface,
-    fontWeight: '600',
   },
   filterContainer: {
     flexDirection: 'row',
