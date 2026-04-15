@@ -90,42 +90,41 @@ export default function BrowserTab() {
 
   const isLyrionBrowser = isLmsEntry && !lmsProbeLoading && lmsProbeData !== null;
 
+  const renderSourceSelector = useMemo(
+    () =>
+      hasMultipleEntries
+        ? () => (
+            <BottomSheetSelect
+              options={options}
+              value={activeEntityId}
+              onChange={setSelectedEntityId}
+              title={t('browser.mediaSource')}
+              renderTrigger={onOpen => (
+                <Button
+                  variant="surface"
+                  size="sm"
+                  onPress={onOpen}
+                  accessibilityLabel={t('browser.selectMediaSource')}
+                  style={{ marginRight: 8 }}
+                >
+                  <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
+                    {activeLabel}
+                  </ButtonText>
+                  <ButtonIcon name="chevron-down" />
+                </Button>
+              )}
+            />
+          )
+        : undefined,
+    [hasMultipleEntries, options, activeEntityId, activeLabel],
+  );
+
+  // Only manage headerRight directly for HaMediaBrowser — LyrionMediaBrowser
+  // owns it fully via the renderHeaderRight prop.
   useLayoutEffect(() => {
-    if (!hasMultipleEntries) {
-      navigation.setOptions({ headerRight: undefined });
-      return;
-    }
-    navigation.setOptions({
-      headerRight: () => (
-        <BottomSheetSelect
-          options={options}
-          value={activeEntityId}
-          onChange={setSelectedEntityId}
-          title={t('browser.mediaSource')}
-          renderTrigger={onOpen => (
-            <Button
-              variant="surface"
-              size="sm"
-              onPress={onOpen}
-              accessibilityLabel={t('browser.selectMediaSource')}
-              style={{ marginRight: 8 }}
-            >
-              <ButtonText numberOfLines={1} style={{ maxWidth: 120 }}>
-                {activeLabel}
-              </ButtonText>
-              <ButtonIcon name="chevron-down" />
-            </Button>
-          )}
-        />
-      ),
-    });
-  }, [
-    navigation,
-    hasMultipleEntries,
-    options,
-    activeEntityId,
-    activeLabel,
-  ]);
+    if (isLyrionBrowser) return;
+    navigation.setOptions({ headerRight: renderSourceSelector });
+  }, [navigation, isLyrionBrowser, renderSourceSelector]);
 
   if (!entityId) {
     return (
@@ -157,7 +156,7 @@ export default function BrowserTab() {
   return (
     <View style={styles.container}>
       {isLyrionBrowser ? (
-        <LyrionMediaBrowser entityId={activeEntityId} />
+        <LyrionMediaBrowser entityId={activeEntityId} renderHeaderRight={renderSourceSelector} />
       ) : (
         <HaMediaBrowser entityId={activeEntityId} hassBaseUrl={hassBaseUrl} />
       )}
