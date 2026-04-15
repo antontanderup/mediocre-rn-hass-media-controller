@@ -90,10 +90,10 @@ export default function BrowserTab() {
 
   const isLyrionBrowser = isLmsEntry && !lmsProbeLoading && lmsProbeData !== null;
 
-  // Tracks how deep the user has navigated inside LyrionMediaBrowser.
-  // When depth > 0 the browser sets headerRight to the play button itself,
+  // Tracks how deep the user has navigated inside the active browser.
+  // When depth > 0, LyrionMediaBrowser sets headerRight to the play button,
   // so we must not override it here.
-  const [lyrionNavDepth, setLyrionNavDepth] = useState(0);
+  const [navDepth, setNavDepth] = useState(0);
 
   const renderSourceSelector = useMemo(
     () =>
@@ -125,9 +125,9 @@ export default function BrowserTab() {
   );
 
   useLayoutEffect(() => {
-    if (isLyrionBrowser && lyrionNavDepth > 0) return;
+    if (navDepth > 0) return;
     navigation.setOptions({ headerRight: renderSourceSelector });
-  }, [navigation, isLyrionBrowser, lyrionNavDepth, renderSourceSelector]);
+  }, [navigation, navDepth, renderSourceSelector]);
 
   if (!entityId) {
     return (
@@ -159,9 +159,9 @@ export default function BrowserTab() {
   return (
     <View style={styles.container}>
       {isLyrionBrowser ? (
-        <LyrionMediaBrowser entityId={activeEntityId} onNavDepthChange={setLyrionNavDepth} />
+        <LyrionMediaBrowser entityId={activeEntityId} onNavDepthChange={setNavDepth} />
       ) : (
-        <HaMediaBrowser entityId={activeEntityId} hassBaseUrl={hassBaseUrl} />
+        <HaMediaBrowser entityId={activeEntityId} hassBaseUrl={hassBaseUrl} onNavDepthChange={setNavDepth} />
       )}
     </View>
   );

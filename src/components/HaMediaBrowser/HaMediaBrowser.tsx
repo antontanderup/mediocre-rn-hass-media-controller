@@ -25,6 +25,7 @@ type ListRow = GridRow | TrackRow;
 export const HaMediaBrowser = ({
   entityId,
   hassBaseUrl,
+  onNavDepthChange,
 }: HaMediaBrowserProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
@@ -54,6 +55,10 @@ export const HaMediaBrowser = ({
       return () => subscription.remove();
     }, [history.length, goBack]),
   );
+
+  useLayoutEffect(() => {
+    onNavDepthChange?.(history.length);
+  }, [history.length, onNavDepthChange]);
 
   useLayoutEffect(() => {
     if (history.length === 0) {
