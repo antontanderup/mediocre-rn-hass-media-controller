@@ -145,6 +145,7 @@ export const LyrionMediaBrowser = ({
                 >
                   <ButtonIcon name="play" />
                   <ButtonText>{t('lyrionBrowser.action.play')}</ButtonText>
+                  <ButtonIcon name="chevron-down" />
                 </Button>
               )}
             />
