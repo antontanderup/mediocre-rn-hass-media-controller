@@ -201,6 +201,7 @@ export const LyrionMediaBrowser = ({
                 >
                   <ButtonIcon name={icon} />
                   <ButtonText>{mediaItem.title}</ButtonText>
+                  <ButtonIcon name="chevron-right" style={styles.categoryButtonChevron} />
                 </Button>
               );
             })}
@@ -445,6 +446,9 @@ const useStyles = createUseStyles(theme => ({
   },
   categoryButton: {
     flex: 1,
+  },
+  categoryButtonChevron: {
+    marginLeft: 'auto' as unknown as number,
   },
   gridRow: {
     flexDirection: 'row',
