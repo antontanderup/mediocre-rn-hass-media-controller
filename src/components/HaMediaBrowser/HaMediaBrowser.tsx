@@ -69,7 +69,7 @@ export const HaMediaBrowser = ({
       headerLeft: () => (
         <Pressable
           onPress={goBack}
-          style={{ padding: 8, marginLeft: 4 }}
+          style={styles.headerBackButton}
           accessibilityRole="button"
           accessibilityLabel={t('haMediaBrowser.goBack')}
         >
@@ -77,18 +77,18 @@ export const HaMediaBrowser = ({
         </Pressable>
       ),
       headerTitle: () => (
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 }}>
-          <Pressable onPress={goToRoot} style={{ paddingHorizontal: 2 }}>
+        <View style={styles.headerBreadcrumbs}>
+          <Pressable onPress={goToRoot} style={styles.headerBreadcrumbHomeItem}>
             <Icon name="home" size={14} color={theme.onSurfaceVariant} />
           </Pressable>
           {history.map((entry, idx) => (
             <React.Fragment key={`bc-${entry.mediaContentId}`}>
-              <Text style={{ color: theme.onSurfaceVariant, fontSize: 13 }}>/</Text>
-              <Pressable onPress={() => goToIndex(idx)} style={{ paddingHorizontal: 2, flexShrink: 1 }}>
+              <Text style={styles.headerBreadcrumbSeparator}>/</Text>
+              <Pressable onPress={() => goToIndex(idx)} style={styles.headerBreadcrumbItem}>
                 <Text
                   style={[
-                    { color: theme.onSurfaceVariant, fontSize: 13 },
-                    idx === history.length - 1 && { color: theme.onSurface, fontWeight: '600' },
+                    styles.headerBreadcrumbText,
+                    idx === history.length - 1 && styles.headerBreadcrumbTextActive,
                   ]}
                   numberOfLines={1}
                 >
@@ -109,7 +109,7 @@ export const HaMediaBrowser = ({
         headerTitleAlign: undefined,
       });
     };
-  }, [navigation, history, goBack, goToRoot, goToIndex, theme]);
+  }, [navigation, history, goBack, goToRoot, goToIndex, theme, styles]);
 
   // Categorise items: tracks render as list rows, others as grid tiles
   const { trackItems, gridItems } = useMemo(() => {
@@ -333,6 +333,35 @@ export const HaMediaBrowser = ({
 const useStyles = createUseStyles(theme => ({
   listContent: {
     paddingBottom: 24,
+  },
+  headerBackButton: {
+    padding: 8,
+    marginLeft: 4,
+  },
+  headerBreadcrumbs: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    flex: 1,
+  },
+  headerBreadcrumbHomeItem: {
+    paddingHorizontal: 2,
+  },
+  headerBreadcrumbItem: {
+    paddingHorizontal: 2,
+    flexShrink: 1,
+  },
+  headerBreadcrumbSeparator: {
+    color: theme.onSurfaceVariant,
+    fontSize: 13,
+  },
+  headerBreadcrumbText: {
+    color: theme.onSurfaceVariant,
+    fontSize: 13,
+  },
+  headerBreadcrumbTextActive: {
+    color: theme.onSurface,
+    fontWeight: '600',
   },
   filterContainer: {
     flexDirection: 'row',
