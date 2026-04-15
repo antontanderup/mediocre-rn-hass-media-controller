@@ -42,6 +42,7 @@ function getItemIcon(item: LyrionBrowserItem): IconName | null {
 export const LyrionMediaBrowser = ({
   entityId,
   renderHeader,
+  onNavDepthChange,
 }: LyrionMediaBrowserProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
@@ -78,6 +79,12 @@ export const LyrionMediaBrowser = ({
       return () => subscription.remove();
     }, [navHistory.length, goBack]),
   );
+
+  // Report nav depth to the parent so it can reclaim headerRight at root.
+  // Declared before the header effect so it fires first in the same commit.
+  useLayoutEffect(() => {
+    onNavDepthChange?.(navHistory.length);
+  }, [navHistory.length, onNavDepthChange]);
 
   useLayoutEffect(() => {
     if (navHistory.length === 0) {
@@ -121,23 +128,29 @@ export const LyrionMediaBrowser = ({
               </Pressable>
             </React.Fragment>
           ))}
-          {currentHeaderMenuActions.length > 0 && (
+        </View>
+      ),
+      headerTitleAlign: 'left',
+      headerRight: currentHeaderMenuActions.length > 0
+        ? () => (
             <MediaItemSheet
               title={navHistory[navHistory.length - 1]?.title ?? ''}
               actions={currentHeaderMenuActions}
               renderTrigger={onOpen => (
-                <Pressable onPress={onOpen} style={styles.headerPlayButton}>
-                  <Icon name="play" size={16} color={theme.onPrimary} />
-                  <Text style={styles.headerPlayButtonText}>
-                    {t('lyrionBrowser.action.play')}
-                  </Text>
-                </Pressable>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onPress={onOpen}
+                  style={styles.headerPlayButton}
+                >
+                  <ButtonIcon name="play" />
+                  <ButtonText>{t('lyrionBrowser.action.play')}</ButtonText>
+                  <ButtonIcon name="chevron-down" />
+                </Button>
               )}
             />
-          )}
-        </View>
-      ),
-      headerTitleAlign: 'left',
+          )
+        : undefined,
     });
 
     return () => {
@@ -145,6 +158,7 @@ export const LyrionMediaBrowser = ({
         headerLeft: undefined,
         headerTitle: undefined,
         headerTitleAlign: undefined,
+        headerRight: undefined,
       });
     };
   }, [navigation, navHistory, currentHeaderMenuActions, goBack, goHome, goToIndex, theme, styles]);
@@ -386,18 +400,7 @@ const useStyles = createUseStyles(theme => ({
     fontWeight: '600',
   },
   headerPlayButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: theme.primary,
-  },
-  headerPlayButtonText: {
-    color: theme.onPrimary,
-    fontSize: 13,
-    fontWeight: '600',
+    marginRight: 8,
   },
   filterContainer: {
     flexDirection: 'row',
