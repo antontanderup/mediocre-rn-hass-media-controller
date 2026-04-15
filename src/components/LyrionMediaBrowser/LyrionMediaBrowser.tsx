@@ -1,5 +1,5 @@
-import { useFocusEffect } from '@react-navigation/core';
-import React, { useCallback, useMemo } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/core';
+import React, { useCallback, useLayoutEffect, useMemo } from 'react';
 import {
   ActivityIndicator,
   BackHandler,
@@ -45,6 +45,7 @@ export const LyrionMediaBrowser = ({
 }: LyrionMediaBrowserProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const {
     navHistory,
@@ -77,6 +78,76 @@ export const LyrionMediaBrowser = ({
       return () => subscription.remove();
     }, [navHistory.length, goBack]),
   );
+
+  useLayoutEffect(() => {
+    if (navHistory.length === 0) {
+      navigation.setOptions({
+        headerLeft: undefined,
+        headerTitle: undefined,
+        headerTitleAlign: undefined,
+      });
+      return;
+    }
+
+    navigation.setOptions({
+      headerLeft: () => (
+        <Pressable
+          onPress={goBack}
+          style={styles.headerBackButton}
+          accessibilityRole="button"
+          accessibilityLabel={t('haMediaBrowser.goBack')}
+        >
+          <Icon name="arrow-left" size={20} color={theme.onSurface} />
+        </Pressable>
+      ),
+      headerTitle: () => (
+        <View style={styles.headerBreadcrumbs}>
+          <Pressable onPress={goHome} style={styles.headerBreadcrumbHomeItem}>
+            <Icon name="home" size={14} color={theme.onSurfaceVariant} />
+          </Pressable>
+          {navHistory.map((entry, idx) => (
+            <React.Fragment key={`bc-${idx}-${entry.id}`}>
+              <Text style={styles.headerBreadcrumbSeparator}>/</Text>
+              <Pressable onPress={() => goToIndex(idx)} style={styles.headerBreadcrumbItem}>
+                <Text
+                  style={[
+                    styles.headerBreadcrumbText,
+                    idx === navHistory.length - 1 && styles.headerBreadcrumbTextActive,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {entry.title}
+                </Text>
+              </Pressable>
+            </React.Fragment>
+          ))}
+          {currentHeaderMenuActions.length > 0 && (
+            <MediaItemSheet
+              title={navHistory[navHistory.length - 1]?.title ?? ''}
+              actions={currentHeaderMenuActions}
+              renderTrigger={onOpen => (
+                <Pressable onPress={onOpen} style={styles.headerPlayButton}>
+                  <Icon name="play" size={16} color={theme.onPrimary} />
+                  <Text style={styles.headerPlayButtonText}>
+                    {t('lyrionBrowser.action.play')}
+                  </Text>
+                </Pressable>
+              )}
+            />
+          )}
+        </View>
+      ),
+      headerTitleAlign: 'left',
+    });
+
+    return () => {
+      navigation.setOptions({
+        headerLeft: undefined,
+        headerTitle: undefined,
+        headerTitleAlign: undefined,
+      });
+    };
+  }, [navigation, navHistory, currentHeaderMenuActions, goBack, goHome, goToIndex, theme, styles]);
 
   const keyExtractor = useCallback((item: BrowserRow, index: number): string => {
     if (!Array.isArray(item)) return `section-${item.categoryId}-${index}`;
@@ -186,6 +257,7 @@ export const LyrionMediaBrowser = ({
                 <View key={mediaItem.id + navHistory.length} style={cellStyle}>
                   <MediaGridItem
                     title={mediaItem.title}
+                    subtitle={mediaItem.subtitle}
                     artworkUrl={mediaItem.thumbnail}
                     fallbackIcon={fallback}
                     onPress={mediaItem.onClick ?? (() => {})}
@@ -202,6 +274,7 @@ export const LyrionMediaBrowser = ({
                   renderTrigger={onOpen => (
                     <MediaGridItem
                       title={mediaItem.title}
+                      subtitle={mediaItem.subtitle}
                       artworkUrl={mediaItem.thumbnail}
                       fallbackIcon={fallback}
                       onPress={onOpen}
@@ -228,57 +301,6 @@ export const LyrionMediaBrowser = ({
         }}
       >
         {renderHeader?.()}
-        <View style={styles.navBar}>
-          {navHistory.length > 0 ? (
-            <Pressable
-              onPress={goBack}
-              style={styles.backButton}
-              accessibilityRole="button"
-              accessibilityLabel={t('haMediaBrowser.goBack')}
-            >
-              <Icon name="arrow-left" size={20} color={theme.onSurface} />
-            </Pressable>
-          ) : (
-            <Icon name="home" size={18} color={theme.onSurface} />
-          )}
-          <View style={styles.breadcrumbs}>
-            <Pressable onPress={goHome} style={styles.breadcrumbItem}>
-              {navHistory.length === 0 ? (
-                <Text style={styles.homeTitle}>{t('lyrionBrowser.home')}</Text>
-              ) : (
-                <Icon name="home" size={14} color={theme.onSurfaceVariant} />
-              )}
-            </Pressable>
-            {navHistory.map((entry, idx) => (
-              <React.Fragment key={`bc-${idx}-${entry.id}`}>
-                <Text style={styles.breadcrumbSeparator}>/</Text>
-                <Pressable onPress={() => goToIndex(idx)} style={styles.breadcrumbItem}>
-                  <Text
-                    style={[
-                      styles.breadcrumbText,
-                      idx === navHistory.length - 1 && styles.breadcrumbTextActive,
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {entry.title}
-                  </Text>
-                </Pressable>
-              </React.Fragment>
-            ))}
-          </View>
-          {currentHeaderMenuActions.length > 0 && (
-            <MediaItemSheet
-              title={navHistory[navHistory.length - 1]?.title ?? ''}
-              actions={currentHeaderMenuActions}
-              renderTrigger={onOpen => (
-                <Pressable onPress={onOpen} style={styles.playButton}>
-                  <Icon name="play" size={16} color={theme.onPrimary} />
-                  <Text style={styles.playButtonText}>{t('lyrionBrowser.action.play')}</Text>
-                </Pressable>
-              )}
-            />
-          )}
-        </View>
         {isSearchable && (
           <View style={styles.filterContainer}>
             <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
@@ -300,10 +322,7 @@ export const LyrionMediaBrowser = ({
         )}
       </View>
     ),
-    [
-      styles, theme, navHistory, currentFilter, isSearchable, currentHeaderMenuActions,
-      goBack, goHome, goToIndex, setCurrentFilter, setChunkSize, renderHeader,
-    ],
+    [styles, theme, currentFilter, isSearchable, setCurrentFilter, setChunkSize, renderHeader],
   );
 
   const renderEmpty = (): React.JSX.Element | null => {
@@ -337,47 +356,36 @@ const useStyles = createUseStyles(theme => ({
   listContent: {
     paddingBottom: 24,
   },
-  navBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    gap: 6,
-    borderBottomWidth: 0.5,
-    borderBottomColor: theme.outlineVariant,
+  headerBackButton: {
+    padding: 8,
+    marginLeft: 4,
   },
-  backButton: {
-    padding: 4,
-  },
-  breadcrumbs: {
-    flex: 1,
+  headerBreadcrumbs: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    overflow: 'hidden',
+    flex: 1,
   },
-  breadcrumbItem: {
+  headerBreadcrumbHomeItem: {
+    paddingHorizontal: 2,
+  },
+  headerBreadcrumbItem: {
     paddingHorizontal: 2,
     flexShrink: 1,
   },
-  breadcrumbSeparator: {
+  headerBreadcrumbSeparator: {
     color: theme.onSurfaceVariant,
     fontSize: 13,
   },
-  breadcrumbText: {
+  headerBreadcrumbText: {
     color: theme.onSurfaceVariant,
     fontSize: 13,
   },
-  breadcrumbTextActive: {
+  headerBreadcrumbTextActive: {
     color: theme.onSurface,
     fontWeight: '600',
   },
-  homeTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: theme.onSurface,
-  },
-  playButton: {
+  headerPlayButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -386,7 +394,7 @@ const useStyles = createUseStyles(theme => ({
     borderRadius: 16,
     backgroundColor: theme.primary,
   },
-  playButtonText: {
+  headerPlayButtonText: {
     color: theme.onPrimary,
     fontSize: 13,
     fontWeight: '600',
