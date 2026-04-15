@@ -42,7 +42,7 @@ function getItemIcon(item: LyrionBrowserItem): IconName | null {
 export const LyrionMediaBrowser = ({
   entityId,
   renderHeader,
-  renderHeaderRight,
+  onNavDepthChange,
 }: LyrionMediaBrowserProps): React.JSX.Element => {
   const styles = useStyles();
   const theme = useTheme();
@@ -80,13 +80,18 @@ export const LyrionMediaBrowser = ({
     }, [navHistory.length, goBack]),
   );
 
+  // Report nav depth to the parent so it can reclaim headerRight at root.
+  // Declared before the header effect so it fires first in the same commit.
+  useLayoutEffect(() => {
+    onNavDepthChange?.(navHistory.length);
+  }, [navHistory.length, onNavDepthChange]);
+
   useLayoutEffect(() => {
     if (navHistory.length === 0) {
       navigation.setOptions({
         headerLeft: undefined,
         headerTitle: undefined,
         headerTitleAlign: undefined,
-        headerRight: renderHeaderRight,
       });
       return;
     }
@@ -155,7 +160,7 @@ export const LyrionMediaBrowser = ({
         headerRight: undefined,
       });
     };
-  }, [navigation, navHistory, currentHeaderMenuActions, goBack, goHome, goToIndex, theme, styles, renderHeaderRight]);
+  }, [navigation, navHistory, currentHeaderMenuActions, goBack, goHome, goToIndex, theme, styles]);
 
   const keyExtractor = useCallback((item: BrowserRow, index: number): string => {
     if (!Array.isArray(item)) return `section-${item.categoryId}-${index}`;
