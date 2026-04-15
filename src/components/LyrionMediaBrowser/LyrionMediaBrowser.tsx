@@ -186,6 +186,7 @@ export const LyrionMediaBrowser = ({
                 <View key={mediaItem.id + navHistory.length} style={cellStyle}>
                   <MediaGridItem
                     title={mediaItem.title}
+                    subtitle={mediaItem.subtitle}
                     artworkUrl={mediaItem.thumbnail}
                     fallbackIcon={fallback}
                     onPress={mediaItem.onClick ?? (() => {})}
@@ -202,6 +203,7 @@ export const LyrionMediaBrowser = ({
                   renderTrigger={onOpen => (
                     <MediaGridItem
                       title={mediaItem.title}
+                      subtitle={mediaItem.subtitle}
                       artworkUrl={mediaItem.thumbnail}
                       fallbackIcon={fallback}
                       onPress={onOpen}
@@ -228,8 +230,8 @@ export const LyrionMediaBrowser = ({
         }}
       >
         {renderHeader?.()}
-        <View style={styles.navBar}>
-          {navHistory.length > 0 ? (
+        {navHistory.length > 0 && (
+          <View style={styles.navBar}>
             <Pressable
               onPress={goBack}
               style={styles.backButton}
@@ -238,47 +240,41 @@ export const LyrionMediaBrowser = ({
             >
               <Icon name="arrow-left" size={20} color={theme.onSurface} />
             </Pressable>
-          ) : (
-            <Icon name="home" size={18} color={theme.onSurface} />
-          )}
-          <View style={styles.breadcrumbs}>
-            <Pressable onPress={goHome} style={styles.breadcrumbItem}>
-              {navHistory.length === 0 ? (
-                <Text style={styles.homeTitle}>{t('lyrionBrowser.home')}</Text>
-              ) : (
+            <View style={styles.breadcrumbs}>
+              <Pressable onPress={goHome} style={styles.breadcrumbItem}>
                 <Icon name="home" size={14} color={theme.onSurfaceVariant} />
-              )}
-            </Pressable>
-            {navHistory.map((entry, idx) => (
-              <React.Fragment key={`bc-${idx}-${entry.id}`}>
-                <Text style={styles.breadcrumbSeparator}>/</Text>
-                <Pressable onPress={() => goToIndex(idx)} style={styles.breadcrumbItem}>
-                  <Text
-                    style={[
-                      styles.breadcrumbText,
-                      idx === navHistory.length - 1 && styles.breadcrumbTextActive,
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {entry.title}
-                  </Text>
-                </Pressable>
-              </React.Fragment>
-            ))}
+              </Pressable>
+              {navHistory.map((entry, idx) => (
+                <React.Fragment key={`bc-${idx}-${entry.id}`}>
+                  <Text style={styles.breadcrumbSeparator}>/</Text>
+                  <Pressable onPress={() => goToIndex(idx)} style={styles.breadcrumbItem}>
+                    <Text
+                      style={[
+                        styles.breadcrumbText,
+                        idx === navHistory.length - 1 && styles.breadcrumbTextActive,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {entry.title}
+                    </Text>
+                  </Pressable>
+                </React.Fragment>
+              ))}
+            </View>
+            {currentHeaderMenuActions.length > 0 && (
+              <MediaItemSheet
+                title={navHistory[navHistory.length - 1]?.title ?? ''}
+                actions={currentHeaderMenuActions}
+                renderTrigger={onOpen => (
+                  <Pressable onPress={onOpen} style={styles.playButton}>
+                    <Icon name="play" size={16} color={theme.onPrimary} />
+                    <Text style={styles.playButtonText}>{t('lyrionBrowser.action.play')}</Text>
+                  </Pressable>
+                )}
+              />
+            )}
           </View>
-          {currentHeaderMenuActions.length > 0 && (
-            <MediaItemSheet
-              title={navHistory[navHistory.length - 1]?.title ?? ''}
-              actions={currentHeaderMenuActions}
-              renderTrigger={onOpen => (
-                <Pressable onPress={onOpen} style={styles.playButton}>
-                  <Icon name="play" size={16} color={theme.onPrimary} />
-                  <Text style={styles.playButtonText}>{t('lyrionBrowser.action.play')}</Text>
-                </Pressable>
-              )}
-            />
-          )}
-        </View>
+        )}
         {isSearchable && (
           <View style={styles.filterContainer}>
             <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />

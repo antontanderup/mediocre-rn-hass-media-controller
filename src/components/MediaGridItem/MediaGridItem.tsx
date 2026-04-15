@@ -9,6 +9,7 @@ import type { MediaGridItemProps } from './MediaGridItem.types';
 
 export const MediaGridItem = React.memo(function MediaGridItem({
   title,
+  subtitle,
   artworkUrl,
   fallbackIcon = 'folder',
   onPress,
@@ -37,6 +38,11 @@ export const MediaGridItem = React.memo(function MediaGridItem({
       <Text style={styles.title} numberOfLines={2}>
         {title}
       </Text>
+      {subtitle ? (
+        <Text style={styles.subtitle} numberOfLines={1}>
+          {subtitle}
+        </Text>
+      ) : null}
     </Pressable>
   );
 });
@@ -71,6 +77,13 @@ const useStyles = createUseStyles(theme => ({
     fontSize: 12,
     fontWeight: '500',
     color: theme.onSurface,
+    textAlign: 'center',
+    width: '100%',
+  },
+  subtitle: {
+    marginTop: 1,
+    fontSize: 11,
+    color: theme.onSurfaceVariant,
     textAlign: 'center',
     width: '100%',
   },
