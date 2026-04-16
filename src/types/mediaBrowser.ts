@@ -26,13 +26,6 @@ export type MediaBrowserNode = {
   childrenMediaClass?: string;
 };
 
-export type MediaBrowserPath = {
-  mediaContentId: string;
-  mediaContentType: string;
-  title: string;
-  canPlay: boolean;
-};
-
 // ─── HA Search ───────────────────────────────────────────────────────────────
 
 export type HaFilterType = 'all' | 'tracks' | 'albums' | 'artists' | 'playlists' | (string & {});

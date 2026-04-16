@@ -16,7 +16,6 @@ export type { AppConfig, MediaPlayerConfig, AppOptions, SearchEntry, MediaBrowse
 export type {
   HaMediaItem,
   MediaBrowserNode,
-  MediaBrowserPath,
   HaFilterType,
   HaEnqueueMode,
   HaFilterConfig,

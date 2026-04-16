@@ -102,15 +102,7 @@ export const HaMediaBrowser = ({
     }
 
     const currentEntry = history[history.length - 1];
-    const currentNode: MediaBrowserNode = {
-      title: currentEntry.title,
-      mediaContentId: currentEntry.mediaContentId,
-      mediaContentType: currentEntry.mediaContentType,
-      mediaClass: '',
-      canPlay: currentEntry.canPlay,
-      canExpand: false,
-    };
-    const playActions = buildActions(currentNode);
+    const playActions = buildActions({ ...currentEntry, canExpand: false });
 
     navigation.setOptions({
       headerLeft: () => (
@@ -151,6 +143,7 @@ export const HaMediaBrowser = ({
         ? () => (
             <MediaItemSheet
               title={currentEntry.title}
+              artworkUrl={currentEntry.thumbnail}
               actions={playActions}
               renderTrigger={onOpen => (
                 <Button

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHassContext } from '@/context';
-import type { HaMediaItem, MediaBrowserNode, MediaBrowserPath, HaEnqueueMode } from '@/types';
+import type { HaMediaItem, MediaBrowserNode, HaEnqueueMode } from '@/types';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -16,20 +16,11 @@ function toNode(raw: HaMediaItem): MediaBrowserNode {
   };
 }
 
-function toPath(node: MediaBrowserNode): MediaBrowserPath {
-  return {
-    mediaContentId: node.mediaContentId,
-    mediaContentType: node.mediaContentType,
-    title: node.title,
-    canPlay: node.canPlay,
-  };
-}
-
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 export interface UseMediaBrowserResult {
   items: MediaBrowserNode[];
-  history: MediaBrowserPath[];
+  history: MediaBrowserNode[];
   loading: boolean;
   error: string | null;
   browse: (node: MediaBrowserNode) => void;
@@ -43,7 +34,7 @@ export function useMediaBrowser(entityId: string): UseMediaBrowserResult {
   const { sendMessage, callService } = useHassContext();
 
   const [items, setItems] = useState<MediaBrowserNode[]>([]);
-  const [history, setHistory] = useState<MediaBrowserPath[]>([]);
+  const [history, setHistory] = useState<MediaBrowserNode[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -92,7 +83,7 @@ export function useMediaBrowser(entityId: string): UseMediaBrowserResult {
   const browse = useCallback(
     (node: MediaBrowserNode) => {
       if (!node.canExpand) return;
-      setHistory(prev => [...prev, toPath(node)]);
+      setHistory(prev => [...prev, node]);
     },
     [],
   );
