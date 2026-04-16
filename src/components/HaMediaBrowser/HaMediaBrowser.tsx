@@ -153,6 +153,7 @@ export const HaMediaBrowser = ({
                   <Button
                     variant="surface"
                     size="sm"
+                    shape="chip"
                     onPress={onOpen}
                     style={styles.headerPlayButton}
                   >

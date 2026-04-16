@@ -146,6 +146,7 @@ export const LyrionMediaBrowser = ({
                   <Button
                     variant="surface"
                     size="sm"
+                    shape="chip"
                     onPress={onOpen}
                     style={styles.headerPlayButton}
                   >
