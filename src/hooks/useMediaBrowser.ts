@@ -21,6 +21,7 @@ function toPath(node: MediaBrowserNode): MediaBrowserPath {
     mediaContentId: node.mediaContentId,
     mediaContentType: node.mediaContentType,
     title: node.title,
+    canPlay: node.canPlay,
   };
 }
 

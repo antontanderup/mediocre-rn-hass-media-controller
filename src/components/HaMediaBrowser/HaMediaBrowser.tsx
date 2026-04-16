@@ -5,6 +5,7 @@ import { useTheme, useMediaBrowser } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { t } from '@/localization';
 import { Icon } from '@/components/Icon';
+import { Button, ButtonIcon, ButtonText } from '@/components/Button';
 import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
 import { MediaItemSheet } from '@/components/MediaItemSheet';
@@ -56,6 +57,35 @@ export const HaMediaBrowser = ({
     }, [history.length, goBack]),
   );
 
+  const buildActions = useCallback(
+    (node: MediaBrowserNode): MediaItemSheetAction[] => {
+      const result: MediaItemSheetAction[] = [];
+      if (node.canPlay) {
+        result.push({ label: t('haMediaBrowser.action.play'), icon: 'play', onPress: () => playItem(node, 'play') });
+        result.push({
+          label: t('haMediaBrowser.action.replaceQueue'),
+          icon: 'playlist-play',
+          onPress: () => playItem(node, 'replace'),
+        });
+        result.push({
+          label: t('haMediaBrowser.action.playNext'),
+          icon: 'playlist-music',
+          onPress: () => playItem(node, 'next'),
+        });
+        result.push({
+          label: t('haMediaBrowser.action.addToQueue'),
+          icon: 'playlist-plus',
+          onPress: () => playItem(node, 'add'),
+        });
+      }
+      if (node.canExpand) {
+        result.push({ label: t('haMediaBrowser.action.open'), icon: 'folder-open', onPress: () => browse(node) });
+      }
+      return result;
+    },
+    [playItem, browse],
+  );
+
   useLayoutEffect(() => {
     onNavDepthChange?.(history.length);
   }, [history.length, onNavDepthChange]);
@@ -66,9 +96,21 @@ export const HaMediaBrowser = ({
         headerLeft: undefined,
         headerTitle: undefined,
         headerTitleAlign: undefined,
+        headerRight: undefined,
       });
       return;
     }
+
+    const currentEntry = history[history.length - 1];
+    const currentNode: MediaBrowserNode = {
+      title: currentEntry.title,
+      mediaContentId: currentEntry.mediaContentId,
+      mediaContentType: currentEntry.mediaContentType,
+      mediaClass: '',
+      canPlay: currentEntry.canPlay,
+      canExpand: false,
+    };
+    const playActions = buildActions(currentNode);
 
     navigation.setOptions({
       headerLeft: () => (
@@ -105,6 +147,26 @@ export const HaMediaBrowser = ({
         </View>
       ),
       headerTitleAlign: 'left',
+      headerRight: playActions.length > 0
+        ? () => (
+            <MediaItemSheet
+              title={currentEntry.title}
+              actions={playActions}
+              renderTrigger={onOpen => (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onPress={onOpen}
+                  style={styles.headerPlayButton}
+                >
+                  <ButtonIcon name="play" />
+                  <ButtonText>{t('haMediaBrowser.action.play')}</ButtonText>
+                  <ButtonIcon name="chevron-down" />
+                </Button>
+              )}
+            />
+          )
+        : undefined,
     });
 
     return () => {
@@ -112,9 +174,10 @@ export const HaMediaBrowser = ({
         headerLeft: undefined,
         headerTitle: undefined,
         headerTitleAlign: undefined,
+        headerRight: undefined,
       });
     };
-  }, [navigation, history, goBack, goToRoot, goToIndex, theme, styles]);
+  }, [navigation, history, goBack, goToRoot, goToIndex, theme, styles, buildActions]);
 
   // Categorise items: tracks render as list rows, others as grid tiles
   const { trackItems, gridItems } = useMemo(() => {
@@ -159,35 +222,6 @@ export const HaMediaBrowser = ({
       browse(node);
     },
     [browse],
-  );
-
-  const buildActions = useCallback(
-    (node: MediaBrowserNode): MediaItemSheetAction[] => {
-      const result: MediaItemSheetAction[] = [];
-      if (node.canPlay) {
-        result.push({ label: t('haMediaBrowser.action.play'), icon: 'play', onPress: () => playItem(node, 'play') });
-        result.push({
-          label: t('haMediaBrowser.action.replaceQueue'),
-          icon: 'playlist-play',
-          onPress: () => playItem(node, 'replace'),
-        });
-        result.push({
-          label: t('haMediaBrowser.action.playNext'),
-          icon: 'playlist-music',
-          onPress: () => playItem(node, 'next'),
-        });
-        result.push({
-          label: t('haMediaBrowser.action.addToQueue'),
-          icon: 'playlist-plus',
-          onPress: () => playItem(node, 'add'),
-        });
-      }
-      if (node.canExpand) {
-        result.push({ label: t('haMediaBrowser.action.open'), icon: 'folder-open', onPress: () => browse(node) });
-      }
-      return result;
-    },
-    [playItem, browse],
   );
 
   // ─── Header: filter only (nav bar lives in the native navigation header) ──
@@ -367,6 +401,9 @@ const useStyles = createUseStyles(theme => ({
   headerBreadcrumbTextActive: {
     color: theme.onSurface,
     fontWeight: '600',
+  },
+  headerPlayButton: {
+    marginRight: 8,
   },
   filterContainer: {
     flexDirection: 'row',

@@ -30,6 +30,7 @@ export type MediaBrowserPath = {
   mediaContentId: string;
   mediaContentType: string;
   title: string;
+  canPlay: boolean;
 };
 
 // ─── HA Search ───────────────────────────────────────────────────────────────
