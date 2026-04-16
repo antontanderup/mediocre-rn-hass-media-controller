@@ -1,6 +1,6 @@
 export type ButtonVariant = 'primary' | 'secondary' | 'surface' | 'outlined' | 'ghost' | 'subtle';
 export type ButtonSize = 'sm' | 'md' | 'lg';
-export type ButtonShape = 'default' | 'chip';
+export type ButtonShape = 'sm' | 'md' | 'lg' | 'chip';
 
 export interface ButtonProps {
   children: React.ReactNode;

@@ -23,7 +23,9 @@ const CONTENT_GAPS: Record<ButtonSize, number> = {
 };
 
 const BORDER_RADIUS: Record<ButtonShape, number> = {
-  default: 8,
+  sm: 4,
+  md: 8,
+  lg: 16,
   chip: 999,
 };
 
@@ -32,7 +34,7 @@ export const Button = ({
   onPress,
   variant = 'primary',
   size = 'md',
-  shape = 'default',
+  shape = 'md',
   disabled = false,
   loading = false,
   accessibilityLabel,
