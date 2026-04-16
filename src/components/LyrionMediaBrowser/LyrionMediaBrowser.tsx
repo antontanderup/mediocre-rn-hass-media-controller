@@ -403,7 +403,6 @@ const useStyles = createUseStyles(theme => ({
   headerPlayButton: {
     marginLeft: 8,
     marginRight: 8,
-    flexShrink: 0,
   },
   headerPlayButtonArtwork: {
     width: 20,

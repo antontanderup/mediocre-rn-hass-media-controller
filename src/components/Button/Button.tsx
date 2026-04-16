@@ -123,10 +123,13 @@ const useStyles = createUseStyles(theme => ({
     justifyContent: 'center',
     borderRadius: 8,
     overflow: 'hidden',
+    flexShrink: 0,
+    flexGrow: 0,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 0,
   },
   pressed: {
     opacity: 0.75,
