@@ -1,9 +1,10 @@
 import { useNavigation } from 'expo-router';
 import { useLayoutEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
-import { BottomSheetSelect, Button, ButtonIcon, ButtonText, HaSearch } from '@/components';
+import { BottomSheetSelect, Button, ButtonIcon, ButtonText, HaSearch, MaSearch } from '@/components';
 import { useHassContext } from '@/context';
 import { useSearchProvider, useSelectedPlayer } from '@/hooks';
+import type { SearchProvider } from '@/hooks';
 import { buildHassUrl, createUseStyles } from '@/utils';
 import { t } from '@/localization';
 
@@ -27,6 +28,10 @@ const useStyles = createUseStyles(theme => ({
   },
 }));
 
+function providerKey(p: SearchProvider): string {
+  return p.type === 'ha' ? `ha:${p.entityId}` : `ma:${p.maEntityId}`;
+}
+
 export default function SearchTab(): React.JSX.Element {
   const { entityId } = useSelectedPlayer();
   const styles = useStyles();
@@ -36,25 +41,13 @@ export default function SearchTab(): React.JSX.Element {
   const { providers, selected: selectedProvider, select: selectProvider } =
     useSearchProvider(entityId ?? '');
 
-  const haProviders = useMemo(
-    () => providers.filter(p => p.type === 'ha'),
-    [providers],
-  );
-  const hasMultipleProviders = haProviders.length > 1;
-
-  const activeEntityId =
-    selectedProvider?.type === 'ha' ? selectedProvider.entityId : (entityId ?? '');
-  const activeLabel =
-    haProviders.find(p => p.type === 'ha' && p.entityId === activeEntityId)?.name ??
-    activeEntityId;
+  const hasMultipleProviders = providers.length > 1;
+  const activeKey = selectedProvider ? providerKey(selectedProvider) : '';
+  const activeLabel = selectedProvider?.name ?? activeKey;
 
   const options = useMemo(
-    () =>
-      haProviders.map(p => ({
-        value: p.type === 'ha' ? p.entityId : '',
-        label: p.name,
-      })),
-    [haProviders],
+    () => providers.map(p => ({ value: providerKey(p), label: p.name })),
+    [providers],
   );
 
   useLayoutEffect(() => {
@@ -66,11 +59,9 @@ export default function SearchTab(): React.JSX.Element {
       headerRight: () => (
         <BottomSheetSelect
           options={options}
-          value={activeEntityId}
+          value={activeKey}
           onChange={value => {
-            const provider = haProviders.find(
-              p => p.type === 'ha' && p.entityId === value,
-            );
+            const provider = providers.find(p => providerKey(p) === value);
             if (provider) selectProvider(provider);
           }}
           title={t('search.searchProvider')}
@@ -96,9 +87,9 @@ export default function SearchTab(): React.JSX.Element {
     navigation,
     hasMultipleProviders,
     options,
-    activeEntityId,
+    activeKey,
     activeLabel,
-    haProviders,
+    providers,
     selectProvider,
   ]);
 
@@ -118,11 +109,20 @@ export default function SearchTab(): React.JSX.Element {
     );
   }
 
+  if (selectedProvider?.type === 'ma') {
+    return (
+      <View style={styles.container}>
+        <MaSearch maEntityId={selectedProvider.maEntityId} />
+      </View>
+    );
+  }
+
   const hassBaseUrl = buildHassUrl(hassConfig);
+  const haEntityId = selectedProvider?.type === 'ha' ? selectedProvider.entityId : (entityId ?? '');
 
   return (
     <View style={styles.container}>
-      <HaSearch entityId={activeEntityId} hassBaseUrl={hassBaseUrl} />
+      <HaSearch entityId={haEntityId} hassBaseUrl={hassBaseUrl} />
     </View>
   );
 }
