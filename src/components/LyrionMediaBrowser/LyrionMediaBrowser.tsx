@@ -411,6 +411,7 @@ const useStyles = createUseStyles(theme => ({
     fontWeight: '600',
   },
   headerPlayButton: {
+    marginLeft: 8,
     marginRight: 8,
     flexShrink: 0,
   },
