@@ -112,7 +112,7 @@ export const LyrionMediaBrowser = ({
       headerTitle: () => (
         <View style={styles.headerBreadcrumbs}>
           <Pressable onPress={goHome} style={styles.headerBreadcrumbHomeItem}>
-            <Icon name="home" size={14} color={theme.onSurfaceVariant} />
+            <Icon name="home" size={20} color={theme.onSurfaceVariant} />
           </Pressable>
           {navHistory.map((entry, idx) => (
             <React.Fragment key={`bc-${idx}-${entry.id}`}>

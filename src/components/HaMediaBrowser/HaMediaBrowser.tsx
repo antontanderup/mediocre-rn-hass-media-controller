@@ -119,7 +119,7 @@ export const HaMediaBrowser = ({
       headerTitle: () => (
         <View style={styles.headerBreadcrumbs}>
           <Pressable onPress={goToRoot} style={styles.headerBreadcrumbHomeItem}>
-            <Icon name="home" size={14} color={theme.onSurfaceVariant} />
+            <Icon name="home" size={20} color={theme.onSurfaceVariant} />
           </Pressable>
           {history.map((entry, idx) => (
             <React.Fragment key={`bc-${entry.mediaContentId}`}>
