@@ -42,6 +42,9 @@ export type { MediaTrackItemProps } from './MediaTrackItem';
 export { HaMediaBrowser } from './HaMediaBrowser';
 export type { HaMediaBrowserProps } from './HaMediaBrowser';
 
+export { SearchField } from './SearchField';
+export type { SearchFieldProps } from './SearchField';
+
 export { HaSearch } from './HaSearch';
 export type { HaSearchProps } from './HaSearch';
 
