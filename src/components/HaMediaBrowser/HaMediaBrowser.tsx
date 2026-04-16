@@ -150,7 +150,7 @@ export const HaMediaBrowser = ({
                 actions={playActions}
                 renderTrigger={onOpen => (
                   <Button
-                    variant="primary"
+                    variant="surface"
                     size="sm"
                     onPress={onOpen}
                     style={styles.headerPlayButton}
@@ -404,6 +404,7 @@ const useStyles = createUseStyles(theme => ({
   },
   headerPlayButton: {
     marginRight: 8,
+    flexShrink: 0,
   },
   headerPlayButtonArtwork: {
     width: 20,
