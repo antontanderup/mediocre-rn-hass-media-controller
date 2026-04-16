@@ -1,10 +1,11 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/core';
 import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, BackHandler, FlatList, type ImageStyle, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, BackHandler, FlatList, type ImageStyle, Pressable, Text, View } from 'react-native';
 import { useTheme, useMediaBrowser } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { t } from '@/localization';
 import { Icon } from '@/components/Icon';
+import { SearchField } from '@/components/SearchField';
 import { Button, ButtonIcon, ButtonText } from '@/components/Button';
 import { MediaArtwork } from '@/components/MediaArtwork';
 import { MediaGridItem } from '@/components/MediaGridItem';
@@ -230,27 +231,16 @@ export const HaMediaBrowser = ({
     () => (
       <View>
         {history.length > 0 && items.length > 6 && (
-          <View style={styles.filterContainer}>
-            <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
-            <TextInput
-              style={styles.filterInput}
-              placeholder={t('haMediaBrowser.filterItems')}
-              placeholderTextColor={theme.onSurfaceVariant}
-              value={filter}
-              onChangeText={setFilter}
-              autoCorrect={false}
-              autoCapitalize="none"
-            />
-            {filter.length > 0 && (
-              <Pressable onPress={() => setFilter('')}>
-                <Icon name="close" size={16} color={theme.onSurfaceVariant} />
-              </Pressable>
-            )}
-          </View>
+          <SearchField
+            value={filter}
+            onChangeText={setFilter}
+            placeholder={t('haMediaBrowser.filterItems')}
+            style={styles.filterField}
+          />
         )}
       </View>
     ),
-    [styles, theme, history.length, items.length, filter],
+    [styles, history.length, items.length, filter],
   );
 
   // ─── Row renderers ────────────────────────────────────────────────────────
@@ -412,23 +402,9 @@ const useStyles = createUseStyles(theme => ({
     height: 20,
     borderRadius: 10,
   },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 16,
+  filterField: {
     marginTop: 8,
     marginBottom: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: theme.surfaceContainerHigh,
-    gap: 8,
-  },
-  filterInput: {
-    flex: 1,
-    fontSize: 14,
-    color: theme.onSurface,
-    padding: 0,
   },
   gridRow: {
     flexDirection: 'row',

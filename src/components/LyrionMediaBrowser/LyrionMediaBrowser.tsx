@@ -7,7 +7,6 @@ import {
   type ImageStyle,
   Pressable,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import { useTheme } from '@/hooks';
@@ -15,6 +14,7 @@ import { createUseStyles } from '@/utils';
 import { t } from '@/localization';
 import { Icon } from '@/components/Icon';
 import type { IconName } from '@/components/Icon';
+import { SearchField } from '@/components/SearchField';
 import { Button, ButtonIcon, ButtonText } from '@/components/Button';
 import { MediaArtwork } from '@/components/MediaArtwork';
 import { MediaGridItem } from '@/components/MediaGridItem';
@@ -327,27 +327,16 @@ export const LyrionMediaBrowser = ({
       >
         {renderHeader?.()}
         {isSearchable && (
-          <View style={styles.filterContainer}>
-            <Icon name="magnify" size={16} color={theme.onSurfaceVariant} />
-            <TextInput
-              style={styles.filterInput}
-              placeholder={t('lyrionBrowser.searchPlaceholder')}
-              placeholderTextColor={theme.onSurfaceVariant}
-              value={currentFilter}
-              onChangeText={setCurrentFilter}
-              autoCorrect={false}
-              autoCapitalize="none"
-            />
-            {currentFilter.length > 0 && (
-              <Pressable onPress={() => setCurrentFilter('')}>
-                <Icon name="close" size={16} color={theme.onSurfaceVariant} />
-              </Pressable>
-            )}
-          </View>
+          <SearchField
+            value={currentFilter}
+            onChangeText={setCurrentFilter}
+            placeholder={t('lyrionBrowser.searchPlaceholder')}
+            style={styles.filterField}
+          />
         )}
       </View>
     ),
-    [styles, theme, currentFilter, isSearchable, setCurrentFilter, setChunkSize, renderHeader],
+    [styles, currentFilter, isSearchable, setCurrentFilter, setChunkSize, renderHeader],
   );
 
   const renderEmpty = (): React.JSX.Element | null => {
@@ -420,23 +409,9 @@ const useStyles = createUseStyles(theme => ({
     height: 20,
     borderRadius: 10,
   },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 16,
+  filterField: {
     marginTop: 8,
     marginBottom: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: theme.surfaceContainerHigh,
-    gap: 8,
-  },
-  filterInput: {
-    flex: 1,
-    fontSize: 14,
-    color: theme.onSurface,
-    padding: 0,
   },
   sectionHeader: {
     flexDirection: 'row',

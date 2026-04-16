@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { SearchField } from '@/components/SearchField';
 import { useFocusEffect } from '@react-navigation/core';
 import { useHaSearch, useHaptics, useSearchHistory, useTheme } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
@@ -90,13 +91,11 @@ export const HaSearch = ({
   const handleQueryChange = useCallback((text: string) => {
     setRawQuery(text);
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(() => setDebouncedQuery(text), DEBOUNCE_MS);
-  }, []);
-
-  const handleClear = useCallback(() => {
-    setRawQuery('');
-    setDebouncedQuery('');
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    if (text === '') {
+      setDebouncedQuery('');
+    } else {
+      debounceTimer.current = setTimeout(() => setDebouncedQuery(text), DEBOUNCE_MS);
+    }
   }, []);
 
   useEffect(() => {
@@ -218,7 +217,7 @@ export const HaSearch = ({
       }
       return (
         <Pressable
-          style={({ pressed }) => [styles.sectionHeader, pressed && styles.btnPressed]}
+          style={({ pressed }) => [styles.sectionHeader, pressed && styles.sectionHeaderPressed]}
           onPress={() => {
             haptics.light();
             setActiveFilter(filterType);
@@ -237,31 +236,12 @@ export const HaSearch = ({
   // Render helpers
   const renderHeader = (): React.JSX.Element => (
     <View style={styles.header}>
-      <View style={styles.searchRow}>
-        <Icon name="magnify" size={18} color={theme.onSurfaceVariant} />
-        <TextInput
-          ref={inputRef}
-          style={styles.searchInput}
-          value={rawQuery}
-          onChangeText={handleQueryChange}
-          placeholder={t('haSearch.placeholder')}
-          placeholderTextColor={theme.onSurfaceVariant}
-          returnKeyType="search"
-          clearButtonMode="never"
-          autoCorrect={false}
-          autoCapitalize="none"
-        />
-        {rawQuery.length > 0 && (
-          <Pressable
-            style={({ pressed }) => [styles.clearBtn, pressed && styles.btnPressed]}
-            onPress={() => { haptics.light(); handleClear(); }}
-            accessibilityRole="button"
-            accessibilityLabel={t('haSearch.clearSearch')}
-          >
-            <Icon name="close" size={16} color={theme.onSurfaceVariant} />
-          </Pressable>
-        )}
-      </View>
+      <SearchField
+        ref={inputRef}
+        value={rawQuery}
+        onChangeText={handleQueryChange}
+        placeholder={t('haSearch.placeholder')}
+      />
 
       {/* Filter chips */}
       <ScrollView
@@ -370,28 +350,6 @@ const useStyles = createUseStyles(theme => ({
     borderBottomWidth: 1,
     borderBottomColor: theme.outlineVariant,
   },
-  searchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.surfaceVariant,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginHorizontal: 16,
-    gap: 8,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    color: theme.onSurface,
-    padding: 0,
-  },
-  clearBtn: {
-    padding: 4,
-  },
-  btnPressed: {
-    opacity: 0.5,
-  },
   filterRow: {
     paddingHorizontal: 16,
     gap: 6,
@@ -426,6 +384,9 @@ const useStyles = createUseStyles(theme => ({
     paddingTop: 16,
     paddingBottom: 6,
     gap: 2,
+  },
+  sectionHeaderPressed: {
+    opacity: 0.5,
   },
   sectionHeaderText: {
     flex: 1,
