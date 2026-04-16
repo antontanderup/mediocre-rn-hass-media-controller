@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   BackHandler,
   FlatList,
+  type ImageStyle,
   Pressable,
   Text,
   TextInput,
@@ -15,6 +16,7 @@ import { t } from '@/localization';
 import { Icon } from '@/components/Icon';
 import type { IconName } from '@/components/Icon';
 import { Button, ButtonIcon, ButtonText } from '@/components/Button';
+import { MediaArtwork } from '@/components/MediaArtwork';
 import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
 import { MediaItemSheet } from '@/components/MediaItemSheet';
@@ -132,24 +134,31 @@ export const LyrionMediaBrowser = ({
       ),
       headerTitleAlign: 'left',
       headerRight: currentHeaderMenuActions.length > 0
-        ? () => (
-            <MediaItemSheet
-              title={navHistory[navHistory.length - 1]?.title ?? ''}
-              actions={currentHeaderMenuActions}
-              renderTrigger={onOpen => (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onPress={onOpen}
-                  style={styles.headerPlayButton}
-                >
-                  <ButtonIcon name="play" />
-                  <ButtonText>{t('lyrionBrowser.action.play')}</ButtonText>
-                  <ButtonIcon name="chevron-down" />
-                </Button>
-              )}
-            />
-          )
+        ? () => {
+            const currentEntry = navHistory[navHistory.length - 1];
+            const artworkUrl = currentEntry?.thumbnail;
+            return (
+              <MediaItemSheet
+                title={currentEntry?.title ?? ''}
+                actions={currentHeaderMenuActions}
+                renderTrigger={onOpen => (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onPress={onOpen}
+                    style={styles.headerPlayButton}
+                  >
+                    {artworkUrl
+                      ? <MediaArtwork uri={artworkUrl} style={styles.headerPlayButtonArtwork as ImageStyle} />
+                      : <ButtonIcon name="play" />
+                    }
+                    <ButtonText>{t('lyrionBrowser.action.play')}</ButtonText>
+                    <ButtonIcon name="chevron-down" />
+                  </Button>
+                )}
+              />
+            );
+          }
         : undefined,
     });
 
@@ -402,6 +411,11 @@ const useStyles = createUseStyles(theme => ({
   },
   headerPlayButton: {
     marginRight: 8,
+  },
+  headerPlayButtonArtwork: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
   },
   filterContainer: {
     flexDirection: 'row',

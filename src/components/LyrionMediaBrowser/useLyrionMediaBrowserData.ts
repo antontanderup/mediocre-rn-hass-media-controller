@@ -244,6 +244,7 @@ export const useLyrionMediaBrowserData = ({ entity_id }: { entity_id: string }) 
         setHistory(prev => [...prev, {
           id: item.id, title: item.title, command: item.id,
           parameters: [], type: 'app' as const, filter: '',
+          thumbnail: item.thumbnail,
         }]);
         return;
       }
@@ -253,6 +254,7 @@ export const useLyrionMediaBrowserData = ({ entity_id }: { entity_id: string }) 
         setHistory(prev => [...prev, {
           id: item.id, title: item.title, command: appEntry.command,
           parameters: [], type: item.type, filter: '',
+          thumbnail: item.thumbnail,
         }]);
         return;
       }
@@ -268,6 +270,7 @@ export const useLyrionMediaBrowserData = ({ entity_id }: { entity_id: string }) 
         setHistory(prev => [...prev, {
           id: item.id, title: item.title, command: nextCommand,
           parameters: [], type: item.type, filter: '',
+          thumbnail: item.thumbnail,
         }]);
       }
     },

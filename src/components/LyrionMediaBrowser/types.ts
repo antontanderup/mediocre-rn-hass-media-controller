@@ -36,4 +36,5 @@ export type LyrionNavigationItem = {
   command: string;
   parameters: string[];
   type: LyrionBrowserItem['type'];
+  thumbnail?: string;
 };

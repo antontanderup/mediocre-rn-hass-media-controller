@@ -1,11 +1,12 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/core';
 import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, BackHandler, FlatList, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, BackHandler, FlatList, type ImageStyle, Pressable, Text, TextInput, View } from 'react-native';
 import { useTheme, useMediaBrowser } from '@/hooks';
 import { createUseStyles, iconForMediaClass, resolveArtworkUrl } from '@/utils';
 import { t } from '@/localization';
 import { Icon } from '@/components/Icon';
 import { Button, ButtonIcon, ButtonText } from '@/components/Button';
+import { MediaArtwork } from '@/components/MediaArtwork';
 import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
 import { MediaItemSheet } from '@/components/MediaItemSheet';
@@ -140,25 +141,31 @@ export const HaMediaBrowser = ({
       ),
       headerTitleAlign: 'left',
       headerRight: playActions.length > 0
-        ? () => (
-            <MediaItemSheet
-              title={currentEntry.title}
-              artworkUrl={currentEntry.thumbnail}
-              actions={playActions}
-              renderTrigger={onOpen => (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onPress={onOpen}
-                  style={styles.headerPlayButton}
-                >
-                  <ButtonIcon name="play" />
-                  <ButtonText>{t('haMediaBrowser.action.play')}</ButtonText>
-                  <ButtonIcon name="chevron-down" />
-                </Button>
-              )}
-            />
-          )
+        ? () => {
+            const artworkUrl = resolveArtworkUrl(currentEntry.thumbnail, hassBaseUrl);
+            return (
+              <MediaItemSheet
+                title={currentEntry.title}
+                artworkUrl={currentEntry.thumbnail}
+                actions={playActions}
+                renderTrigger={onOpen => (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onPress={onOpen}
+                    style={styles.headerPlayButton}
+                  >
+                    {artworkUrl
+                      ? <MediaArtwork uri={artworkUrl} style={styles.headerPlayButtonArtwork as ImageStyle} />
+                      : <ButtonIcon name="play" />
+                    }
+                    <ButtonText>{t('haMediaBrowser.action.play')}</ButtonText>
+                    <ButtonIcon name="chevron-down" />
+                  </Button>
+                )}
+              />
+            );
+          }
         : undefined,
     });
 
@@ -170,7 +177,7 @@ export const HaMediaBrowser = ({
         headerRight: undefined,
       });
     };
-  }, [navigation, history, goBack, goToRoot, goToIndex, theme, styles, buildActions]);
+  }, [navigation, history, hassBaseUrl, goBack, goToRoot, goToIndex, theme, styles, buildActions]);
 
   // Categorise items: tracks render as list rows, others as grid tiles
   const { trackItems, gridItems } = useMemo(() => {
@@ -397,6 +404,11 @@ const useStyles = createUseStyles(theme => ({
   },
   headerPlayButton: {
     marginRight: 8,
+  },
+  headerPlayButtonArtwork: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
   },
   filterContainer: {
     flexDirection: 'row',
