@@ -58,17 +58,39 @@ export type MaFilterConfig = {
   name: string;
 };
 
-/** Base shape of a Music Assistant media item returned by the search API */
-export type MaMediaItem = {
-  media_type: MaMediaType;
+/** Minimal artist reference nested within tracks and albums */
+export type MaArtistRef = {
+  name: string;
+  image?: string | null;
+};
+
+/** Base fields shared by all MA media items */
+type MaMediaItemBase = {
   uri: string;
   name: string;
   version?: string;
-  image?: string;
-  /** For tracks/albums */
-  artist?: string;
-  album?: string;
+  image?: string | null;
 };
+
+export type MaArtistItem = MaMediaItemBase & { media_type: 'artist' };
+
+export type MaAlbumItem = MaMediaItemBase & {
+  media_type: 'album';
+  artists?: MaArtistRef[];
+};
+
+export type MaTrackItem = MaMediaItemBase & {
+  media_type: 'track';
+  artists?: MaArtistRef[];
+  album?: MaAlbumItem;
+};
+
+export type MaOtherItem = MaMediaItemBase & {
+  media_type: Exclude<MaMediaType, 'artist' | 'album' | 'track'>;
+};
+
+/** Union of all Music Assistant media item shapes returned by the search/library API */
+export type MaMediaItem = MaArtistItem | MaAlbumItem | MaTrackItem | MaOtherItem;
 
 /**
  * MA search results organised by type.

@@ -228,6 +228,22 @@ export const en = {
     noResultsForQuery: 'No results for \u201c%{query}\u201d.',
   },
 
+  maSearch: {
+    enqueue: {
+      play: 'Play',
+      replace: 'Replace Queue',
+      next: 'Add Next',
+      replace_next: 'Replace Next',
+      add: 'Add to Queue',
+    },
+    placeholder: 'Search Music Assistant\u2026',
+    enqueueMode: 'Enqueue Mode',
+    changeEnqueueMode: 'Change enqueue mode',
+    filterBy: 'Filter by %{name}',
+    noResultsForQuery: 'No results for \u201c%{query}\u201d.',
+    favoritesEmpty: 'No favorites found.',
+  },
+
   haMediaBrowser: {
     action: {
       play: 'Play',
