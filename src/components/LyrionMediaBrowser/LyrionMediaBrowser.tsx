@@ -140,6 +140,7 @@ export const LyrionMediaBrowser = ({
             return (
               <MediaItemSheet
                 title={currentEntry?.title ?? ''}
+                artworkUrl={artworkUrl}
                 actions={currentHeaderMenuActions}
                 renderTrigger={onOpen => (
                   <Button
