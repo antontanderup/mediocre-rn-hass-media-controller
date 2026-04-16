@@ -2,7 +2,7 @@ import { ActivityIndicator, Pressable, View } from 'react-native';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { ButtonContext } from './ButtonContext';
-import type { ButtonProps, ButtonSize, ButtonVariant } from './Button.types';
+import type { ButtonProps, ButtonShape, ButtonSize, ButtonVariant } from './Button.types';
 
 const ICON_SIZES: Record<ButtonSize, number> = {
   sm: 16,
@@ -22,11 +22,19 @@ const CONTENT_GAPS: Record<ButtonSize, number> = {
   lg: 8,
 };
 
+const BORDER_RADIUS: Record<ButtonShape, number> = {
+  sm: 4,
+  md: 8,
+  lg: 16,
+  chip: 999,
+};
+
 export const Button = ({
   children,
   onPress,
   variant = 'primary',
   size = 'md',
+  shape = 'md',
   disabled = false,
   loading = false,
   accessibilityLabel,
@@ -87,6 +95,7 @@ export const Button = ({
           styles.base,
           containerVariantStyle,
           containerSizeStyle,
+          { borderRadius: BORDER_RADIUS[shape] },
           pressed && !isInteractionDisabled && styles.pressed,
           isInteractionDisabled && styles.disabled,
           style,
@@ -114,10 +123,13 @@ const useStyles = createUseStyles(theme => ({
     justifyContent: 'center',
     borderRadius: 8,
     overflow: 'hidden',
+    flexShrink: 0,
+    flexGrow: 0,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 0,
   },
   pressed: {
     opacity: 0.75,

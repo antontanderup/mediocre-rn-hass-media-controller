@@ -108,6 +108,7 @@ export default function BrowserTab() {
                 <Button
                   variant="surface"
                   size="sm"
+                  shape="chip"
                   onPress={onOpen}
                   accessibilityLabel={t('browser.selectMediaSource')}
                   style={{ marginRight: 8 }}

@@ -78,6 +78,7 @@ export default function SearchTab(): React.JSX.Element {
             <Button
               variant="surface"
               size="sm"
+              shape="chip"
               onPress={onOpen}
               accessibilityLabel={t('search.selectSearchProvider')}
               style={{ marginRight: 8 }}
