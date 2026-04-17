@@ -48,6 +48,9 @@ export type { SearchFieldProps } from './SearchField';
 export { HaSearch } from './HaSearch';
 export type { HaSearchProps } from './HaSearch';
 
+export { MaSearch } from './MaSearch';
+export type { MaSearchProps } from './MaSearch';
+
 export { SourceSelect } from './SourceSelect';
 export type { SourceSelectProps } from './SourceSelect';
 

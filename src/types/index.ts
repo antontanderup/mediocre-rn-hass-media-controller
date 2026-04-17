@@ -23,6 +23,11 @@ export type {
   MaFilterType,
   MaEnqueueMode,
   MaFilterConfig,
+  MaArtistRef,
+  MaArtistItem,
+  MaAlbumItem,
+  MaTrackItem,
+  MaOtherItem,
   MaMediaItem,
   MaSearchResults,
 } from './mediaBrowser';

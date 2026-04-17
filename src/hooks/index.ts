@@ -41,6 +41,8 @@ export { useHaSearch } from './useHaSearch';
 export type { UseHaSearchResult } from './useHaSearch';
 export { useMaSearch } from './useMaSearch';
 export type { UseMaSearchResult } from './useMaSearch';
+export { useMaFavorites } from './useMaFavorites';
+export type { UseMaFavoritesResult } from './useMaFavorites';
 export { useSearchProvider } from './useSearchProvider';
 export type { SearchProvider, UseSearchProviderResult } from './useSearchProvider';
 
