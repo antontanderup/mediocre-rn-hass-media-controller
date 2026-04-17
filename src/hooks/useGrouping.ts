@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useHassContext } from '@/context';
+import { useHassContext, useHassEntities } from '@/context';
 import { useAppConfig } from '@/hooks';
 import type { MediaPlayerConfig } from '@/types';
 
@@ -29,7 +29,8 @@ export interface GroupingState {
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export const useGrouping = (entityId: string): GroupingState => {
-  const { players, callService } = useHassContext();
+  const { callService } = useHassContext();
+  const { players } = useHassEntities();
   const { config: appConfig } = useAppConfig();
   const [loadingIds, setLoadingIds] = useState<string[]>([]);
 

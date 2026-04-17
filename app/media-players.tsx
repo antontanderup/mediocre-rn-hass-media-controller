@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useHassContext } from '@/context';
+import { useHassEntities } from '@/context';
 import { useAppConfig, useTheme } from '@/hooks';
 import { Icon } from '@/components';
 import type { AppConfig, MediaPlayerConfig } from '@/types';
@@ -22,7 +22,7 @@ export default function MediaPlayersScreen() {
   const router = useRouter();
   const styles = useStyles();
   const { config, saveConfig } = useAppConfig();
-  const { players: hassPlayers } = useHassContext();
+  const { players: hassPlayers } = useHassEntities();
   const [showPicker, setShowPicker] = useState(false);
 
   const configuredPlayers = config?.mediaPlayers ?? [];

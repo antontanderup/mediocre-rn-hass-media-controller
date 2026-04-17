@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { useHassContext, useSelectedPlayerContext } from '@/context';
+import { useHassEntities, useSelectedPlayerContext } from '@/context';
 import { useAppConfig } from './useAppConfig';
 import { selectActiveMediaPlayer } from '@/utils';
 
@@ -10,7 +10,7 @@ import { selectActiveMediaPlayer } from '@/utils';
  */
 export const useAutoSelectPlayer = () => {
   const router = useRouter();
-  const { players, entities } = useHassContext();
+  const { players, entities } = useHassEntities();
   const { config: appConfig } = useAppConfig();
   const { entityId, setEntityId } = useSelectedPlayerContext();
   const hasAutoSelected = useRef(false);

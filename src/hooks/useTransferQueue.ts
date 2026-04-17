@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useHassContext, useSelectedPlayerContext } from '@/context';
+import { useHassContext, useHassEntities, useSelectedPlayerContext } from '@/context';
 import { getHasMassFeatures, getIsLmsPlayer } from '@/utils';
 import { useAppConfig } from './useAppConfig';
 
@@ -16,7 +16,8 @@ export type UseTransferQueueResult = {
 };
 
 export const useTransferQueue = (entityId: string): UseTransferQueueResult => {
-  const { players, callService } = useHassContext();
+  const { callService } = useHassContext();
+  const { players } = useHassEntities();
   const { config: appConfig } = useAppConfig();
   const { setEntityId } = useSelectedPlayerContext();
 

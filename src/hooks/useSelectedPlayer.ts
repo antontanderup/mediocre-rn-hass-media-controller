@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { useHassContext, useSelectedPlayerContext } from '@/context';
+import { useHassEntities, useSelectedPlayerContext } from '@/context';
 import { useAppConfig } from './useAppConfig';
 import type { MediaPlayerConfig, MediaPlayerEntity } from '@/types';
 
@@ -20,7 +20,7 @@ export interface SelectedPlayerState {
 
 export const useSelectedPlayer = (): SelectedPlayerState => {
   const { entityId, setEntityId } = useSelectedPlayerContext();
-  const { players } = useHassContext();
+  const { players } = useHassEntities();
   const { config: appConfig } = useAppConfig();
   const lastInteractionRef = useRef<number | null>(null);
 

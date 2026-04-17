@@ -107,7 +107,7 @@ function getTrackArtwork(item: MaMediaItem): string | undefined {
   return item.image ?? undefined;
 }
 
-export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
+export const MaSearch = React.memo(function MaSearch({ maEntityId }: MaSearchProps): React.JSX.Element {
   const styles = useStyles();
   const theme = useTheme();
   const haptics = useHaptics();
@@ -303,6 +303,9 @@ export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
         }
         stickySectionHeadersEnabled={false}
         contentInsetAdjustmentBehavior="automatic"
+        windowSize={5}
+        maxToRenderPerBatch={5}
+        removeClippedSubviews
       />
     );
   };
@@ -313,7 +316,7 @@ export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
       {renderContent()}
     </View>
   );
-};
+});
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 

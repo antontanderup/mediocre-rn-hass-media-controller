@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useHassContext } from '@/context';
+import { useHassContext, useHassEntities } from '@/context';
 import type { QueueItem } from '@/types';
 import { useHassMessagePromise } from './useHassMessagePromise';
 
@@ -25,7 +25,8 @@ export type MassQueueResult = {
 };
 
 export const useMassQueue = (entityId: string, enabled: boolean): MassQueueResult => {
-  const { players, callService } = useHassContext();
+  const { callService } = useHassContext();
+  const { players } = useHassEntities();
   const player = players.find(p => p.entity_id === entityId);
 
   const { data, loading, error, refetch } = useHassMessagePromise<MassQueueResponse>(

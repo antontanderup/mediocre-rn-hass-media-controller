@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { useHassContext } from '@/context';
+import { useHassEntities } from '@/context';
 import { useAppConfig, useSelectedPlayer, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { t } from '@/localization';
@@ -12,7 +12,7 @@ export default function SpeakersTab() {
   const { entityId, setSelectedPlayer } = useSelectedPlayer();
   const theme = useTheme();
   const styles = useStyles();
-  const { players } = useHassContext();
+  const { players } = useHassEntities();
   const { config: appConfig } = useAppConfig();
 
   const disablePlayerFocusSwitching = appConfig?.options.disablePlayerFocusSwitching ?? false;

@@ -1,7 +1,7 @@
 import { TrueSheet } from '@lodev09/react-native-true-sheet';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
-import { useHassContext } from '@/context';
+import { useHassEntities } from '@/context';
 import { useHaptics, useTheme } from '@/hooks';
 import { createUseStyles } from '@/utils';
 import { BottomSheetHeader } from '@/components/BottomSheetHeader';
@@ -17,7 +17,7 @@ export const EntityPicker = ({
   placeholder,
   label,
 }: EntityPickerProps): React.JSX.Element => {
-  const { entities } = useHassContext();
+  const { entities } = useHassEntities();
   const styles = useStyles();
   const theme = useTheme();
   const haptics = useHaptics();

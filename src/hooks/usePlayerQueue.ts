@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useHassContext } from '@/context';
+import { useHassEntities } from '@/context';
 import type { QueueItem } from '@/types';
 import { getHasMassFeatures, getIsLmsPlayer } from '@/utils';
 import { useAppConfig } from './useAppConfig';
@@ -23,7 +23,7 @@ export type UsePlayerQueueResult = {
 };
 
 export const usePlayerQueue = (entityId: string): UsePlayerQueueResult => {
-  const { players } = useHassContext();
+  const { players } = useHassEntities();
   const { config: appConfig } = useAppConfig();
 
   const playerConfig = appConfig?.mediaPlayers.find(p => p.entityId === entityId);

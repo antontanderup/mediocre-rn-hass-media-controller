@@ -42,11 +42,11 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return chunks;
 }
 
-export const HaSearch = ({
+export const HaSearch = React.memo(function HaSearch({
   entityId,
   hassBaseUrl,
   filterConfig,
-}: HaSearchProps): React.JSX.Element => {
+}: HaSearchProps): React.JSX.Element {
   const styles = useStyles();
   const theme = useTheme();
   const haptics = useHaptics();
@@ -110,14 +110,15 @@ export const HaSearch = ({
   const haSearch = useHaSearch(debouncedQuery, activeFilter, entityId, filterConfig);
   const hasQuery = debouncedQuery.trim().length >= 2;
 
+  const { playItem: haPlayItem } = haSearch;
   const buildActions = useCallback(
     (item: HaMediaItem): MediaItemSheetAction[] => [
-      { label: t('haSearch.enqueue.play'), icon: 'play', onPress: () => haSearch.playItem(item, entityId, 'play') },
-      { label: t('haSearch.enqueue.replaceQueue'), icon: 'playlist-play', onPress: () => haSearch.playItem(item, entityId, 'replace') },
-      { label: t('haSearch.enqueue.addNext'), icon: 'playlist-music', onPress: () => haSearch.playItem(item, entityId, 'next') },
-      { label: t('haSearch.enqueue.addToQueue'), icon: 'playlist-plus', onPress: () => haSearch.playItem(item, entityId, 'add') },
+      { label: t('haSearch.enqueue.play'), icon: 'play', onPress: () => haPlayItem(item, entityId, 'play') },
+      { label: t('haSearch.enqueue.replaceQueue'), icon: 'playlist-play', onPress: () => haPlayItem(item, entityId, 'replace') },
+      { label: t('haSearch.enqueue.addNext'), icon: 'playlist-music', onPress: () => haPlayItem(item, entityId, 'next') },
+      { label: t('haSearch.enqueue.addToQueue'), icon: 'playlist-plus', onPress: () => haPlayItem(item, entityId, 'add') },
     ],
-    [haSearch, entityId],
+    [haPlayItem, entityId],
   );
 
   // Group results by media_content_type into SectionList sections.
@@ -323,6 +324,9 @@ export const HaSearch = ({
         }
         stickySectionHeadersEnabled={false}
         contentInsetAdjustmentBehavior="automatic"
+        windowSize={5}
+        maxToRenderPerBatch={5}
+        removeClippedSubviews
       />
     );
   };
@@ -333,7 +337,7 @@ export const HaSearch = ({
       {renderContent()}
     </View>
   );
-};
+});
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
