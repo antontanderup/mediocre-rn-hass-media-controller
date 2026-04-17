@@ -343,7 +343,7 @@ const useStyles = createUseStyles(theme => ({
     backgroundColor: theme.background,
   },
   header: {
-    paddingTop: 8,
+    paddingTop: 12,
     paddingBottom: 8,
     gap: 8,
     backgroundColor: theme.surface,

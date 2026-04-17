@@ -410,7 +410,7 @@ const useStyles = createUseStyles(theme => ({
     borderRadius: 10,
   },
   filterField: {
-    marginTop: 8,
+    marginTop: 12,
     marginBottom: 4,
   },
   sectionHeader: {
