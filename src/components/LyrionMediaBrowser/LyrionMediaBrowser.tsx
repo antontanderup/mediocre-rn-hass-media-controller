@@ -437,7 +437,9 @@ const useStyles = createUseStyles(theme => ({
     gap: 8,
   },
   categoryButton: {
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
   },
   categoryButtonChevron: {
     marginLeft: 'auto' as unknown as number,
