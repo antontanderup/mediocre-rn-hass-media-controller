@@ -237,8 +237,6 @@ export const en = {
       add: 'Add to Queue',
     },
     placeholder: 'Search Music Assistant\u2026',
-    enqueueMode: 'Enqueue Mode',
-    changeEnqueueMode: 'Change enqueue mode',
     filterBy: 'Filter by %{name}',
     noResultsForQuery: 'No results for \u201c%{query}\u201d.',
     favoritesEmpty: 'No favorites found.',

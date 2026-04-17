@@ -16,7 +16,7 @@ export const useConfigEntries = (): string[] | null => {
   const [loadedDomains, setLoadedDomains] = useState<string[] | null>(null);
 
   useEffect(() => {
-    sendMessage<ConfigEntry[]>({ type: 'config/config_entries/entry' })
+    sendMessage<ConfigEntry[]>({ type: 'config_entries/get' })
       .then(entries =>
         setLoadedDomains(entries.filter(e => e.state === 'loaded').map(e => e.domain)),
       )

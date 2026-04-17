@@ -45,7 +45,7 @@ beforeEach(() => {
 describe('useMaSearch', () => {
   it('fetches config entry on mount', async () => {
     renderHook(() => useMaSearch('', 'all', MA_ENTITY_ID));
-    expect(mockSendMessage).toHaveBeenCalledWith({ type: 'config/config_entries/entry' });
+    expect(mockSendMessage).toHaveBeenCalledWith({ type: 'config_entries/get' });
   });
 
   it('sets configError when no music_assistant entry is found', async () => {
@@ -137,8 +137,10 @@ describe('useMaSearch', () => {
       result.current.playItem(item, 'play');
     });
     expect(mockCallService).toHaveBeenCalledWith('music_assistant', 'play_media', {
+      entity_id: MA_ENTITY_ID,
+      media_type: item.media_type,
       media_id: item.uri,
-      enqueue_mode: 'play',
+      enqueue: 'play',
     });
   });
 
@@ -149,8 +151,10 @@ describe('useMaSearch', () => {
       result.current.playItem(item, 'replace_next');
     });
     expect(mockCallService).toHaveBeenCalledWith('music_assistant', 'play_media', {
+      entity_id: MA_ENTITY_ID,
+      media_type: item.media_type,
       media_id: item.uri,
-      enqueue_mode: 'replace_next',
+      enqueue: 'replace_next',
     });
   });
 });

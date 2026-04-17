@@ -31,7 +31,7 @@ export const useMaSearch = (
     if (!maEntityId) return;
     setConfigError(null);
     setConfigEntryId(null);
-    sendMessage<ConfigEntry[]>({ type: 'config/config_entries/entry' })
+    sendMessage<ConfigEntry[]>({ type: 'config_entries/get' })
       .then(entries => {
         const maEntry = entries.find(
           e => e.domain === 'music_assistant' && e.state === 'loaded',
@@ -58,6 +58,7 @@ export const useMaSearch = (
         name: query,
         config_entry_id: configEntryId,
         ...(filter !== 'all' && { media_type: filter }),
+        limit: filter === 'all' ? 8 : 100,
       },
       return_response: true,
     };
@@ -72,11 +73,13 @@ export const useMaSearch = (
   const playItem = useCallback(
     (item: MaMediaItem, enqueue: MaEnqueueMode) => {
       callService('music_assistant', 'play_media', {
+        entity_id: maEntityId,
+        media_type: item.media_type,
         media_id: item.uri,
-        enqueue_mode: enqueue,
+        enqueue,
       });
     },
-    [callService],
+    [callService, maEntityId],
   );
 
   const results = useMemo<MaSearchResults>(
