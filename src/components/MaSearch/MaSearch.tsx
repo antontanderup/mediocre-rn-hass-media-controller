@@ -303,6 +303,9 @@ export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
         }
         stickySectionHeadersEnabled={false}
         contentInsetAdjustmentBehavior="automatic"
+        windowSize={5}
+        maxToRenderPerBatch={5}
+        removeClippedSubviews
       />
     );
   };
