@@ -107,7 +107,7 @@ function getTrackArtwork(item: MaMediaItem): string | undefined {
   return item.image ?? undefined;
 }
 
-export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
+export const MaSearch = React.memo(function MaSearch({ maEntityId }: MaSearchProps): React.JSX.Element {
   const styles = useStyles();
   const theme = useTheme();
   const haptics = useHaptics();
@@ -316,7 +316,7 @@ export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
       {renderContent()}
     </View>
   );
-};
+});
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 

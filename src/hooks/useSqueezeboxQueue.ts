@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useHassContext } from '@/context';
+import { useHassContext, useHassEntities } from '@/context';
 import type {
   QueueItem,
   SqueezeboxServerStatusResponse,
@@ -19,7 +19,8 @@ export type SqueezeboxQueueResult = {
 };
 
 export const useSqueezeboxQueue = (entityId: string, enabled: boolean): SqueezeboxQueueResult => {
-  const { players, callService, sendMessage } = useHassContext();
+  const { callService, sendMessage } = useHassContext();
+  const { players } = useHassEntities();
   const player = players.find(p => p.entity_id === entityId);
 
   const { data: serverData } = useHassMessagePromise<SqueezeboxServerStatusResponse>(

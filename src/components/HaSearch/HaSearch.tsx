@@ -42,11 +42,11 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   return chunks;
 }
 
-export const HaSearch = ({
+export const HaSearch = React.memo(function HaSearch({
   entityId,
   hassBaseUrl,
   filterConfig,
-}: HaSearchProps): React.JSX.Element => {
+}: HaSearchProps): React.JSX.Element {
   const styles = useStyles();
   const theme = useTheme();
   const haptics = useHaptics();
@@ -337,7 +337,7 @@ export const HaSearch = ({
       {renderContent()}
     </View>
   );
-};
+});
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 

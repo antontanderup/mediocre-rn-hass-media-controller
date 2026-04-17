@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useHassContext } from '@/context';
+import { useHassEntities } from '@/context';
 import { useAppConfig } from './useAppConfig';
 
 export type SearchProvider =
@@ -13,7 +13,7 @@ export type UseSearchProviderResult = {
 };
 
 export const useSearchProvider = (entityId: string): UseSearchProviderResult => {
-  const { players } = useHassContext();
+  const { players } = useHassEntities();
   const { config: appConfig } = useAppConfig();
 
   const playerConfig = appConfig?.mediaPlayers.find(p => p.entityId === entityId);

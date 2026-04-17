@@ -2,7 +2,7 @@ import { Redirect, useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { Button, ButtonText } from '@/components';
-import { useHassContext, useSelectedPlayerContext } from '@/context';
+import { useHassContext, useHassEntities, useSelectedPlayerContext } from '@/context';
 import {
   ERR_CANNOT_CONNECT,
   ERR_CONNECTION_LOST,
@@ -32,7 +32,8 @@ function getErrorDescription(code: number | null): string {
 export default function IndexRedirect() {
   const router = useRouter();
   const theme = useTheme();
-  const { players, entities, authState, connectionErrorCode, isConfigLoaded, hasConfig } = useHassContext();
+  const { authState, connectionErrorCode, isConfigLoaded, hasConfig } = useHassContext();
+  const { players, entities } = useHassEntities();
   const { config: appConfig } = useAppConfig();
   const { setEntityId } = useSelectedPlayerContext();
   const hasRedirected = useRef(false);

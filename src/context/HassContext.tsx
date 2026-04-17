@@ -3,12 +3,11 @@ import { callService as hassCallService } from 'home-assistant-js-websocket';
 import type { HassAuthState, HassConfig, HassEntity, MediaPlayerEntity } from '@/types';
 import { useHassConfig, useHassConnection, useMediaPlayers } from '@/hooks';
 
-interface HassContextValue {
+// Stable API values — only change on connect/disconnect or config save.
+// Components subscribing here are NOT re-rendered by entity state updates.
+interface HassApiContextValue {
   authState: HassAuthState;
   connectionErrorCode: number | null;
-  entities: HassEntity[];
-  players: MediaPlayerEntity[];
-  isLoading: boolean;
   isConfigLoaded: boolean;
   hasConfig: boolean;
   hassConfig: HassConfig | null;
@@ -22,7 +21,16 @@ interface HassContextValue {
   sendMessage: <T>(message: { type: string } & Record<string, unknown>) => Promise<T>;
 }
 
-const HassContext = createContext<HassContextValue | null>(null);
+// Frequently-updating entity state — changes on every HA entity event.
+// Only subscribe here if you need live entity data.
+interface HassEntitiesContextValue {
+  entities: HassEntity[];
+  players: MediaPlayerEntity[];
+  isLoading: boolean;
+}
+
+const HassApiContext = createContext<HassApiContextValue | null>(null);
+const HassEntitiesContext = createContext<HassEntitiesContextValue | null>(null);
 
 interface HassProviderProps {
   children: React.ReactNode;
@@ -35,9 +43,7 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
 
   useEffect(() => {
     if (authState === 'auth_invalid') {
-      clearConfig().catch(() => {
-        // Non-fatal — token is already invalidated on the server side
-      });
+      clearConfig().catch(() => {});
     }
   }, [authState, clearConfig]);
 
@@ -49,9 +55,7 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
       target?: { entity_id?: string | string[] },
     ) => {
       if (!connection) return;
-      hassCallService(connection, domain, service, serviceData, target).catch(() => {
-        // Service call errors are non-fatal from the UI's perspective
-      });
+      hassCallService(connection, domain, service, serviceData, target).catch(() => {});
     },
     [connection],
   );
@@ -64,18 +68,42 @@ export const HassProvider = ({ children }: HassProviderProps): React.JSX.Element
     [connection],
   );
 
-  const value = useMemo(
-    () => ({ authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, hasConfig: config !== null, hassConfig: config, saveConfig, callService, sendMessage }),
-    [authState, connectionErrorCode, entities, players, isLoading, isConfigLoaded, config, saveConfig, callService, sendMessage],
+  const apiValue = useMemo<HassApiContextValue>(
+    () => ({
+      authState,
+      connectionErrorCode,
+      isConfigLoaded,
+      hasConfig: config !== null,
+      hassConfig: config,
+      saveConfig,
+      callService,
+      sendMessage,
+    }),
+    [authState, connectionErrorCode, isConfigLoaded, config, saveConfig, callService, sendMessage],
   );
 
-  return <HassContext.Provider value={value}>{children}</HassContext.Provider>;
+  const entitiesValue = useMemo<HassEntitiesContextValue>(
+    () => ({ entities, players, isLoading }),
+    [entities, players, isLoading],
+  );
+
+  return (
+    <HassApiContext.Provider value={apiValue}>
+      <HassEntitiesContext.Provider value={entitiesValue}>
+        {children}
+      </HassEntitiesContext.Provider>
+    </HassApiContext.Provider>
+  );
 };
 
-export const useHassContext = (): HassContextValue => {
-  const ctx = useContext(HassContext);
-  if (!ctx) {
-    throw new Error('useHassContext must be used within a HassProvider');
-  }
+export const useHassContext = (): HassApiContextValue => {
+  const ctx = useContext(HassApiContext);
+  if (!ctx) throw new Error('useHassContext must be used within a HassProvider');
+  return ctx;
+};
+
+export const useHassEntities = (): HassEntitiesContextValue => {
+  const ctx = useContext(HassEntitiesContext);
+  if (!ctx) throw new Error('useHassEntities must be used within a HassProvider');
   return ctx;
 };

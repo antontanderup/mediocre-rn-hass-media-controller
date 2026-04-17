@@ -11,7 +11,8 @@ const mockPlayers = [
 let mockAppConfig: object | null = null;
 
 jest.mock('@/context', () => ({
-  useHassContext: () => ({ players: mockPlayers }),
+  useHassContext: () => ({}),
+  useHassEntities: () => ({ players: mockPlayers }),
 }));
 
 jest.mock('../useAppConfig', () => ({

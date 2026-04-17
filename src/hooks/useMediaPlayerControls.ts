@@ -1,5 +1,5 @@
 import { useCallback, useRef } from 'react';
-import { useHassContext } from '@/context';
+import { useHassContext, useHassEntities } from '@/context';
 import { useAppConfig } from '@/hooks/useAppConfig';
 import type { MediaPlayerConfig } from '@/types';
 
@@ -16,7 +16,8 @@ export interface MediaPlayerControls {
 }
 
 export const useMediaPlayerControls = (entityId: string): MediaPlayerControls => {
-  const { callService, players } = useHassContext();
+  const { callService } = useHassContext();
+  const { players } = useHassEntities();
   const { config: appConfig } = useAppConfig();
   const entityIdRef = useRef(entityId);
   entityIdRef.current = entityId;

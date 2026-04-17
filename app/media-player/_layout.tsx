@@ -1,7 +1,7 @@
 import { Tabs, useRouter } from 'expo-router';
 import React, { useMemo } from 'react';
 import { Button, ButtonIcon, Icon } from '@/components';
-import { useHassContext, useThemeContext } from '@/context';
+import { useHassEntities, useThemeContext } from '@/context';
 import { useAppConfig, useSelectedPlayer, useTheme } from '@/hooks';
 import { t } from '@/localization';
 import { getHasQueueSupport } from '@/utils';
@@ -12,7 +12,7 @@ export default function MediaPlayerLayout(): React.JSX.Element {
   const router = useRouter();
   const { entityId } = useSelectedPlayer();
   const { config: appConfig } = useAppConfig();
-  const { players } = useHassContext();
+  const { players } = useHassEntities();
 
   const playerConfig = appConfig?.mediaPlayers.find(p => p.entityId === entityId);
   const hasSearch = !!(playerConfig?.searchEntries?.length || playerConfig?.maEntityId);
