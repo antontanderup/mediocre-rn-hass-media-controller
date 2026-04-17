@@ -28,7 +28,8 @@ export const SearchField = React.forwardRef<TextInput, SearchFieldProps>(
         />
         {value.length > 0 && (
           <Pressable
-            style={({ pressed }) => [styles.clearBtn, pressed && styles.clearBtnPressed]}
+            hitSlop={8}
+            style={({ pressed }) => pressed && styles.clearBtnPressed}
             onPress={() => { haptics.light(); onChangeText(''); }}
             accessibilityRole="button"
           >
@@ -56,9 +57,6 @@ const useStyles = createUseStyles(theme => ({
     fontSize: 15,
     color: theme.onSurface,
     padding: 0,
-  },
-  clearBtn: {
-    padding: 4,
   },
   clearBtnPressed: {
     opacity: 0.5,
