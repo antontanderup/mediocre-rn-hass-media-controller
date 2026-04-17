@@ -15,8 +15,7 @@ import { MediaGridItem } from '@/components/MediaGridItem';
 import { MediaTrackItem } from '@/components/MediaTrackItem';
 import { MediaItemSheet } from '@/components/MediaItemSheet';
 import { Icon } from '@/components/Icon';
-import { BottomSheetSelect } from '@/components/BottomSheetSelect';
-import { Button, ButtonIcon } from '@/components/Button';
+import type { IconName } from '@/components/Icon';
 import type { MediaItemSheetAction } from '@/components/MediaItemSheet';
 import type { MaEnqueueMode, MaFilterType, MaMediaItem, MaSearchResults, MaTrackItem, MaAlbumItem } from '@/types';
 import type { MaSearchProps } from './MaSearch.types';
@@ -24,32 +23,24 @@ import type { MaSearchProps } from './MaSearch.types';
 const DEBOUNCE_MS = 600;
 const GRID_COLUMNS = 3;
 
-const MA_FILTERS: { type: MaFilterType; label: string }[] = [
-  { type: 'all', label: 'All' },
-  { type: 'track', label: 'Tracks' },
-  { type: 'album', label: 'Albums' },
-  { type: 'artist', label: 'Artists' },
-  { type: 'playlist', label: 'Playlists' },
-  { type: 'radio', label: 'Radio' },
-  { type: 'audiobook', label: 'Audiobooks' },
-  { type: 'podcast', label: 'Podcasts' },
+const MA_FILTERS: { type: MaFilterType; label: string; icon: IconName }[] = [
+  { type: 'all', label: 'All', icon: 'all-inclusive' },
+  { type: 'track', label: 'Tracks', icon: 'music-note' },
+  { type: 'album', label: 'Albums', icon: 'album' },
+  { type: 'artist', label: 'Artists', icon: 'account-music' },
+  { type: 'playlist', label: 'Playlists', icon: 'playlist-music' },
+  { type: 'radio', label: 'Radio', icon: 'radio' },
+  { type: 'audiobook', label: 'Audiobooks', icon: 'book-open-variant' },
+  { type: 'podcast', label: 'Podcasts', icon: 'podcast' },
 ];
 
-const ENQUEUE_OPTIONS: { value: MaEnqueueMode; label: string; icon: 'play-circle' | 'playlist-remove' | 'playlist-play' | 'playlist-edit' | 'playlist-plus' }[] = [
+const ENQUEUE_OPTIONS: { value: MaEnqueueMode; label: string; icon: IconName }[] = [
   { value: 'play', label: 'Play', icon: 'play-circle' },
   { value: 'replace', label: 'Replace Queue', icon: 'playlist-remove' },
   { value: 'next', label: 'Add Next', icon: 'playlist-play' },
   { value: 'replace_next', label: 'Replace Next', icon: 'playlist-edit' },
   { value: 'add', label: 'Add to Queue', icon: 'playlist-plus' },
 ];
-
-const ENQUEUE_ICON_MAP: Record<MaEnqueueMode, 'play-circle' | 'playlist-remove' | 'playlist-play' | 'playlist-edit' | 'playlist-plus'> = {
-  play: 'play-circle',
-  replace: 'playlist-remove',
-  next: 'playlist-play',
-  replace_next: 'playlist-edit',
-  add: 'playlist-plus',
-};
 
 function chunkArray<T>(arr: T[], size: number): T[][] {
   const chunks: T[][] = [];
@@ -126,7 +117,6 @@ export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [activeFilter, setActiveFilter] = useState<MaFilterType>('all');
-  const [enqueueMode, setEnqueueMode] = useState<MaEnqueueMode>('play');
 
   const handleQueryChange = useCallback((text: string) => {
     setRawQuery(text);
@@ -158,9 +148,9 @@ export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
       ENQUEUE_OPTIONS.map(opt => ({
         label: t(`maSearch.enqueue.${opt.value}`),
         icon: opt.icon,
-        onPress: () => playItem(item, enqueueMode),
+        onPress: () => playItem(item, opt.value),
       })),
-    [playItem, enqueueMode],
+    [playItem],
   );
 
   const renderItem = useCallback(
@@ -242,25 +232,12 @@ export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
 
   const renderHeader = () => (
     <View style={styles.header}>
-      <View style={styles.inputRow}>
-        <SearchField
-          value={rawQuery}
-          onChangeText={handleQueryChange}
-          placeholder={t('maSearch.placeholder')}
-          style={styles.searchField}
-        />
-        <BottomSheetSelect<MaEnqueueMode>
-          title={t('maSearch.enqueueMode')}
-          options={ENQUEUE_OPTIONS}
-          value={enqueueMode}
-          onChange={val => { haptics.selection(); setEnqueueMode(val); }}
-          renderTrigger={onOpen => (
-            <Button variant="ghost" size="sm" onPress={onOpen} accessibilityLabel={t('maSearch.changeEnqueueMode')}>
-              <ButtonIcon name={ENQUEUE_ICON_MAP[enqueueMode]} />
-            </Button>
-          )}
-        />
-      </View>
+      <SearchField
+        value={rawQuery}
+        onChangeText={handleQueryChange}
+        placeholder={t('maSearch.placeholder')}
+        style={styles.searchField}
+      />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -280,6 +257,11 @@ export const MaSearch = ({ maEntityId }: MaSearchProps): React.JSX.Element => {
               accessibilityRole="button"
               accessibilityLabel={t('maSearch.filterBy', { name: f.label })}
             >
+              <Icon
+                name={f.icon}
+                size={14}
+                color={isActive ? theme.onSecondaryContainer : theme.onSurfaceVariant}
+              />
               <Text style={[styles.filterChipText, isActive && styles.filterChipTextSelected]}>
                 {f.label}
               </Text>
@@ -348,14 +330,8 @@ const useStyles = createUseStyles(theme => ({
     borderBottomWidth: 1,
     borderBottomColor: theme.outlineVariant,
   },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    gap: 8,
-  },
   searchField: {
-    flex: 1,
+    marginHorizontal: 16,
   },
   filterRow: {
     paddingHorizontal: 16,
