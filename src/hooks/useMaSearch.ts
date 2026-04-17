@@ -31,7 +31,7 @@ export const useMaSearch = (
     if (!maEntityId) return;
     setConfigError(null);
     setConfigEntryId(null);
-    sendMessage<ConfigEntry[]>({ type: 'config/config_entries/entry' })
+    sendMessage<ConfigEntry[]>({ type: 'config_entries/get' })
       .then(entries => {
         const maEntry = entries.find(
           e => e.domain === 'music_assistant' && e.state === 'loaded',

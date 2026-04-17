@@ -45,7 +45,7 @@ beforeEach(() => {
 describe('useMaSearch', () => {
   it('fetches config entry on mount', async () => {
     renderHook(() => useMaSearch('', 'all', MA_ENTITY_ID));
-    expect(mockSendMessage).toHaveBeenCalledWith({ type: 'config/config_entries/entry' });
+    expect(mockSendMessage).toHaveBeenCalledWith({ type: 'config_entries/get' });
   });
 
   it('sets configError when no music_assistant entry is found', async () => {

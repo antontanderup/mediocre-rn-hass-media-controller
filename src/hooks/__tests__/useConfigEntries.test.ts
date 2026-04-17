@@ -30,10 +30,10 @@ describe('useConfigEntries', () => {
     expect(result.current).toBeNull();
   });
 
-  it('calls config/config_entries/entry on mount', () => {
+  it('calls config_entries/get on mount', () => {
     mockSendMessage.mockResolvedValue([]);
     renderHook(() => useConfigEntries());
-    expect(mockSendMessage).toHaveBeenCalledWith({ type: 'config/config_entries/entry' });
+    expect(mockSendMessage).toHaveBeenCalledWith({ type: 'config_entries/get' });
   });
 
   it('returns domain names of loaded entries after resolving', async () => {

@@ -38,7 +38,7 @@ export const useMaFavorites = (filter: MaFilterType, enabled: boolean): UseMaFav
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    sendMessage<ConfigEntry[]>({ type: 'config/config_entries/entry' })
+    sendMessage<ConfigEntry[]>({ type: 'config_entries/get' })
       .then(entries => {
         const maEntry = entries.find(e => e.domain === 'music_assistant' && e.state === 'loaded');
         if (maEntry) setConfigEntryId(maEntry.entry_id);
