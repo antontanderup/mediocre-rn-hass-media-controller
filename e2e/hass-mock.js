@@ -111,6 +111,31 @@
       return;
     }
 
+    if (msg.type === 'media_player/browse_media') {
+      setTimeout(function () {
+        self._reply(id, {
+          title: 'Music',
+          media_class: 'directory',
+          media_content_type: 'library',
+          media_content_id: '',
+          can_expand: true,
+          can_play: false,
+          children: [
+            { title: 'A Night at the Opera', media_content_id: 'album:1', media_content_type: 'album', media_class: 'album', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/1' },
+            { title: 'Greatest Hits', media_content_id: 'album:2', media_content_type: 'album', media_class: 'album', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/2' },
+            { title: 'Dark Side of the Moon', media_content_id: 'album:3', media_content_type: 'album', media_class: 'album', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/3' },
+            { title: 'Morning Playlist', media_content_id: 'playlist:1', media_content_type: 'playlist', media_class: 'playlist', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/4' },
+            { title: 'Chill Vibes', media_content_id: 'playlist:2', media_content_type: 'playlist', media_class: 'playlist', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/5' },
+            { title: 'Road Trip', media_content_id: 'playlist:3', media_content_type: 'playlist', media_class: 'playlist', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/6' },
+            { title: 'Rumours', media_content_id: 'album:4', media_content_type: 'album', media_class: 'album', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/7' },
+            { title: 'Abbey Road', media_content_id: 'album:5', media_content_type: 'album', media_class: 'album', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/8' },
+            { title: 'Thriller', media_content_id: 'album:6', media_content_type: 'album', media_class: 'album', can_play: true, can_expand: true, thumbnail: '/api/mock-thumb/9' },
+          ],
+        });
+      }, 10);
+      return;
+    }
+
     // supported_features, call_service, unsubscribe_events, get_states, etc.
     if (id != null) {
       setTimeout(function () { self._reply(id, null); }, 10);

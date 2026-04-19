@@ -39,11 +39,30 @@ test.beforeAll(() => {
   fs.mkdirSync(DIR, { recursive: true });
 });
 
+// Distinct colours for the 9 mock browser thumbnails.
+const THUMB_COLORS: [number, number, number][] = [
+  [98,  59,  171], // purple
+  [220, 80,  60],  // red
+  [40,  140, 80],  // green
+  [50,  120, 200], // blue
+  [200, 140, 30],  // amber
+  [160, 50,  130], // magenta
+  [30,  160, 160], // teal
+  [210, 100, 40],  // orange
+  [80,  80,  180], // indigo
+];
+
 test.beforeEach(async ({ page }) => {
-  // Serve mock album art for the living room player (intercepted before page load).
+  // Serve mock album art for the Now Playing screen.
   await page.route('**/api/mock-artwork', route =>
     route.fulfill({ contentType: 'image/png', body: solidPng(300, 300, 98, 59, 171) })
   );
+  // Serve mock thumbnails for the browser grid (one colour per index 1-9).
+  await page.route('**/api/mock-thumb/**', route => {
+    const idx = parseInt(route.request().url().split('/').pop() ?? '1', 10);
+    const [r, g, b] = THUMB_COLORS[(idx - 1) % THUMB_COLORS.length] ?? [128, 128, 128];
+    return route.fulfill({ contentType: 'image/png', body: solidPng(120, 120, r, g, b) });
+  });
   await page.addInitScript({ path: MOCK });
 });
 
@@ -69,7 +88,8 @@ test('browse - mobile', async ({ page, isMobile }) => {
   await goToPlayer(page);
   await page.getByText('Browse', { exact: true }).click();
   await page.waitForURL('**/browser**', { timeout: 5000 });
-  await page.waitForTimeout(600);
+  await page.waitForSelector('text=A Night at the Opera', { timeout: 5000 });
+  await page.waitForTimeout(400);
   await page.screenshot({ path: path.join(DIR, 'browse-mobile.png') });
 });
 
