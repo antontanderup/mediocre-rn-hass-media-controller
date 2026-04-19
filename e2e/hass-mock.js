@@ -31,6 +31,7 @@
         source_list: ['Spotify', 'Radio', 'Bluetooth'],
         supported_features: 445887,
         media_content_type: 'music',
+        entity_picture: '/api/mock-artwork',
       },
       lc: NOW_TS,
       c: 'ctx1',
