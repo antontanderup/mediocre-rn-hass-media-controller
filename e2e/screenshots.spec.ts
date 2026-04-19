@@ -28,12 +28,6 @@ test('now playing - mobile', async ({ page, isMobile }) => {
   await page.screenshot({ path: path.join(DIR, 'now-playing-mobile.png') });
 });
 
-test('now playing - desktop', async ({ page, isMobile }) => {
-  test.skip(!!isMobile, 'desktop only');
-  await goToPlayer(page);
-  await page.screenshot({ path: path.join(DIR, 'now-playing-desktop.png') });
-});
-
 // ── Browse ────────────────────────────────────────────────────────────────────
 
 test('browse - mobile', async ({ page, isMobile }) => {

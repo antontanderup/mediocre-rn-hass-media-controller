@@ -15,13 +15,6 @@ export default defineConfig({
         ...devices['Pixel 7'],
       },
     },
-    {
-      name: 'desktop',
-      use: {
-        ...devices['Desktop Chrome'],
-        viewport: { width: 1280, height: 800 },
-      },
-    },
   ],
   webServer: {
     command: 'npx serve dist --single --listen 3000',
