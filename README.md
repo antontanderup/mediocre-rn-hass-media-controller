@@ -6,9 +6,11 @@ A native mobile app (React Native + Expo) that replicates and extends the multi-
 
 ## Screenshots
 
-| Mobile | Desktop |
-|--------|---------|
-| ![Settings (mobile)](docs/screenshots/settings-mobile.png) | ![Settings (desktop)](docs/screenshots/settings-desktop.png) |
+| | Mobile | Desktop |
+|-|--------|---------|
+| Now Playing | ![Now Playing (mobile)](docs/screenshots/now-playing-mobile.png) | ![Now Playing (desktop)](docs/screenshots/now-playing-desktop.png) |
+| Browse | ![Browse (mobile)](docs/screenshots/browse-mobile.png) | |
+| Speakers | ![Speakers (mobile)](docs/screenshots/speakers-mobile.png) | |
 
 ## Features
 
