@@ -111,6 +111,28 @@
       return;
     }
 
+    if (msg.type === 'call_service' && msg.service === 'search_media') {
+      setTimeout(function () {
+        self._reply(id, {
+          response: {
+            'media_player.living_room': {
+              result: [
+                { title: 'Bohemian Rhapsody', media_content_id: 'track:1', media_content_type: 'track', media_class: 'track', can_play: true, can_expand: false, thumbnail: '/api/mock-thumb/1' },
+                { title: 'We Will Rock You', media_content_id: 'track:2', media_content_type: 'track', media_class: 'track', can_play: true, can_expand: false, thumbnail: '/api/mock-thumb/2' },
+                { title: 'Somebody to Love', media_content_id: 'track:3', media_content_type: 'track', media_class: 'track', can_play: true, can_expand: false, thumbnail: '/api/mock-thumb/3' },
+                { title: 'Don\'t Stop Me Now', media_content_id: 'track:4', media_content_type: 'track', media_class: 'track', can_play: true, can_expand: false, thumbnail: '/api/mock-thumb/7' },
+                { title: 'We Are the Champions', media_content_id: 'track:5', media_content_type: 'track', media_class: 'track', can_play: true, can_expand: false, thumbnail: '/api/mock-thumb/4' },
+                { title: 'Under Pressure', media_content_id: 'track:6', media_content_type: 'track', media_class: 'track', can_play: true, can_expand: false, thumbnail: '/api/mock-thumb/5' },
+                { title: 'Radio Ga Ga', media_content_id: 'track:7', media_content_type: 'track', media_class: 'track', can_play: true, can_expand: false, thumbnail: '/api/mock-thumb/6' },
+                { title: 'I Want to Break Free', media_content_id: 'track:8', media_content_type: 'track', media_class: 'track', can_play: true, can_expand: false, thumbnail: '/api/mock-thumb/8' },
+              ],
+            },
+          },
+        });
+      }, 10);
+      return;
+    }
+
     if (msg.type === 'media_player/browse_media') {
       setTimeout(function () {
         self._reply(id, {
@@ -204,6 +226,9 @@
     token: 'fake_ll_token',
   }));
 
+  // Pre-seed search history so the search screen auto-fires on load.
+  localStorage.setItem('search_history', JSON.stringify(['Queen']));
+
   // @react-native-async-storage/async-storage on web writes directly to localStorage
   localStorage.setItem('app_config', JSON.stringify({
     mediaPlayers: [
@@ -214,7 +239,7 @@
         speakerGroupEntityId: null,
         maEntityId: null,
         lmsEntityId: null,
-        searchEntries: [],
+        searchEntries: [{ entity_id: 'media_player.living_room' }],
         mediaBrowserEntries: [],
       },
       {

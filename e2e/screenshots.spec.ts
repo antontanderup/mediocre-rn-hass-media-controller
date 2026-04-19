@@ -93,6 +93,23 @@ test('browse - mobile', async ({ page, isMobile }) => {
   await page.screenshot({ path: path.join(DIR, 'browse-mobile.png') });
 });
 
+// ── Search ────────────────────────────────────────────────────────────────────
+
+test('search - mobile', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'mobile only');
+  await goToPlayer(page);
+  await page.getByText('Search', { exact: true }).click();
+  await page.waitForURL('**/search**', { timeout: 5000 });
+  // search_history is pre-seeded with "Queen" so the search fires on mount.
+  // Wait for any result that isn't already in the Now Playing entity data.
+  await page.waitForSelector('text=We Will Rock You', { timeout: 5000 });
+  // Now activate the Tracks filter chip — results stay visible.
+  await page.getByText('Tracks', { exact: true }).click();
+  await page.waitForSelector('text=We Will Rock You', { timeout: 5000 });
+  await page.waitForTimeout(200);
+  await page.screenshot({ path: path.join(DIR, 'search-mobile.png') });
+});
+
 // ── Speakers ──────────────────────────────────────────────────────────────────
 
 test('speakers - mobile', async ({ page, isMobile }) => {
