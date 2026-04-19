@@ -1,7 +1,8 @@
+import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HassProvider, SelectedPlayerProvider, ThemeProvider, useHassContext, useThemeContext } from '@/context';
 import { useArtworkColor, useSelectedPlayer } from '@/hooks';
@@ -46,6 +47,15 @@ function ThemedStack(): React.JSX.Element {
 }
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    MaterialDesignIcons: require('@react-native-vector-icons/material-design-icons/fonts/MaterialDesignIcons.ttf'),
+  });
+
+  if (!fontsLoaded) {
+    return <View style={styles.root} />;
+  }
+
   return (
     <GestureHandlerRootView style={styles.root}>
       <ThemeProvider>
