@@ -12,5 +12,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.d.ts"
+  ],
+  "exclude": [
+    "e2e/**",
+    "node_modules"
   ]
 }
